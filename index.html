@@ -73,13 +73,35 @@
   }
   .sidebar-new-plan .sb-plus { width: 13px; height: 13px; flex-shrink: 0; }
   .brand-mark {
-    width: 32px; height: 32px; border-radius: 9px;
-    background: linear-gradient(135deg, var(--primary), #4a8a5f);
-    display: grid; place-items: center; color: white; font-weight: 700;
-    font-family: 'Fraunces', serif; font-size: 16px;
+    width: 38px; height: 38px; border-radius: 11px;
+    background: linear-gradient(145deg, #2D5F3F 0%, #3a7450 55%, #4a8a5f 100%);
+    display: grid; place-items: center;
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.08), 0 2px 6px rgba(45, 95, 63, 0.25);
+    position: relative; overflow: hidden;
+    flex-shrink: 0;
   }
-  .brand-name { font-family: 'Fraunces', serif; font-weight: 600; font-size: 19px; letter-spacing: -0.01em; }
-  .brand-sub { font-size: 11px; color: var(--ink-faint); letter-spacing: 0.02em; text-transform: uppercase; }
+  .brand-mark svg { width: 100%; height: 100%; display: block; }
+  .brand-name { font-family: 'Fraunces', serif; font-weight: 600; font-size: 20px; letter-spacing: -0.01em; line-height: 1.1; }
+  .brand-sub { font-size: 10px; color: var(--ink-faint); letter-spacing: 0.12em; text-transform: uppercase; margin-top: 2px; font-weight: 600; }
+
+  /* Seasonal accent bar — a subtle ribbon at the top of main that shifts hue
+     with the school calendar (Samhain, Seachtain na Gaeilge, etc.). */
+  .season-bar {
+    height: 3px; width: 100%;
+    background: linear-gradient(90deg, var(--season-from, var(--primary)) 0%, var(--season-to, var(--accent)) 100%);
+    position: sticky; top: 0; z-index: 10;
+  }
+  .season-strip {
+    display: flex; align-items: center; gap: 10px;
+    padding: 6px 40px; font-size: 12px; color: var(--ink-soft);
+    background: var(--surface); border-bottom: 1px solid var(--line);
+    letter-spacing: 0.02em;
+  }
+  .season-strip .se-dot { width: 8px; height: 8px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--season-from, var(--primary)), var(--season-to, var(--accent))); }
+  .season-strip .se-label { font-weight: 600; color: var(--ink); }
+  .season-strip .se-hint { color: var(--ink-faint); }
+  @media (max-width: 720px) { .season-strip { padding: 6px 20px; } }
   .nav-section-label { font-size: 11px; color: var(--ink-faint); letter-spacing: 0.06em; text-transform: uppercase; padding: 14px 10px 6px 10px; }
   .nav-item {
     display: flex; align-items: center; gap: 10px;
@@ -108,6 +130,73 @@
   .profile-pic img { width: 100%; height: 100%; object-fit: cover; display: block; }
   .profile-pic-controls { display: flex; flex-direction: column; gap: 6px; }
   .profile-pic-controls .muted { font-size: 12px; }
+
+  /* ===== Right-Now hero — the "what am I teaching at 8:55am?" card ===== */
+  .now-hero {
+    position: relative; overflow: hidden;
+    background: linear-gradient(135deg, #F9F4E7 0%, #F4EEE2 55%, #EAE0CC 100%);
+    border: 1px solid var(--line); border-radius: 20px;
+    padding: 24px 28px; margin-bottom: 22px;
+    box-shadow: var(--shadow-sm);
+    display: grid; grid-template-columns: 1fr auto; gap: 24px; align-items: center;
+  }
+  .now-hero::before {
+    content: ''; position: absolute; inset: 0; pointer-events: none;
+    background: radial-gradient(circle at 90% 0%, rgba(212, 167, 44, 0.12), transparent 55%),
+                radial-gradient(circle at 10% 100%, rgba(45, 95, 63, 0.10), transparent 55%);
+  }
+  .now-hero > * { position: relative; }
+  .now-hero .nh-kicker {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-size: 11px; font-weight: 700; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--primary);
+    padding: 4px 10px 4px 8px; background: rgba(45, 95, 63, 0.08);
+    border-radius: 999px; margin-bottom: 10px;
+  }
+  .now-hero .nh-kicker .nh-pulse {
+    width: 7px; height: 7px; border-radius: 50%; background: var(--primary);
+    box-shadow: 0 0 0 0 rgba(45, 95, 63, 0.6);
+    animation: nh-pulse 1.8s infinite;
+  }
+  @keyframes nh-pulse {
+    0%   { box-shadow: 0 0 0 0 rgba(45, 95, 63, 0.55); }
+    70%  { box-shadow: 0 0 0 10px rgba(45, 95, 63, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(45, 95, 63, 0); }
+  }
+  .now-hero .nh-kicker.rest { color: var(--ink-soft); background: rgba(43, 36, 32, 0.06); }
+  .now-hero .nh-kicker.rest .nh-pulse { background: var(--ink-faint); animation: none; }
+  .now-hero .nh-subject { font-size: 13px; color: var(--ink-soft); letter-spacing: 0.04em; text-transform: uppercase; font-weight: 600; margin-bottom: 2px; }
+  .now-hero h2.nh-title {
+    font-family: 'Fraunces', serif; font-size: 32px; line-height: 1.15;
+    font-weight: 600; margin-bottom: 10px; letter-spacing: -0.015em;
+  }
+  .now-hero .nh-meta { display: flex; flex-wrap: wrap; gap: 12px 18px; font-size: 14px; color: var(--ink-soft); margin-bottom: 16px; }
+  .now-hero .nh-meta .nh-meta-item { display: inline-flex; align-items: center; gap: 6px; }
+  .now-hero .nh-meta svg { width: 15px; height: 15px; stroke: var(--ink-faint); flex-shrink: 0; }
+  .now-hero .nh-timebar {
+    height: 6px; border-radius: 3px; background: rgba(45, 95, 63, 0.12);
+    overflow: hidden; margin: 4px 0 14px; max-width: 420px;
+  }
+  .now-hero .nh-timebar-fill {
+    height: 100%; background: linear-gradient(90deg, var(--primary), #4a8a5f);
+    border-radius: 3px; transition: width 0.4s ease;
+  }
+  .now-hero .nh-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+  .now-hero .nh-emoji {
+    font-size: 92px; line-height: 1;
+    filter: drop-shadow(0 6px 12px rgba(43, 36, 32, 0.12));
+    align-self: center;
+  }
+  .now-hero.rest {
+    background: linear-gradient(135deg, #FBF7F0 0%, #F4EEE2 100%);
+  }
+  .now-hero.rest h2.nh-title { font-size: 26px; }
+  .now-hero.rest .nh-emoji { font-size: 68px; opacity: 0.85; }
+  @media (max-width: 720px) {
+    .now-hero { grid-template-columns: 1fr; padding: 20px; }
+    .now-hero .nh-emoji { font-size: 56px; justify-self: end; }
+    .now-hero h2.nh-title { font-size: 24px; }
+  }
 
   /* Dashboard two-column layout — main content on the left, Today panel on the right */
   .dashboard-split {
@@ -189,8 +278,22 @@
     margin-top: 6px; display: flex; align-items: center; gap: 4px;
     font-weight: 600;
   }
-  .week-slot.empty .ws-empty-body { display: flex; flex-direction: column; gap: 8px; align-items: center; justify-content: center; flex: 1; }
+  .week-slot.empty .ws-empty-body { display: flex; flex-direction: column; gap: 8px; align-items: center; justify-content: center; flex: 1; padding: 6px 4px; }
   .week-slot.empty .ws-empty-body .btn { font-size: 11px; }
+  .week-slot.empty .ws-empty-illus { width: 36px; height: 36px; opacity: 0.55; }
+  .week-slot.empty:hover .ws-empty-illus { opacity: 0.9; }
+
+  /* Illustrated empty state — shared across views */
+  .empty-state {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 14px; padding: 40px 24px; text-align: center;
+    background: var(--surface); border: 1px dashed var(--line-strong); border-radius: 18px;
+  }
+  .empty-state svg { width: 160px; height: auto; }
+  .empty-state h3 { font-family: 'Fraunces', serif; font-size: 20px; color: var(--ink); }
+  .empty-state p { color: var(--ink-soft); font-size: 14px; max-width: 380px; margin: 0; }
+  .empty-state .es-actions { display: flex; gap: 10px; margin-top: 4px; }
+  .today-empty-illus { display: block; margin: 8px auto 10px; width: 72px; height: auto; opacity: 0.7; }
   .week-slot.dragging { opacity: 0.45; }
   body.dragging-week .week-slot { outline: 2px dashed transparent; outline-offset: -3px; }
   body.dragging-week .week-slot.drop-hover { outline-color: var(--primary); background: var(--primary-soft); }
@@ -209,7 +312,16 @@
   }
   .user-name { font-size: 13px; font-weight: 600; }
   .user-sub { font-size: 11px; color: var(--ink-faint); }
-  .main { padding: 32px 40px 80px; max-width: 1200px; }
+  .main { padding: 0 0 80px; max-width: 1200px; }
+  .main > .view { padding: 28px 40px 0; }
+  .main > .view#view-create,
+  .main > .view#view-plan,
+  .main > .view#view-lesson,
+  .main > .view#view-dashboard,
+  .main > .view#view-library,
+  .main > .view#view-themes,
+  .main > .view#view-class { padding: 28px 40px 0; }
+  @media (max-width: 720px) { .main > .view { padding: 20px 20px 0; } }
   .view { display: none; }
   .view.active { display: block; }
 
@@ -1072,10 +1184,22 @@
   <!-- Sidebar -->
   <aside class="sidebar no-print">
     <div class="brand" onclick="goto('dashboard')">
-      <div class="brand-mark">S</div>
+      <div class="brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 38 38" xmlns="http://www.w3.org/2000/svg">
+          <g>
+            <circle cx="7"  cy="24" r="1.7" fill="#C7E3CE" opacity="0.55"/>
+            <circle cx="11.5" cy="19.5" r="1.7" fill="#C7E3CE" opacity="0.75"/>
+            <circle cx="15.5" cy="16" r="1.7" fill="#C7E3CE" opacity="0.9"/>
+            <circle cx="19" cy="14.5" r="2.6" fill="#D4A72C"/>
+            <circle cx="22.5" cy="16" r="1.7" fill="#C7E3CE" opacity="0.9"/>
+            <circle cx="26.5" cy="19.5" r="1.7" fill="#C7E3CE" opacity="0.75"/>
+            <circle cx="31" cy="24" r="1.7" fill="#C7E3CE" opacity="0.55"/>
+          </g>
+        </svg>
+      </div>
       <div>
         <div class="brand-name">Seachtain</div>
-        <div class="brand-sub">Beta</div>
+        <div class="brand-sub">Pleanáil Sheachtainiúil</div>
       </div>
     </div>
     <button class="btn btn-primary sidebar-new-plan" onclick="startNewPlan()">
@@ -1111,6 +1235,12 @@
 
   <!-- Main -->
   <main class="main">
+    <div class="season-bar no-print" id="season-bar"></div>
+    <div class="season-strip no-print" id="season-strip" style="display:none;">
+      <span class="se-dot"></span>
+      <span class="se-label" id="season-label">—</span>
+      <span class="se-hint" id="season-hint">—</span>
+    </div>
     <!-- ============ DASHBOARD ============ -->
     <section id="view-dashboard" class="view">
       <div class="page-head">
@@ -1123,6 +1253,8 @@
           New weekly plan
         </button>
       </div>
+
+      <div id="now-hero-mount" class="no-print"></div>
 
       <div class="stat-grid">
         <div class="stat card">
@@ -1314,7 +1446,11 @@
             <span class="chip" id="plan-chip-mins">—</span>
           </div>
         </div>
-        <div style="display:flex; gap:8px;">
+        <div style="display:flex; gap:8px; flex-wrap: wrap;">
+          <button class="btn btn-ghost" onclick="openSubPack()" title="A printable day-by-day pack for a substitute teacher">
+            <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:2px;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M9 13h6M9 17h4"/></svg>
+            Sub pack
+          </button>
           <button class="btn btn-ghost" onclick="window.print()">🖨 Print week</button>
           <button class="btn btn-ghost" onclick="regeneratePlan()">↻ Regenerate</button>
           <button class="btn btn-primary" onclick="exportPlan()">Export</button>
@@ -3317,6 +3453,45 @@ function suggestSeasonalTheme(ymd) {
   return { ...THEMES.find(t => t.id === 'ireland'), reason: 'A balanced default for any week of the year.' };
 }
 
+// Seasonal accent palette — paired with suggestSeasonalTheme() so the brand
+// feels tied to the school calendar. Kept subtle so it never overpowers.
+const SEASONAL_PALETTE = {
+  brigid:    { from: '#6B8E23', to: '#D4A72C', label: 'Lá Fhéile Bríde',          hint: 'Spring begins — soft greens & gold' },
+  gaeilge:   { from: '#2D5F3F', to: '#D4A72C', label: 'Seachtain na Gaeilge',     hint: 'Gaeilge front-and-centre this week' },
+  easter:    { from: '#C85A3E', to: '#D4A72C', label: 'Cáisc',                    hint: 'Easter & spring festivities' },
+  earth:     { from: '#2D5F3F', to: '#4A7BA8', label: 'Earth Week',               hint: 'Our environment in focus' },
+  ireland:   { from: '#2D5F3F', to: '#C85A3E', label: 'Seachtain na hÉireann',    hint: 'Standard week — a bit of everything' },
+  oceans:    { from: '#4A7BA8', to: '#8FB3D9', label: 'Oceans',                   hint: 'Atlantic summer' },
+  dance:     { from: '#C85A3E', to: '#8A5CA0', label: 'Active Schools Week',      hint: 'Movement & rhythm focus' },
+  wellbeing: { from: '#8A5CA0', to: '#D4A72C', label: 'Wellbeing Week',           hint: 'Settling & belonging' },
+  farm:      { from: '#D4A72C', to: '#6B8E23', label: 'Fómhar',                   hint: 'Harvest & autumn colours' },
+  maths:     { from: '#4A7BA8', to: '#2D5F3F', label: 'Maths Week Ireland',       hint: 'A playful week of numbers' },
+  samhain:   { from: '#C85A3E', to: '#4B2E2A', label: 'Oíche Shamhna',            hint: 'Samhain & Hallowe\'en' },
+  science:   { from: '#4A7BA8', to: '#8A5CA0', label: 'Science Week',             hint: 'Curiosity & investigation' },
+  nollaig:   { from: '#2D5F3F', to: '#C85A3E', label: 'An Nollaig',               hint: 'Christmas & end of term' },
+  space:     { from: '#3B4A6B', to: '#8A5CA0', label: 'Space',                    hint: 'Looking up & out' },
+  mexico:    { from: '#C85A3E', to: '#D4A72C', label: 'Around the world',         hint: 'A cultural excursion' },
+};
+
+function renderSeasonalAccent() {
+  const bar = document.getElementById('season-bar');
+  const strip = document.getElementById('season-strip');
+  if (!bar) return;
+  const t = suggestSeasonalTheme();
+  const p = SEASONAL_PALETTE[t.id] || SEASONAL_PALETTE.ireland;
+  document.documentElement.style.setProperty('--season-from', p.from);
+  document.documentElement.style.setProperty('--season-to', p.to);
+  // Only show the strip on dashboard (quieter elsewhere)
+  if (strip) {
+    const onDash = State.view === 'dashboard';
+    strip.style.display = onDash ? 'flex' : 'none';
+    const label = document.getElementById('season-label');
+    const hint = document.getElementById('season-hint');
+    if (label) label.textContent = p.label;
+    if (hint) hint.textContent = '· ' + (t.reason || p.hint);
+  }
+}
+
 /* =========================================================================
    NAVIGATION
    ========================================================================= */
@@ -3327,6 +3502,7 @@ function goto(view) {
   if (el) { el.classList.add('active'); el.classList.add('print-active'); }
   document.querySelectorAll('.nav-item').forEach(n => n.classList.toggle('active', n.dataset.nav === view));
   window.scrollTo({ top: 0, behavior: 'smooth' });
+  renderSeasonalAccent();
   if (view === 'dashboard') renderDashboard();
   if (view === 'library') renderLibrary();
   if (view === 'themes') renderThemes();
@@ -3369,9 +3545,180 @@ function renderDashboard() {
   }
 
   renderPrepRitual();
+  renderNowHero();
   renderTodayPanel();
   renderWeekStrip();
   renderInsightsPanel();
+}
+
+/* =========================================================================
+   RIGHT-NOW HERO
+   The single most important card on the dashboard — shows the teacher what
+   they're teaching *right now*, or what's next, in big type with one tap
+   to open the lesson. Fallbacks cover pre-school, after-school, weekend,
+   and no-plan states.
+   ========================================================================= */
+function renderNowHero() {
+  const mount = document.getElementById('now-hero-mount');
+  if (!mount) return;
+  const now = new Date();
+  const dayIdx = now.getDay(); // 0 Sun – 6 Sat
+  const dayNames = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  const todayName = dayNames[dayIdx];
+  const nowMins = now.getHours() * 60 + now.getMinutes();
+  const plan = findPlanForDate(now);
+  const P = State.profile || {};
+  const emojiFor = (sid) => (plan && plan.subjectEmojis?.[sid]) || P.subjectEmojis?.[sid] || (SUBJECTS.find(s => s.id === sid) || {}).emoji || '📘';
+
+  // --- Weekend branch ---
+  if (dayIdx === 0 || dayIdx === 6) {
+    const nextMonday = new Date(now);
+    nextMonday.setDate(nextMonday.getDate() + ((8 - dayIdx) % 7 || 1));
+    const mondayYmd = ymdLocal(nextMonday);
+    const mondayPlan = State.plans.find(p => p.weekDate === mondayYmd);
+    const readable = nextMonday.toLocaleDateString('en-IE', { weekday:'long', day:'numeric', month:'long' });
+    mount.innerHTML = nowHeroCard({
+      kicker: 'Weekend',
+      emoji: '🌿',
+      subject: '',
+      title: mondayPlan ? `${mondayPlan.title} is ready for ${readable}` : `Plan next week — ${readable}`,
+      meta: mondayPlan ? [`${mondayPlan.lessons.length} lessons`, `${Math.round((mondayPlan.totals || 0)/60)}h`] : ['No plan yet'],
+      actions: mondayPlan
+        ? `<button class="btn btn-primary" onclick="openPlan('${mondayPlan.id}')">Open the week →</button>
+           <button class="btn btn-ghost" onclick="goto('dashboard')">Review later</button>`
+        : `<button class="btn btn-primary" onclick="startNewPlan()">Plan next week →</button>`,
+      progress: null, rest: true,
+    });
+    return;
+  }
+
+  // --- No plan for this week ---
+  if (!plan) {
+    mount.innerHTML = nowHeroCard({
+      kicker: 'No plan for this week',
+      emoji: '📝',
+      subject: '',
+      title: 'Let\'s build this week together',
+      meta: [`It'll take about 60 seconds.`],
+      actions: `<button class="btn btn-primary" onclick="startNewPlan()">Start the week →</button>`,
+      progress: null, rest: true,
+    });
+    return;
+  }
+
+  const slots = plan.timetable || TIMETABLE_SLOTS;
+  const todaysLessons = (plan.lessons || [])
+    .filter(l => l.day === todayName)
+    .map(l => ({ ...l, slot: slots[l.slotIdx] || {} }))
+    .filter(l => l.slot && l.slot.time)
+    .sort((a,b) => a.slotIdx - b.slotIdx)
+    .map(l => {
+      const m = (l.slot.time || '').match(/(\d{1,2}:\d{2})\s*[–-]\s*(\d{1,2}:\d{2})/);
+      return { ...l, startMin: m ? toMin(m[1]) : 0, endMin: m ? toMin(m[2]) : 0, startStr: m ? m[1] : '', endStr: m ? m[2] : '' };
+    });
+
+  // --- No lessons scheduled today ---
+  if (!todaysLessons.length) {
+    mount.innerHTML = nowHeroCard({
+      kicker: `Today · ${todayName}`,
+      emoji: '☕',
+      subject: '',
+      title: 'No lessons scheduled today',
+      meta: ['Open the week to see what\'s on the rest of the week.'],
+      actions: `<button class="btn btn-primary" onclick="openPlan('${plan.id}')">Open week plan →</button>`,
+      progress: null, rest: true,
+    });
+    return;
+  }
+
+  // --- Currently in a lesson ---
+  const currentLesson = todaysLessons.find(l => nowMins >= l.startMin && nowMins < l.endMin);
+  if (currentLesson) {
+    const total = currentLesson.endMin - currentLesson.startMin;
+    const elapsed = nowMins - currentLesson.startMin;
+    const remaining = currentLesson.endMin - nowMins;
+    const pct = Math.min(100, Math.max(0, Math.round((elapsed / total) * 100)));
+    mount.innerHTML = nowHeroCard({
+      kicker: `<span class="nh-pulse"></span> Right now · ${currentLesson.startStr}–${currentLesson.endStr}`,
+      emoji: emojiFor(currentLesson.subject),
+      subject: subjectLabel(currentLesson.subject),
+      title: currentLesson.title,
+      meta: [
+        `<span class="nh-meta-item">⏱ ${remaining} min left</span>`,
+        `<span class="nh-meta-item">${total} min lesson</span>`,
+      ],
+      actions:
+        `<button class="btn btn-primary" onclick="openLessonInPlan('${plan.id}','${currentLesson.id}')">Open lesson →</button>
+         <button class="btn btn-ghost" onclick="openPlan('${plan.id}')">Full week</button>`,
+      progress: pct,
+      rest: false,
+    });
+    return;
+  }
+
+  // --- Before first lesson today ---
+  const nextLesson = todaysLessons.find(l => l.startMin > nowMins);
+  if (nextLesson) {
+    const minsUntil = nextLesson.startMin - nowMins;
+    const untilStr = minsUntil >= 60
+      ? `in ${Math.floor(minsUntil / 60)}h ${minsUntil % 60}m`
+      : `in ${minsUntil} min`;
+    mount.innerHTML = nowHeroCard({
+      kicker: `Next up · ${nextLesson.startStr}`,
+      emoji: emojiFor(nextLesson.subject),
+      subject: subjectLabel(nextLesson.subject),
+      title: nextLesson.title,
+      meta: [
+        `<span class="nh-meta-item">Starts ${untilStr}</span>`,
+        `<span class="nh-meta-item">${todaysLessons.length} lessons today</span>`,
+      ],
+      actions:
+        `<button class="btn btn-primary" onclick="openLessonInPlan('${plan.id}','${nextLesson.id}')">Preview lesson →</button>
+         <button class="btn btn-ghost" onclick="openPlan('${plan.id}')">Full week</button>`,
+      progress: null,
+      rest: false,
+    });
+    return;
+  }
+
+  // --- After the last lesson of the day ---
+  const last = todaysLessons[todaysLessons.length - 1];
+  mount.innerHTML = nowHeroCard({
+    kicker: 'Today · wrapped',
+    emoji: '🌾',
+    subject: '',
+    title: 'Nice one — school day done',
+    meta: [`${todaysLessons.length} lessons taught today · last was ${subjectLabel(last.subject)}`],
+    actions: `<button class="btn btn-primary" onclick="openPlan('${plan.id}')">Open week →</button>
+              <button class="btn btn-ghost" onclick="markReviewed('${plan.id}')">Reflect on today</button>`,
+    progress: null, rest: true,
+  });
+}
+
+function nowHeroCard({ kicker, emoji, subject, title, meta, actions, progress, rest }) {
+  const progressHtml = (progress != null)
+    ? `<div class="nh-timebar" aria-hidden="true"><div class="nh-timebar-fill" style="width:${progress}%"></div></div>`
+    : '';
+  return `<section class="now-hero ${rest ? 'rest' : ''}" aria-label="Right now">
+    <div>
+      <div class="nh-kicker ${rest ? 'rest' : ''}">${rest ? '' : '<span class="nh-pulse"></span>'} ${kicker}</div>
+      ${subject ? `<div class="nh-subject">${escape(subject)}</div>` : ''}
+      <h2 class="nh-title">${escape(title)}</h2>
+      ${progressHtml}
+      <div class="nh-meta">${(meta || []).join('')}</div>
+      <div class="nh-actions">${actions || ''}</div>
+    </div>
+    <div class="nh-emoji" aria-hidden="true">${emoji}</div>
+  </section>`;
+}
+
+// Local YYYY-MM-DD helper (already used elsewhere as ymd, but some callers
+// also use ymdLocal in case of naming collisions). Safe for Dublin DST.
+function ymdLocal(d) {
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const da = String(d.getDate()).padStart(2, '0');
+  return `${y}-${m}-${da}`;
 }
 
 // === Sunday-evening Prep Ritual ===
@@ -3600,6 +3947,13 @@ function renderWeekStrip() {
         <div class="ws-date">${escape(readableWeek(weekYmd))}${isCurrent ? '' : ''}</div>
         ${isCurrent ? '<span class="ws-current-pill">This week</span>' : ''}
         <div class="ws-empty-body">
+          <svg class="ws-empty-illus" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <rect x="9" y="12" width="30" height="28" rx="4"/>
+            <path d="M9 20h30"/>
+            <path d="M16 9v5M32 9v5"/>
+            <circle cx="24" cy="30" r="4"/>
+            <path d="M24 27v6M21 30h6"/>
+          </svg>
           <div style="font-size:11px;">No plan yet</div>
           <button class="btn btn-ghost btn-sm" onclick="startPlanForWeek('${weekYmd}')">+ Plan this week</button>
         </div>
@@ -3745,7 +4099,14 @@ function renderTodayPanel() {
     host.innerHTML = `
       <div class="today-head"><h3>Today</h3><span class="today-badge">Weekend</span></div>
       <div class="today-date">${escape(dateLine)}</div>
-      <div class="today-empty">No school today. Enjoy the break — then open next week's plan when you're ready.</div>
+      <svg class="today-empty-illus" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="color: var(--primary);">
+        <path d="M20 42c0-8 5-14 12-14s12 6 12 14"/>
+        <path d="M14 42h36"/>
+        <path d="M26 28c0-4 2-7 6-7s6 3 6 7"/>
+        <path d="M12 50h40" stroke-dasharray="2 3"/>
+        <circle cx="50" cy="18" r="3"/>
+      </svg>
+      <div class="today-empty">Enjoy the weekend. Next week's plan is ready when you are.</div>
     `;
     return;
   }
@@ -3755,7 +4116,13 @@ function renderTodayPanel() {
     host.innerHTML = `
       <div class="today-head"><h3>Today</h3></div>
       <div class="today-date">${escape(dateLine)}</div>
-      <div class="today-empty">No plan for this week yet. Start one to see today's lessons here.</div>
+      <svg class="today-empty-illus" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="color: var(--accent);">
+        <rect x="14" y="14" width="36" height="38" rx="3"/>
+        <path d="M14 24h36"/>
+        <path d="M22 10v8M42 10v8"/>
+        <path d="M22 34h20M22 42h14"/>
+      </svg>
+      <div class="today-empty">No plan for this week yet — let's build one le chéile.</div>
       <div class="today-mini-cta"><button class="btn btn-primary btn-sm" onclick="startNewPlan()">+ New weekly plan</button></div>
     `;
     return;
@@ -6018,6 +6385,237 @@ function renderMondayBriefing(plan) {
 
 function currentPlan() {
   return State.plans.find(p => p.id === State.currentPlanId);
+}
+
+/* =========================================================================
+   SUBSTITUTE PACK
+   A single printable document a substitute teacher can walk in with —
+   day-by-day lessons, school times, fixed slots, SEN flags, key contacts.
+   Opens in a new window with print-optimized CSS; teacher prints to PDF.
+   ========================================================================= */
+function openSubPack() {
+  const plan = currentPlan();
+  if (!plan) { toast('Open a plan first'); return; }
+  const P = State.profile || {};
+  const slots = plan.timetable || TIMETABLE_SLOTS;
+  const days = ['Monday','Tuesday','Wednesday','Thursday','Friday'];
+  const emojiFor = (sid) => plan.subjectEmojis?.[sid] || P.subjectEmojis?.[sid] || (SUBJECTS.find(s => s.id === sid) || {}).emoji || '📘';
+
+  const esc = (s) => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+  const lessonsByDay = {};
+  days.forEach(d => lessonsByDay[d] = []);
+  (plan.lessons || []).forEach(l => {
+    if (lessonsByDay[l.day]) lessonsByDay[l.day].push(l);
+  });
+  Object.values(lessonsByDay).forEach(arr => arr.sort((a,b) => a.slotIdx - b.slotIdx));
+
+  const fixedRows = (P.fixedSlots || []).map(f =>
+    `<tr><td>${esc(f.day)}</td><td>${esc(subjectLabel(f.subject))}</td><td>${esc(f.minutes)} min</td><td>${esc(f.note || '')}</td></tr>`
+  ).join('') || `<tr><td colspan="4" class="faint">No recurring fixed slots</td></tr>`;
+
+  const dayCards = days.map(day => {
+    const lessons = lessonsByDay[day];
+    if (!lessons.length) {
+      return `<section class="sp-day"><h2>${day}</h2><p class="sp-empty">No lessons scheduled.</p></section>`;
+    }
+    const rows = lessons.map(l => {
+      const slot = slots[l.slotIdx] || {};
+      const time = slot.time || slot.label || '';
+      const outcomes = (l.outcomes || []).slice(0, 3).map(o => `<li>${esc(o)}</li>`).join('');
+      const materials = (l.resources || l.materials || []).slice(0, 5).map(m => `<li>${esc(m)}</li>`).join('');
+      const plan500 = (l.plan || l.overview || l.focus || '').toString().slice(0, 500);
+      return `<article class="sp-lesson">
+        <div class="sp-lesson-head">
+          <div class="sp-time">${esc(time)}</div>
+          <div class="sp-emoji" aria-hidden="true">${emojiFor(l.subject)}</div>
+          <div class="sp-titles">
+            <div class="sp-subject">${esc(subjectLabel(l.subject))}</div>
+            <div class="sp-title">${esc(l.title || 'Untitled lesson')}</div>
+          </div>
+          <div class="sp-mins">${esc(l.minutes || '')} min</div>
+        </div>
+        ${plan500 ? `<div class="sp-section"><h4>Overview</h4><p>${esc(plan500)}</p></div>` : ''}
+        ${outcomes ? `<div class="sp-section"><h4>Learning outcomes</h4><ul>${outcomes}</ul></div>` : ''}
+        ${materials ? `<div class="sp-section"><h4>What you'll need</h4><ul>${materials}</ul></div>` : ''}
+      </article>`;
+    }).join('');
+    return `<section class="sp-day"><h2>${day}</h2>${rows}</section>`;
+  }).join('');
+
+  const timetableRows = days.map(day => {
+    const cells = slots.map((slot, i) => {
+      if (slot.type === 'break') return `<td class="sp-break">${esc(slot.label || 'Break')}</td>`;
+      const l = (lessonsByDay[day] || []).find(x => x.slotIdx === i);
+      if (!l) return `<td class="sp-empty-cell">—</td>`;
+      return `<td><span class="sp-cell-emoji">${emojiFor(l.subject)}</span> ${esc(subjectLabel(l.subject))}<br><span class="sp-cell-title">${esc(l.title || '')}</span></td>`;
+    }).join('');
+    return `<tr><th>${day}</th>${cells}</tr>`;
+  }).join('');
+
+  const slotHeaders = slots.map(s => `<th>${esc(s.time || s.label || '')}</th>`).join('');
+
+  const html = `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Substitute Pack — ${esc(plan.title)} — ${esc(plan.weekDateReadable || '')}</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; }
+  body {
+    font-family: 'Inter', -apple-system, 'Segoe UI', sans-serif;
+    font-size: 13px; line-height: 1.5; color: #2B2420; background: #FBF7F0;
+    margin: 0; padding: 0;
+  }
+  h1, h2, h3, h4 { font-family: 'Fraunces', Georgia, serif; margin: 0; font-weight: 600; }
+  h1 { font-size: 28px; }
+  h2 { font-size: 20px; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 2px solid #2D5F3F; }
+  h3 { font-size: 15px; margin-bottom: 6px; }
+  h4 { font-size: 12px; text-transform: uppercase; letter-spacing: 0.06em; color: #6B5F54; margin: 10px 0 4px; }
+  p { margin: 0 0 8px; }
+  ul { margin: 4px 0 6px 18px; padding: 0; }
+  li { margin-bottom: 2px; }
+  .sp-wrap { max-width: 860px; margin: 0 auto; padding: 32px 40px; }
+  .sp-hero {
+    background: linear-gradient(135deg, #2D5F3F 0%, #4a8a5f 100%);
+    color: white; border-radius: 14px; padding: 22px 26px; margin-bottom: 22px;
+  }
+  .sp-hero .sp-kicker { font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; opacity: 0.85; margin-bottom: 6px; }
+  .sp-hero h1 { color: white; margin-bottom: 4px; }
+  .sp-hero .sp-sub { opacity: 0.9; font-size: 14px; }
+  .sp-hero .sp-for { margin-top: 14px; padding-top: 14px; border-top: 1px solid rgba(255,255,255,0.25); font-size: 13px; }
+  .sp-hero .sp-for strong { font-family: 'Fraunces', serif; font-size: 16px; display: block; margin-bottom: 2px; }
+  .sp-facts { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 22px; }
+  .sp-fact { background: white; border: 1px solid #E8E0D4; border-radius: 10px; padding: 12px 14px; }
+  .sp-fact-label { font-size: 11px; color: #A89B8E; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 3px; }
+  .sp-fact-val { font-family: 'Fraunces', serif; font-size: 19px; font-weight: 600; }
+  .sp-fact-sub { font-size: 11px; color: #6B5F54; margin-top: 2px; }
+  .sp-section-card { background: white; border: 1px solid #E8E0D4; border-radius: 12px; padding: 18px 22px; margin-bottom: 18px; }
+  .sp-tt { width: 100%; border-collapse: collapse; font-size: 11px; }
+  .sp-tt th, .sp-tt td { border: 1px solid #E8E0D4; padding: 6px 8px; text-align: left; vertical-align: top; }
+  .sp-tt th { background: #F4EEE2; font-weight: 600; font-size: 10px; text-transform: uppercase; letter-spacing: 0.04em; }
+  .sp-tt td.sp-break { background: #FAF0CC; font-style: italic; color: #7a5e0e; text-align: center; }
+  .sp-tt td.sp-empty-cell { color: #A89B8E; text-align: center; }
+  .sp-cell-emoji { margin-right: 2px; }
+  .sp-cell-title { font-size: 10px; color: #6B5F54; }
+  .sp-fixed { width: 100%; border-collapse: collapse; font-size: 12px; }
+  .sp-fixed th, .sp-fixed td { padding: 6px 10px; border-bottom: 1px solid #E8E0D4; text-align: left; }
+  .sp-fixed th { font-size: 11px; color: #6B5F54; text-transform: uppercase; letter-spacing: 0.04em; background: #FBF7F0; }
+  .sp-day { page-break-before: always; margin-bottom: 24px; }
+  .sp-day:first-of-type { page-break-before: auto; }
+  .sp-lesson { background: white; border: 1px solid #E8E0D4; border-radius: 12px; padding: 14px 18px; margin-bottom: 12px; page-break-inside: avoid; }
+  .sp-lesson-head { display: grid; grid-template-columns: 80px 40px 1fr auto; gap: 12px; align-items: center; margin-bottom: 10px; padding-bottom: 10px; border-bottom: 1px solid #F4EEE2; }
+  .sp-time { font-variant-numeric: tabular-nums; font-size: 13px; font-weight: 600; color: #2D5F3F; }
+  .sp-emoji { font-size: 26px; line-height: 1; }
+  .sp-subject { font-size: 10px; color: #A89B8E; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 600; }
+  .sp-title { font-family: 'Fraunces', serif; font-size: 16px; font-weight: 600; line-height: 1.2; }
+  .sp-mins { font-size: 12px; color: #6B5F54; font-variant-numeric: tabular-nums; }
+  .sp-section { margin-top: 6px; }
+  .sp-section p { font-size: 12px; color: #4a3f38; }
+  .sp-empty { color: #A89B8E; font-style: italic; padding: 8px 0; }
+  .sp-notes { background: #FAF0CC; border-left: 3px solid #D4A72C; border-radius: 0 10px 10px 0; padding: 12px 16px; font-size: 12px; color: #5c4a12; }
+  .sp-notes h4 { color: #7a5e0e; margin-top: 0; }
+  .sp-contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .sp-contact-line { border-bottom: 1px solid #D9CEBD; padding: 22px 4px 4px; font-size: 11px; color: #6B5F54; }
+  .sp-print-btn {
+    position: fixed; top: 14px; right: 14px;
+    background: #2D5F3F; color: white; border: none; border-radius: 8px;
+    padding: 10px 18px; font-weight: 600; font-size: 14px; cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  }
+  .sp-print-btn:hover { background: #25513a; }
+  .faint { color: #A89B8E; }
+  @media print {
+    body { background: white; }
+    .sp-wrap { padding: 0; max-width: none; }
+    .sp-print-btn { display: none; }
+    .sp-hero { background: #2D5F3F !important; color: white !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .sp-tt th, .sp-tt td.sp-break, .sp-fixed th, .sp-notes { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    @page { size: A4; margin: 14mm; }
+  }
+</style>
+</head>
+<body>
+<button class="sp-print-btn no-print" onclick="window.print()">🖨 Print / Save as PDF</button>
+<div class="sp-wrap">
+  <div class="sp-hero">
+    <div class="sp-kicker">Substitute Teacher Pack</div>
+    <h1>${esc(plan.title)}</h1>
+    <div class="sp-sub">Week of ${esc(plan.weekDateReadable || '')} · ${esc(plan.gradeName || P.grade || '')}</div>
+    <div class="sp-for">
+      <strong>${esc(P.teacher || 'Class teacher')}</strong>
+      ${esc(P.school || '')}${P.roll ? ' · Roll ' + esc(P.roll) : ''}
+    </div>
+  </div>
+
+  <div class="sp-facts">
+    <div class="sp-fact">
+      <div class="sp-fact-label">Pupils</div>
+      <div class="sp-fact-val">${esc(plan.pupils || P.pupils || '—')}</div>
+      <div class="sp-fact-sub">in the class</div>
+    </div>
+    <div class="sp-fact">
+      <div class="sp-fact-label">SEN / Support</div>
+      <div class="sp-fact-val">${esc(plan.sen ?? P.sen ?? 0)}</div>
+      <div class="sp-fact-sub">on SET roll</div>
+    </div>
+    <div class="sp-fact">
+      <div class="sp-fact-label">Medium</div>
+      <div class="sp-fact-val" style="font-size:15px;">${esc((plan.medium || P.medium || 'english').replace(/^./, c => c.toUpperCase()))}</div>
+      <div class="sp-fact-sub">of instruction</div>
+    </div>
+    <div class="sp-fact">
+      <div class="sp-fact-label">School day</div>
+      <div class="sp-fact-val" style="font-size:15px;">${esc(P.schoolStart || '09:00')}–${esc(P.schoolEnd || '14:40')}</div>
+      <div class="sp-fact-sub">Small break ${esc(P.smallBreakStart || '11:00')} · Lunch ${esc(P.lunchStart || '12:30')}</div>
+    </div>
+  </div>
+
+  <div class="sp-section-card">
+    <h3>Week at a glance</h3>
+    <table class="sp-tt">
+      <thead><tr><th>Day</th>${slotHeaders}</tr></thead>
+      <tbody>${timetableRows}</tbody>
+    </table>
+  </div>
+
+  <div class="sp-section-card">
+    <h3>Fixed slots &amp; bookings</h3>
+    <p class="faint" style="font-size:12px; margin-bottom:8px;">Weekly recurring slots the class expects — hall times, resource room, etc.</p>
+    <table class="sp-fixed">
+      <thead><tr><th>Day</th><th>Subject</th><th>Duration</th><th>Note</th></tr></thead>
+      <tbody>${fixedRows}</tbody>
+    </table>
+  </div>
+
+  <div class="sp-section-card sp-notes">
+    <h4>If something comes up</h4>
+    <p style="margin:0;">If you need help: office / principal first. For behaviour issues, the class has agreed responses — check the staffroom folder. Fire drill: out the back door, line up on the yard. Pupils with medical notes are flagged in the school's care plan binder — please ask the office.</p>
+  </div>
+
+  <div class="sp-section-card">
+    <h3>Key contacts</h3>
+    <div class="sp-contact-grid">
+      <div><div class="sp-contact-line">Class teacher (today's cover coordinator)</div></div>
+      <div><div class="sp-contact-line">Principal / Deputy</div></div>
+      <div><div class="sp-contact-line">SET / SEN lead</div></div>
+      <div><div class="sp-contact-line">Office</div></div>
+    </div>
+  </div>
+
+  ${dayCards}
+
+</div>
+</body>
+</html>`;
+
+  const w = window.open('', '_blank', 'width=900,height=1100');
+  if (!w) { toast('Enable pop-ups to open the Sub Pack'); return; }
+  w.document.open();
+  w.document.write(html);
+  w.document.close();
+  try { logEvent('bulk_print', { kind: 'sub_pack', planId: plan.id }); } catch(e) {}
 }
 
 // === Time Audit ===
