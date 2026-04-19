@@ -338,6 +338,23 @@
   .prep-progress .pp-bar { height: 6px; border-radius: 3px; background: var(--surface-alt); overflow: hidden; }
   .prep-progress .pp-fill { height: 100%; background: linear-gradient(90deg, var(--primary), #4a8a5f); transition: width 0.4s; }
   .prep-progress .pp-hint { margin-top: 8px; font-size: 12px; color: var(--ink-soft); }
+
+  /* AI regenerate modal extras */
+  .ai-dir { transition: background 0.12s, border-color 0.12s; }
+  .ai-dir:hover { background: var(--surface-alt); border-color: var(--line-strong); }
+  .ai-dir:has(input:checked) { background: var(--primary-soft); border-color: var(--primary); }
+  .ai-spinner { display: inline-block; width: 12px; height: 12px; border: 2px solid var(--line); border-top-color: var(--primary); border-radius: 50%; animation: ai-spin 0.8s linear infinite; vertical-align: middle; margin-right: 6px; }
+  @keyframes ai-spin { to { transform: rotate(360deg); } }
+  .ai-banner {
+    display: flex; gap: 10px; align-items: center; justify-content: space-between;
+    background: linear-gradient(135deg, #E8F0E8, #D7E8DB);
+    border: 1px solid #9bc6a8; border-radius: 10px;
+    padding: 8px 14px; margin-bottom: 14px; font-size: 13px;
+  }
+  .ai-banner .ai-banner-icon { font-size: 18px; }
+  .ai-banner .ai-banner-text { color: #1d4a30; flex: 1; }
+  .ai-banner .ai-banner-text strong { font-family: 'Fraunces', serif; }
+  .ai-banner .btn { padding: 5px 10px; font-size: 12px; }
   .user-name { font-size: 13px; font-weight: 600; }
   .user-sub { font-size: 11px; color: var(--ink-faint); }
   .main { padding: 0 0 80px; max-width: 1200px; }
@@ -1743,7 +1760,8 @@
         <div style="display:flex; gap:8px;">
           <button class="btn btn-ghost" onclick="toggleEdit()" id="edit-btn">✎ Edit</button>
           <button class="btn btn-ghost" onclick="window.print()">🖨 Print</button>
-          <button class="btn btn-ghost" onclick="regenerateLesson()">↻ Regenerate</button>
+          <button class="btn btn-ghost" onclick="openAIRegenerateModal()" title="Rewrite this lesson with Claude, grounded in NCCA and your class profile">✨ AI regenerate</button>
+          <button class="btn btn-ghost" onclick="regenerateLesson()" title="Swap opening / plenary for variety (offline)">↻ Regenerate</button>
         </div>
       </div>
 
@@ -3574,6 +3592,165 @@ function migrateProfile() {
     });
     saveProfileStore();
   }
+}
+
+/* =========================================================================
+   NCCA CURRICULUM REFERENCE
+   Condensed strand + strand-unit structure from the NCCA 2023 Primary
+   Curriculum Framework. Passed as context to the AI regeneration proxy so
+   the model names real strands verbatim rather than inventing them.
+   Grade bands roughly: infants (junior/senior), 1st–2nd, 3rd–4th, 5th–6th.
+   ========================================================================= */
+const NCCA_CURRICULUM = {
+  english: {
+    strands: ['Oral language', 'Reading', 'Writing'],
+    strandUnits: {
+      'Oral language': ['Engagement, listening and attention', 'Social conventions and awareness of others', 'Sentence structure and grammar', 'Acquisition and use of vocabulary', 'Demonstration of understanding', 'Description, prediction and reflection'],
+      'Reading': ['Engagement', 'Motivation and choice', 'Conventions of print and sentence structure', 'Phonological and phonemic awareness', 'Phonics and word recognition', 'Vocabulary', 'Fluency', 'Comprehension', 'Purpose, genre and voice', 'Response and author\'s intent'],
+      'Writing': ['Engagement', 'Motivation and choice', 'Conventions of print and sentence structure', 'Vocabulary', 'Writing process and creating text', 'Response and author\'s intent', 'Handwriting and presentation']
+    },
+    gradeNotes: {
+      infants: 'Play-based; oral storytelling, songs, rhyme, phonological awareness; emergent writing with scribbles and mark-making; shared book reading.',
+      'first-second': 'Extended oral language, decoding and phonics, simple sentence writing, connected writing in short bursts.',
+      'third-fourth': 'Comprehension strategies, genre awareness, paragraph writing, grammar in context.',
+      'fifth-sixth': 'Critical reading, extended writing across genres, editing and revising, presentation skills.'
+    }
+  },
+  gaeilge: {
+    strands: ['Teanga ó bhéal', 'Léitheoireacht', 'Scríbhneoireacht'],
+    strandUnits: {
+      'Teanga ó bhéal': ['Rannpháirtíocht, éisteacht agus aird', 'Gnásanna sóisialta', 'Struchtúr abairte agus gramadach', 'Foclóir', 'Tuiscint', 'Cur síos, tuar agus machnamh'],
+      'Léitheoireacht': ['Rannpháirtíocht', 'Inspreagadh agus rogha', 'Fóineolaíocht agus aithint focal', 'Foclóir', 'Líofacht', 'Tuiscint'],
+      'Scríbhneoireacht': ['Rannpháirtíocht', 'Struchtúr abairte', 'Próiseas scríbhneoireachta', 'Peannaireacht agus cur i láthair']
+    },
+    gradeNotes: {
+      infants: 'Gníomhaíochtaí béil — amhráin, rannta, scéalta gairide. Foclóir téamach (seomra ranga, clann, dathanna, uimhreacha).',
+      'first-second': 'Frásaí laethúla, ceisteanna simplí, scéalta pictiúrtha, scríbhneoireacht threoraithe.',
+      'third-fourth': 'Comhrá níos faide, léitheoireacht neamhspleách ar théacsanna gairide, scríobh phíosaí simplí.',
+      'fifth-sixth': 'Comhráite casta, léitheoireacht neamhspleách, próiseas scríbhneoireachta, gramadach i gcomhthéacs.'
+    }
+  },
+  maths: {
+    strands: ['Number', 'Algebra', 'Shape and space', 'Measures', 'Data and chance'],
+    strandUnits: {
+      'Number': ['Counting and numeration', 'Place value and base ten', 'Sets and operations', 'Fractions, decimals and percentages'],
+      'Algebra': ['Patterns, rules and relationships', 'Expressions and equations'],
+      'Shape and space': ['Shape (2-D and 3-D)', 'Space (location, transformation)'],
+      'Measures': ['Length', 'Weight/mass', 'Capacity', 'Money', 'Time', 'Area'],
+      'Data and chance': ['Data', 'Chance']
+    },
+    gradeNotes: {
+      infants: 'Concrete, hands-on; sorting, matching, counting to 10 then 20; recognising shapes; early sense of more/less.',
+      'first-second': 'Counting to 100+, place value to tens, addition/subtraction within 20, simple patterns, telling time to the hour/half-hour.',
+      'third-fourth': 'Multiplication/division facts, fractions of quantities, decimals introduced, area by counting, simple data handling.',
+      'fifth-sixth': 'Operations with decimals and fractions, percentages, algebra with unknowns, multi-step word problems, probability.'
+    }
+  },
+  sese: {
+    strands: ['History', 'Geography', 'Science'],
+    strandUnits: {
+      'History': ['Myself and my family', 'Story', 'Early peoples and ancient societies', 'Life, society, work and culture in the past', 'Local studies', 'Continuity and change over time'],
+      'Geography': ['Human environments', 'Natural environments', 'Environmental awareness and care'],
+      'Science': ['Living things', 'Energy and forces', 'Materials', 'Environmental awareness and care']
+    },
+    gradeNotes: {
+      infants: 'Exploration through senses; immediate local environment; family, home, school.',
+      'first-second': 'Wider community and landscape; simple investigations of plants, weather, materials; stories from the past.',
+      'third-fourth': 'Local area studies, Irish myths and legends, life in the past (Celts, Vikings), fair tests in science.',
+      'fifth-sixth': 'Global geography, Irish history themes (Famine, 1916, Independence), ecosystems, forces, energy.'
+    }
+  },
+  pe: {
+    strands: ['Athletics', 'Dance', 'Gymnastics', 'Games', 'Outdoor and adventure activities', 'Aquatics'],
+    strandUnits: {
+      'Athletics': ['Running', 'Jumping', 'Throwing', 'Understanding and appreciation'],
+      'Dance': ['Exploring, creating and performing', 'Understanding and appreciation'],
+      'Gymnastics': ['Movement', 'Understanding and appreciation'],
+      'Games': ['Sending, receiving and travelling', 'Creating and playing games', 'Understanding and appreciation'],
+      'Outdoor and adventure activities': ['Walking', 'Orienteering', 'Outdoor challenges', 'Understanding and appreciation'],
+      'Aquatics': ['Hygiene', 'Entry and exit', 'Buoyancy and propulsion', 'Stroke development', 'Water safety', 'Understanding and appreciation']
+    },
+    gradeNotes: {
+      infants: 'Locomotor skills (run, hop, skip, jump); body awareness; simple ball-handling; co-operative games.',
+      'first-second': 'Sending/receiving with control; simple invasion games; rhythmic movement; stations and circuits.',
+      'third-fourth': 'Small-sided games with rules; athletics technique (triple jump, standing long jump); dance compositions.',
+      'fifth-sixth': 'Tactical play; peer coaching; dance performances; longer outdoor pursuits.'
+    }
+  },
+  arts: {
+    strands: ['Visual Arts', 'Music', 'Drama'],
+    strandUnits: {
+      'Visual Arts': ['Drawing', 'Paint and colour', 'Print', 'Clay', 'Construction', 'Fabric and fibre', 'Looking and responding'],
+      'Music': ['Listening and responding', 'Performing (song singing, literacy, playing instruments)', 'Composing'],
+      'Drama': ['Drama to explore feelings, knowledge and ideas', 'Co-operating and communicating in making drama', 'Reflecting on drama']
+    },
+    gradeNotes: {
+      infants: 'Mark-making, printing with natural materials, singing and clapping, dramatic play.',
+      'first-second': 'Mixed media, instrument families, role-play drama exploring familiar stories.',
+      'third-fourth': 'Colour theory, rhythm and pulse literacy, improvisation.',
+      'fifth-sixth': 'Composition with theme, formal musical notation, devised drama with purpose.'
+    }
+  },
+  sphe: {
+    strands: ['Myself', 'Myself and others', 'Myself and the wider world'],
+    strandUnits: {
+      'Myself': ['Self-identity', 'Taking care of my body', 'Growing and changing', 'Safety and protection'],
+      'Myself and others': ['Myself and my family', 'My friends and other people', 'Relating to others'],
+      'Myself and the wider world': ['Developing citizenship', 'Media education']
+    },
+    gradeNotes: {
+      infants: 'Feelings and naming them, family and friends, simple safety (roads, strangers).',
+      'first-second': 'Healthy eating, hygiene, kindness, road safety.',
+      'third-fourth': 'Bodily changes, bullying and inclusion, responsible choices online.',
+      'fifth-sixth': 'Puberty/RSE, decision-making, citizenship, media literacy.'
+    }
+  },
+  religion: {
+    strands: ['Christian faith', 'Christian story', 'Christian prayer', 'Christian morality', 'Sacraments', 'Other religions and worldviews'],
+    strandUnits: {
+      'Christian faith': ['God, Jesus and the Holy Spirit', 'Church as community'],
+      'Christian story': ['Scripture (Old and New Testament)', 'Lives of saints'],
+      'Christian prayer': ['Formal prayer', 'Personal prayer'],
+      'Christian morality': ['Being a follower of Jesus', 'Conscience and moral choice'],
+      'Sacraments': ['Baptism, Eucharist, Confirmation', 'Reconciliation'],
+      'Other religions and worldviews': ['World religions', 'Pluralism and respect']
+    },
+    gradeNotes: {
+      infants: 'Wonder, belonging, simple prayers (Our Father), Bible stories with illustrations.',
+      'first-second': 'Preparing for First Confession / First Communion (where applicable), liturgical year, saints.',
+      'third-fourth': 'Scripture in context, parables, Christian community.',
+      'fifth-sixth': 'Confirmation preparation, moral reasoning, comparative religions.'
+    }
+  }
+};
+
+// Map a grade id (junior, senior, 1st, 2nd, ..., 6th, or multi-grade) to
+// the NCCA band we embed gradeNotes for.
+function nccaGradeBand(gradeId) {
+  if (!gradeId) return 'third-fourth';
+  const g = String(gradeId).toLowerCase();
+  if (g.includes('junior') || g.includes('senior') || g === 'infants') return 'infants';
+  if (g.startsWith('1st') || g.startsWith('2nd')) return 'first-second';
+  if (g.startsWith('3rd') || g.startsWith('4th')) return 'third-fourth';
+  if (g.startsWith('5th') || g.startsWith('6th')) return 'fifth-sixth';
+  return 'third-fourth'; // sensible multi-grade default
+}
+
+// Render a compact text block of the NCCA reference for a subject, scoped
+// to the grade band. Passed into the AI prompt so the model stays grounded.
+function nccaContextFor(subjectId, gradeId) {
+  const ref = NCCA_CURRICULUM[subjectId];
+  if (!ref) return '';
+  const band = nccaGradeBand(gradeId);
+  const strandBlock = (ref.strands || []).map(s => {
+    const units = (ref.strandUnits?.[s] || []).slice(0, 8);
+    return `  - ${s}${units.length ? ': ' + units.join('; ') : ''}`;
+  }).join('\n');
+  const note = ref.gradeNotes?.[band] || '';
+  return `Strands and strand units (NCCA 2023 Primary Curriculum Framework):
+${strandBlock}
+
+Pitch guidance for this grade band (${band}): ${note}`;
 }
 
 /* =========================================================================
@@ -8280,9 +8457,16 @@ function renderLessonPlan(l) {
   const phaseTimings = computePhaseTimings(l);
   const recapHtml = l.recap ? `<div class="lesson-recap ${l.recapKind || ''}"><strong>Continuity:</strong> ${escape(l.recap)}</div>` : '';
   const pinHtml = l.fixed ? `<div class="lesson-recap fresh" style="background:#EAF4EE; border-left-color: var(--primary);"><strong>📌 Pinned slot:</strong> ${escape(l.fixedNote || 'Pinned from your profile')}.</div>` : '';
+  const aiBanner = l.aiGeneratedAt ? `
+    <div class="ai-banner">
+      <div class="ai-banner-icon">✨</div>
+      <div class="ai-banner-text"><strong>AI-regenerated</strong> ${l.aiDirection ? ' · ' + escape(l.aiDirection) : ''}. ${l._preAI ? 'Not right? ' : ''}</div>
+      ${l._preAI ? `<button class="btn btn-ghost" onclick="revertAIRegeneration()">↺ Revert</button>` : ''}
+    </div>` : '';
   const tabSubtitle = `<div class="tab-subtitle"><strong>Lesson plan · what you'll do, minute by minute.</strong> Swap to <em>Teacher notes</em> for watch-outs, differentiation, and the pupil-facing opening line.</div>`;
   main.innerHTML = `
     ${tabSubtitle}
+    ${aiBanner}
     ${pinHtml}
     ${recapHtml}
     <div class="lesson-section">
@@ -9067,6 +9251,185 @@ function doRegenerateLesson(l) {
   logEvent('lesson_regenerate', { planId: State.currentPlanId, lessonId: l.id, subject: l.subject });
   renderLesson();
   toast('✓ Lesson regenerated — opening and plenary swapped.');
+}
+
+/* =========================================================================
+   AI REGENERATION
+   Calls the Vercel serverless proxy at /api/regenerate-lesson, which fronts
+   Anthropic's Messages API (Claude Sonnet 4.6). Sends class profile,
+   the current lesson, the teacher's direction, prior feedback, and an NCCA
+   reference block so the model names real strands and pitches to grade.
+   ========================================================================= */
+const AI_DIRECTIONS = [
+  { id: 'younger', label: 'Pitch younger', hint: 'Shorter, more concrete, more hands-on' },
+  { id: 'older',   label: 'Pitch older',   hint: 'More abstract, longer writing / multi-step' },
+  { id: 'shorter', label: 'Make it shorter', hint: 'Trim the main activity, tighter pacing' },
+  { id: 'longer',  label: 'Extend it',       hint: 'Push the main activity deeper' },
+  { id: 'gaeilge-up', label: 'More Gaeilge', hint: 'More Irish vocab & classroom language' },
+  { id: 'gaeilge-down', label: 'Less Gaeilge', hint: 'Keep Gaeilge light — just a phrase' },
+  { id: 'different-focus', label: 'Different focus', hint: 'Same strand, different angle' },
+  { id: 'hands-on', label: 'More hands-on', hint: 'Swap passive work for activity' },
+];
+
+function openAIRegenerateModal() {
+  const l = currentLesson();
+  if (!l) return;
+  if (l.teacherOverride) {
+    toast('This lesson is under teacher override — regenerate isn\'t available.');
+    return;
+  }
+  const m = document.getElementById('modal');
+  document.getElementById('modal-title').textContent = 'AI regenerate this lesson';
+  const feedbackHint = l.feedback?.rating
+    ? `<div class="callout callout-primary" style="margin-bottom: 14px;"><h4>Your feedback is on file</h4><p style="margin:0; font-size:13px;">${l.feedback.rating === 'up' ? '👍' : l.feedback.rating === 'mid' ? '🤔' : '👎'} ${escape((l.feedback.tags || []).join(', ') || '(no tags)')}${l.feedback.comment ? ` — "${escape(l.feedback.comment)}"` : ''}. The model will see this.</p></div>`
+    : '';
+  document.getElementById('modal-body').innerHTML = `
+    ${feedbackHint}
+    <p style="margin: 0 0 8px; font-size: 13px; color: var(--ink-soft);">How should Claude reshape this lesson? Pick any combination, or just hit Regenerate.</p>
+    <div id="ai-direction-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 12px;">
+      ${AI_DIRECTIONS.map(d => `
+        <label class="ai-dir" style="border:1px solid var(--line); border-radius: 8px; padding: 8px 10px; font-size: 13px; cursor: pointer;">
+          <input type="checkbox" value="${d.id}" style="margin-right: 8px;" /><strong>${escape(d.label)}</strong>
+          <div style="font-size: 11px; color: var(--ink-soft); margin-top: 2px; margin-left: 20px;">${escape(d.hint)}</div>
+        </label>
+      `).join('')}
+    </div>
+    <textarea id="ai-direction-free" placeholder="Or describe what to change in your own words (optional)" style="width: 100%; min-height: 64px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 8px; font-family: inherit; font-size: 13px; resize: vertical;"></textarea>
+    <div id="ai-regen-status" style="margin-top: 10px; font-size: 12px; color: var(--ink-soft);"></div>
+  `;
+  const ok = document.getElementById('modal-ok');
+  ok.textContent = '✨ Regenerate';
+  ok.className = 'btn btn-primary';
+  ok.onclick = () => runAIRegenerate(l);
+  m.classList.add('show');
+}
+
+async function runAIRegenerate(l) {
+  const dirs = Array.from(document.querySelectorAll('#ai-direction-grid input:checked')).map(x => x.value);
+  const free = (document.getElementById('ai-direction-free')?.value || '').trim();
+  const directionText = [
+    dirs.map(id => {
+      const d = AI_DIRECTIONS.find(x => x.id === id);
+      return d ? d.label + ' — ' + d.hint : id;
+    }).join('; '),
+    free
+  ].filter(Boolean).join(' | ');
+
+  const plan = currentPlan();
+  if (!plan) return;
+  const profile = State.profile || {};
+  const curriculum = nccaContextFor(l.subject, plan.grade || plan.gradeId || profile.grade);
+
+  const ok = document.getElementById('modal-ok');
+  const status = document.getElementById('ai-regen-status');
+  ok.disabled = true;
+  ok.textContent = 'Generating…';
+  if (status) status.innerHTML = '<span class="ai-spinner"></span> Thinking… this usually takes 6–12 seconds.';
+
+  try {
+    const resp = await fetch('/api/regenerate-lesson', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({
+        lesson: {
+          id: l.id, subject: l.subject, title: l.title, focus: l.focus,
+          day: l.day, minutes: l.minutes,
+          plan: l.plan, outcomes: l.outcomes, vocab: l.vocab, feedback: l.feedback,
+        },
+        plan: {
+          gradeName: plan.gradeName, grade: plan.grade, gradeId: plan.gradeId,
+          pupils: plan.pupils, sen: plan.sen, medium: plan.medium,
+          weekDate: plan.weekDate, weekDateReadable: plan.weekDateReadable,
+          title: plan.title, themeName: plan.themeName, themeDesc: plan.themeDesc,
+        },
+        profile: {
+          teacher: profile.teacher, school: profile.school, grade: profile.grade,
+          pupils: profile.pupils, sen: profile.sen, medium: profile.medium,
+          gaeilgeLevel: profile.gaeilgeLevel,
+        },
+        direction: directionText,
+        tags: l.feedback?.tags || [],
+        comment: l.feedback?.comment || '',
+        curriculum,
+      }),
+    });
+    if (!resp.ok) {
+      const err = await resp.json().catch(() => ({}));
+      throw new Error(err.error || `HTTP ${resp.status}`);
+    }
+    const data = await resp.json();
+    if (!data.lesson) throw new Error('Empty response');
+    applyAIRegeneratedLesson(l, data.lesson, directionText);
+    closeModal();
+    toast('✨ Lesson regenerated by Claude — review and give feedback.');
+  } catch (e) {
+    console.warn('AI regenerate failed', e);
+    if (status) {
+      status.innerHTML = `<div style="padding: 10px 12px; background: var(--gold-soft); color: #7a5e0e; border-radius: 8px; font-size: 13px;">
+        <strong>AI isn't available right now:</strong> ${escape(e.message || 'unknown error')}.<br>
+        <span style="font-size: 12px;">Falling back to offline variants preserves your flow. Add <code>ANTHROPIC_API_KEY</code> to Vercel to enable live generation.</span>
+      </div>`;
+    }
+    ok.disabled = false;
+    ok.textContent = '↻ Use offline variants instead';
+    ok.onclick = () => { closeModal(); doRegenerateLesson(l); };
+  }
+}
+
+// Merge the AI's JSON response into the existing lesson. We preserve
+// identifying fields (id, day, slotIdx, spanSlots, subject, fixed) and
+// overwrite content fields. Feedback history stays intact.
+function applyAIRegeneratedLesson(l, ai, direction) {
+  // Keep a "before" snapshot once so the teacher can undo if needed.
+  if (!l._preAI) {
+    l._preAI = {
+      title: l.title, focus: l.focus, plan: JSON.parse(JSON.stringify(l.plan || {})),
+      outcomes: l.outcomes, vocab: l.vocab, resources: l.resources,
+      guide: JSON.parse(JSON.stringify(l.guide || {})), diff: l.diff, strand: l.strand,
+    };
+  }
+  if (ai.title) l.title = ai.title;
+  if (ai.focus) l.focus = ai.focus;
+  if (ai.strand) l.strand = ai.strand;
+  if (ai.strandUnit) l.strandUnit = ai.strandUnit;
+  if (Array.isArray(ai.outcomes)) l.outcomes = ai.outcomes;
+  if (Array.isArray(ai.vocab)) l.vocab = ai.vocab;
+  if (Array.isArray(ai.resources)) l.resources = ai.resources;
+  if (ai.plan && typeof ai.plan === 'object') {
+    l.plan = { ...(l.plan || {}), ...ai.plan };
+  }
+  if (ai.guide && typeof ai.guide === 'object') {
+    l.guide = { ...(l.guide || {}), ...ai.guide };
+  }
+  if (ai.diff && typeof ai.diff === 'object') {
+    l.diff = { ...(l.diff || {}), ...ai.diff };
+  }
+  l.aiGeneratedAt = new Date().toISOString();
+  l.aiDirection = direction || '';
+  // Reset feedback editing state so the card re-renders fresh.
+  if (l.feedback) l.feedback.editing = false;
+  save();
+  logEvent('lesson_regenerate', {
+    planId: State.currentPlanId, lessonId: l.id, subject: l.subject,
+    ai: true, direction: direction || null,
+  });
+  renderLesson();
+}
+
+function revertAIRegeneration() {
+  const l = currentLesson();
+  if (!l || !l._preAI) { toast('No AI regeneration to revert.'); return; }
+  const snap = l._preAI;
+  l.title = snap.title; l.focus = snap.focus;
+  l.plan = snap.plan; l.outcomes = snap.outcomes;
+  l.vocab = snap.vocab; l.resources = snap.resources;
+  l.guide = snap.guide; l.diff = snap.diff; l.strand = snap.strand;
+  delete l._preAI;
+  delete l.aiGeneratedAt;
+  delete l.aiDirection;
+  save();
+  renderLesson();
+  toast('Reverted to the previous version.');
 }
 function regeneratePlan() {
   const plan = State.plans.find(p => p.id === State.currentPlanId);
