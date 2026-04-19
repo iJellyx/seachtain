@@ -385,6 +385,36 @@
   .plan-card-theme { font-family: 'Fraunces', serif; font-size: 17px; font-weight: 600; margin-bottom: 4px; }
   .plan-card-grade { font-size: 13px; color: var(--ink-soft); margin-bottom: 14px; }
   .plan-card-meta { display: flex; gap: 6px; flex-wrap: wrap; font-size: 12px; }
+  .plan-card { position: relative; }
+  .plan-card.archived { opacity: 0.7; background: var(--surface-alt); }
+  .plan-card.archived::after {
+    content: 'Archived'; position: absolute; top: 10px; right: 36px;
+    font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--ink-faint); font-weight: 600;
+  }
+  .plan-kebab {
+    position: absolute; top: 8px; right: 8px;
+    width: 28px; height: 28px; border-radius: 6px;
+    display: grid; place-items: center;
+    color: var(--ink-faint); background: transparent; border: none; cursor: pointer;
+    transition: background 0.12s, color 0.12s;
+  }
+  .plan-kebab:hover { background: var(--surface-alt); color: var(--ink); }
+  .plan-kebab svg { width: 16px; height: 16px; }
+  .plan-kebab-menu {
+    background: var(--surface); border: 1px solid var(--line); border-radius: 10px;
+    box-shadow: var(--shadow-lg); padding: 6px; min-width: 180px;
+    display: flex; flex-direction: column; gap: 2px;
+  }
+  .plan-kebab-menu .pk-item {
+    text-align: left; padding: 8px 12px; border-radius: 6px;
+    font-size: 13px; color: var(--ink); cursor: pointer; background: transparent; border: none;
+  }
+  .plan-kebab-menu .pk-item:hover { background: var(--surface-alt); }
+  .plan-kebab-menu .pk-item.pk-danger { color: #b2382a; }
+  .plan-kebab-menu .pk-item.pk-danger:hover { background: #fbe9e5; }
+  .btn-danger { background: #b2382a; color: white; box-shadow: var(--shadow-sm); }
+  .btn-danger:hover { background: #8f2a20; }
 
   /* ===== Creation wizard ===== */
   .wizard { max-width: 780px; }
@@ -526,14 +556,63 @@
   .lesson-tile .t-subject { font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase; font-weight: 600; opacity: 0.8; }
   .lesson-tile .t-title { font-size: 13px; font-weight: 600; line-height: 1.25; }
   .lesson-tile .t-meta { font-size: 10px; opacity: 0.7; }
-  .ls-english { background: var(--blue-soft); color: #2a4d6f; }
-  .ls-gaeilge { background: var(--primary-soft); color: var(--primary); }
-  .ls-maths { background: var(--gold-soft); color: #7a5e0e; }
-  .ls-sese { background: var(--accent-soft); color: #8e3b27; }
-  .ls-pe { background: var(--purple-soft); color: #6a4479; }
-  .ls-arts { background: var(--pink-soft); color: #8b4b2f; }
-  .ls-other { background: var(--surface-alt); color: var(--ink-soft); }
-  .ls-empty { background: var(--surface); color: var(--ink-faint); font-style: italic; border: 1px dashed var(--line); }
+  /* Subject colour system — every core DES subject gets its own hue with:
+       - a soft tinted background (for the tile fill)
+       - a strong 4px left accent (for at-a-glance scanning)
+       - a dark, readable ink colour (paired to the hue, AA-compliant)
+     Intentional separation in hue/saturation keeps adjacent lessons on the
+     timetable clearly distinct even at small sizes. */
+  .lesson-tile { border-left: 4px solid transparent; }
+  .ls-english  { background: #DDE9F4; color: #1e3a5c; border-left-color: #3B6EA8; }
+  .ls-gaeilge  { background: #D7E8DB; color: #1d4a30; border-left-color: #2D5F3F; }
+  .ls-maths    { background: #F6E4B8; color: #6b4e0a; border-left-color: #C48A1A; }
+  .ls-sese     { background: #F5D9CB; color: #7a2d1a; border-left-color: #C85A3E; }
+  .ls-pe       { background: #E3D6EF; color: #4a2c63; border-left-color: #8A5CA0; }
+  .ls-arts     { background: #F9D7DC; color: #7a2a3b; border-left-color: #C0566A; }
+  .ls-sphe     { background: #CFE8E3; color: #16433e; border-left-color: #3E8F83; }
+  .ls-religion { background: #E8DFEB; color: #523a5f; border-left-color: #7A5E8C; }
+  .ls-other    { background: var(--surface-alt); color: var(--ink-soft); border-left-color: #A89B8E; }
+  .ls-empty    { background: var(--surface); color: var(--ink-faint); font-style: italic; border: 1px dashed var(--line); border-left: 1px dashed var(--line); }
+
+  /* Chip variants — keep aligned with the tile palette so the lesson header
+     tag matches its timetable tile at a glance. */
+  .chip-sphe     { background: #CFE8E3; color: #16433e; }
+  .chip-religion { background: #E8DFEB; color: #523a5f; }
+
+  /* Lesson feedback card — captured into the learning log so future AI
+     regeneration can get better over time. */
+  .feedback-card {
+    background: var(--surface); border: 1px solid var(--line); border-radius: 14px;
+    padding: 16px 18px; margin-top: 14px;
+  }
+  .feedback-card h4 { margin: 0 0 4px; font-family: 'Fraunces', serif; font-size: 15px; }
+  .feedback-card .fc-hint { font-size: 12px; color: var(--ink-soft); margin-bottom: 12px; }
+  .feedback-chips { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px; }
+  .fb-chip {
+    padding: 7px 12px; border-radius: 999px; border: 1px solid var(--line);
+    background: var(--surface); font-size: 12px; font-weight: 600;
+    cursor: pointer; transition: all 0.12s; color: var(--ink-soft);
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+  .fb-chip:hover { border-color: var(--line-strong); background: var(--surface-alt); }
+  .fb-chip.active[data-rating="up"]   { background: #D7E8DB; border-color: #2D5F3F; color: #1d4a30; }
+  .fb-chip.active[data-rating="mid"]  { background: #F6E4B8; border-color: #C48A1A; color: #6b4e0a; }
+  .fb-chip.active[data-rating="down"] { background: #F5D9CB; border-color: #C85A3E; color: #7a2d1a; }
+  .fb-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px; }
+  .fb-tag {
+    padding: 4px 10px; border-radius: 999px; font-size: 11px;
+    background: var(--surface-alt); color: var(--ink-soft); border: 1px solid transparent;
+    cursor: pointer;
+  }
+  .fb-tag:hover { background: var(--primary-soft); color: var(--primary); }
+  .fb-tag.active { background: var(--primary-soft); color: var(--primary); border-color: var(--primary); font-weight: 600; }
+  .feedback-card textarea {
+    width: 100%; min-height: 60px; padding: 8px 10px; font-size: 13px;
+    border: 1px solid var(--line); border-radius: 8px; resize: vertical;
+    font-family: inherit; color: inherit; background: var(--surface); margin-bottom: 8px;
+  }
+  .feedback-card textarea:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-soft); }
+  .fb-submitted { padding: 10px 12px; background: var(--primary-soft); color: var(--primary); font-size: 13px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; gap: 8px; }
 
   /* ===== Lesson detail ===== */
   .breadcrumb { font-size: 13px; color: var(--ink-soft); margin-bottom: 16px; display: flex; align-items: center; gap: 6px; }
@@ -958,6 +1037,31 @@
   .lesson-tile[draggable="true"] { cursor: grab; }
   .lesson-tile[draggable="true"]:active { cursor: grabbing; }
   .lesson-tile.drag-src { opacity: 0.4; }
+
+  /* Drag-to-extend — a grab handle on the bottom edge of each non-pinned
+     lesson tile. Teachers drag down to absorb adjacent empty slots, up to
+     release them. Quantises to whole-slot increments; breaks / pinned slots
+     / occupied slots all block further extension. */
+  .tt-resize-handle {
+    position: absolute; left: 0; right: 0; bottom: 0;
+    height: 10px; cursor: ns-resize;
+    background: transparent; z-index: 3;
+  }
+  .tt-resize-handle::before {
+    content: ''; position: absolute; left: 50%; bottom: 2px; transform: translateX(-50%);
+    width: 28px; height: 3px; border-radius: 2px; background: currentColor; opacity: 0;
+    transition: opacity 0.15s;
+  }
+  .lesson-tile:hover .tt-resize-handle::before,
+  .lesson-tile.resizing .tt-resize-handle::before { opacity: 0.45; }
+  .lesson-tile.resizing {
+    z-index: 5;
+    box-shadow: 0 6px 20px rgba(43, 36, 32, 0.18), 0 0 0 2px var(--primary);
+  }
+  .lesson-tile.spans-multi { justify-content: flex-start; }
+  .lesson-tile.spans-multi .t-meta { font-weight: 600; }
+  body.resizing-lesson { cursor: ns-resize; user-select: none; }
+  body.resizing-lesson .lesson-tile:not(.resizing) { opacity: 0.7; }
   body.dragging-lesson .lesson-tile.drop-ok {
     outline: 2px dashed var(--primary); outline-offset: -3px;
   }
@@ -1453,6 +1557,8 @@
           </button>
           <button class="btn btn-ghost" onclick="window.print()">🖨 Print week</button>
           <button class="btn btn-ghost" onclick="regeneratePlan()">↻ Regenerate</button>
+          <button class="btn btn-ghost" onclick="archiveCurrentPlan()" title="Move to Archived">🗄 Archive</button>
+          <button class="btn btn-ghost" onclick="deleteCurrentPlan()" style="color:#b2382a;" title="Permanently delete this plan">🗑 Delete</button>
           <button class="btn btn-primary" onclick="exportPlan()">Export</button>
         </div>
       </div>
@@ -1627,6 +1733,7 @@
         <button class="lib-filter active" data-lfilter="all">All</button>
         <button class="lib-filter" data-lfilter="theme">Themed</button>
         <button class="lib-filter" data-lfilter="standard">Standard</button>
+        <button class="lib-filter" data-lfilter="archived">Archived</button>
       </div>
 
       <div id="library-plans" class="plan-grid"></div>
@@ -3923,10 +4030,11 @@ function renderWeekStrip() {
     cells.push(d);
   }
 
-  // Group plans by weekDate so we can flag conflicts.
+  // Group plans by weekDate so we can flag conflicts. Archived plans don't
+  // surface on the dashboard — they live in the Archived library filter.
   const plansByWeek = {};
   for (const p of State.plans) {
-    if (!p.weekDate) continue;
+    if (!p.weekDate || p.archived) continue;
     (plansByWeek[p.weekDate] = plansByWeek[p.weekDate] || []).push(p);
   }
 
@@ -4067,8 +4175,10 @@ function resolveWeekConflict(weekYmd) {
 
 function findPlanForDate(dateObj) {
   // A plan's week runs from plan.weekDate (Monday) through Friday (+4 days).
+  // Archived plans are excluded — once archived, they no longer drive the
+  // dashboard, Right-Now hero, or Today panel.
   for (const p of State.plans) {
-    if (!p.weekDate) continue;
+    if (!p.weekDate || p.archived) continue;
     const start = new Date(p.weekDate);
     start.setHours(0,0,0,0);
     const end = new Date(start);
@@ -4208,7 +4318,10 @@ function markReviewed(planId) {
 function renderPlanCard(plan) {
   const themeChip = plan.theme && plan.theme !== 'none'
     ? `<span class="chip chip-gold">${escape(plan.themeName)}</span>` : `<span class="chip">Standard</span>`;
-  return `<div class="plan-card" onclick="openPlan('${plan.id}')">
+  return `<div class="plan-card ${plan.archived ? 'archived' : ''}" onclick="openPlan('${plan.id}')">
+    <button class="plan-kebab" aria-label="Plan actions" onclick="planKebabMenu(event, '${plan.id}')">
+      <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg>
+    </button>
     <div class="plan-card-head">
       <span class="plan-card-week">Week of ${escape(plan.weekDateReadable)}</span>
       <span class="faint" style="font-size:18px;">${plan.themeEmoji || '📅'}</span>
@@ -6048,50 +6161,137 @@ function peAgent(ctx) {
 
 function buildCoachBrief(f, minutes) {
   const mainMin = Math.max(15, (minutes || 50) - 20);
-  // SVG pitch/space diagram — varies per focus.
+  // SVG pitch/space diagram — varies per focus. Uses simple stick figures
+  // (head + body + limbs) so the diagram reads as "pupils doing things in
+  // space" rather than an abstract dot plot. Labels sit above figures so
+  // they never collide with the external caption.
   const svgPitch = (() => {
-    if (f.key === 'games') return `<svg viewBox="0 0 360 200" width="100%" style="max-width:460px; border:1px solid #bbb; border-radius:6px; background:#F0F8F2;">
-      <rect x="10" y="10" width="340" height="180" fill="none" stroke="#2D5F3F" stroke-width="2"/>
-      <line x1="180" y1="10" x2="180" y2="190" stroke="#2D5F3F" stroke-width="1.5" stroke-dasharray="4 4"/>
-      <circle cx="180" cy="100" r="22" fill="none" stroke="#2D5F3F" stroke-width="1.5"/>
-      <circle cx="35" cy="100" r="5" fill="#C85A3E"/>
-      <circle cx="325" cy="100" r="5" fill="#C85A3E"/>
-      <text x="35" y="125" font-size="10" fill="#333" text-anchor="middle">Goal A</text>
-      <text x="325" y="125" font-size="10" fill="#333" text-anchor="middle">Goal B</text>
-      <text x="90" y="30" font-size="10" fill="#2D5F3F">Team 1 start area</text>
-      <text x="230" y="30" font-size="10" fill="#2D5F3F">Team 2 start area</text>
-      <text x="180" y="130" font-size="9" fill="#666" text-anchor="middle" font-style="italic">Centre circle — kick-off / restart</text>
+    // Reusable stick figure — 16px tall, centred on (cx, cy). Colour is
+    // controlled by the inherited `stroke`/`fill` of the parent <g>.
+    const fig = (cx, cy, variant = 'stand') => {
+      const poses = {
+        stand:  `<line x1="${cx}" y1="${cy-4}" x2="${cx}" y2="${cy+5}"/>
+                 <line x1="${cx-4}" y1="${cy-1}" x2="${cx+4}" y2="${cy-1}"/>
+                 <line x1="${cx}" y1="${cy+5}" x2="${cx-3}" y2="${cy+11}"/>
+                 <line x1="${cx}" y1="${cy+5}" x2="${cx+3}" y2="${cy+11}"/>`,
+        run:    `<line x1="${cx-1}" y1="${cy-4}" x2="${cx+2}" y2="${cy+5}"/>
+                 <line x1="${cx-4}" y1="${cy}" x2="${cx+4}" y2="${cy-3}"/>
+                 <line x1="${cx+2}" y1="${cy+5}" x2="${cx-3}" y2="${cy+10}"/>
+                 <line x1="${cx+2}" y1="${cy+5}" x2="${cx+5}" y2="${cy+11}"/>`,
+        jump:   `<line x1="${cx}" y1="${cy-4}" x2="${cx}" y2="${cy+3}"/>
+                 <line x1="${cx-5}" y1="${cy-5}" x2="${cx+5}" y2="${cy-5}"/>
+                 <line x1="${cx}" y1="${cy+3}" x2="${cx-4}" y2="${cy+9}"/>
+                 <line x1="${cx}" y1="${cy+3}" x2="${cx+4}" y2="${cy+9}"/>`,
+        throw:  `<line x1="${cx}" y1="${cy-4}" x2="${cx}" y2="${cy+5}"/>
+                 <line x1="${cx}" y1="${cy-1}" x2="${cx+6}" y2="${cy-4}"/>
+                 <line x1="${cx}" y1="${cy-1}" x2="${cx-4}" y2="${cy+2}"/>
+                 <line x1="${cx}" y1="${cy+5}" x2="${cx-3}" y2="${cy+11}"/>
+                 <line x1="${cx}" y1="${cy+5}" x2="${cx+3}" y2="${cy+11}"/>`,
+        balance:`<line x1="${cx}" y1="${cy-4}" x2="${cx}" y2="${cy+5}"/>
+                 <line x1="${cx-5}" y1="${cy-2}" x2="${cx+5}" y2="${cy-2}"/>
+                 <line x1="${cx}" y1="${cy+5}" x2="${cx-5}" y2="${cy+10}"/>
+                 <line x1="${cx}" y1="${cy+5}" x2="${cx}" y2="${cy+11}"/>`,
+        dance:  `<line x1="${cx}" y1="${cy-4}" x2="${cx-1}" y2="${cy+5}"/>
+                 <line x1="${cx-5}" y1="${cy-4}" x2="${cx+5}" y2="${cy-4}"/>
+                 <line x1="${cx-1}" y1="${cy+5}" x2="${cx-5}" y2="${cy+11}"/>
+                 <line x1="${cx-1}" y1="${cy+5}" x2="${cx+4}" y2="${cy+10}"/>`,
+      };
+      return `<g stroke-width="1.4" fill="none" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="${cx}" cy="${cy-7}" r="2.6" fill="currentColor" stroke="none"/>
+        ${poses[variant] || poses.stand}
+      </g>`;
+    };
+    // Cone marker
+    const cone = (cx, cy) => `<polygon points="${cx-4},${cy+4} ${cx+4},${cy+4} ${cx},${cy-4}" fill="#C85A3E" stroke="#8e3b27" stroke-width="0.8"/>`;
+    // Small station label — sits ABOVE the figure so it can't collide with
+    // external captions below the SVG.
+    const stationLabel = (cx, cy, text) =>
+      `<text x="${cx}" y="${cy}" font-family="Inter, sans-serif" font-size="10" font-weight="600" fill="#2B2420" text-anchor="middle">${text}</text>`;
+
+    if (f.key === 'games') return `<svg viewBox="0 0 400 220" width="100%" style="max-width:500px; border:1px solid #cfd8cc; border-radius:8px; background:#EEF6EC;">
+      <rect x="14" y="14" width="372" height="192" fill="#F4F9F0" stroke="#2D5F3F" stroke-width="2" rx="3"/>
+      <line x1="200" y1="14" x2="200" y2="206" stroke="#2D5F3F" stroke-width="1.2" stroke-dasharray="5 4"/>
+      <circle cx="200" cy="110" r="24" fill="none" stroke="#2D5F3F" stroke-width="1.4"/>
+      <circle cx="200" cy="110" r="2" fill="#2D5F3F"/>
+      ${cone(30, 110)}${stationLabel(30, 148, 'Goal A')}
+      ${cone(370, 110)}${stationLabel(370, 148, 'Goal B')}
+      <g color="#3B6EA8">${fig(80, 60, 'run')}${fig(120, 90, 'stand')}${fig(80, 140, 'run')}${fig(120, 160, 'stand')}</g>
+      <g color="#C85A3E">${fig(280, 60, 'stand')}${fig(320, 90, 'run')}${fig(280, 140, 'stand')}${fig(320, 160, 'run')}</g>
+      ${stationLabel(100, 40, 'Team 1 (bibs)')}
+      ${stationLabel(300, 40, 'Team 2')}
     </svg>`;
-    if (f.key === 'athletics') return `<svg viewBox="0 0 360 200" width="100%" style="max-width:460px; border:1px solid #bbb; border-radius:6px; background:#F0F8F2;">
-      <rect x="10" y="10" width="340" height="180" fill="none" stroke="#2D5F3F" stroke-width="2"/>
-      <circle cx="60" cy="60" r="6" fill="#C85A3E"/><text x="60" y="80" font-size="10" fill="#333" text-anchor="middle">Throw</text>
-      <circle cx="60" cy="140" r="6" fill="#C85A3E"/><text x="60" y="160" font-size="10" fill="#333" text-anchor="middle">Jump</text>
-      <circle cx="180" cy="60" r="6" fill="#C85A3E"/><text x="180" y="80" font-size="10" fill="#333" text-anchor="middle">Sprint start</text>
-      <line x1="180" y1="60" x2="320" y2="60" stroke="#333" stroke-width="1" stroke-dasharray="3 3"/>
-      <text x="320" y="55" font-size="10" fill="#333" text-anchor="end">Sprint finish</text>
-      <circle cx="180" cy="140" r="6" fill="#C85A3E"/><text x="180" y="160" font-size="10" fill="#333" text-anchor="middle">Relay</text>
-      <text x="20" y="195" font-size="9" fill="#666" font-style="italic">Four stations — rotate every 5 minutes</text>
+
+    if (f.key === 'athletics') return `<svg viewBox="0 0 400 220" width="100%" style="max-width:500px; border:1px solid #cfd8cc; border-radius:8px; background:#EEF6EC;">
+      <rect x="14" y="14" width="372" height="192" fill="#F4F9F0" stroke="#2D5F3F" stroke-width="2" rx="3"/>
+      <!-- Four quadrants separated by light dashed lines -->
+      <line x1="200" y1="14" x2="200" y2="206" stroke="#2D5F3F" stroke-width="0.8" stroke-dasharray="3 4" opacity="0.6"/>
+      <line x1="14" y1="110" x2="386" y2="110" stroke="#2D5F3F" stroke-width="0.8" stroke-dasharray="3 4" opacity="0.6"/>
+      <!-- Station 1: Throw (top-left) -->
+      ${stationLabel(95, 34, 'Throw')}
+      ${cone(55, 75)}
+      <g color="#2D5F3F">${fig(110, 70, 'throw')}</g>
+      <circle cx="140" cy="62" r="3" fill="#C48A1A"/>
+      <!-- Station 2: Sprint (top-right) — start line, running figures, finish cone -->
+      ${stationLabel(290, 34, 'Sprint')}
+      ${cone(235, 75)}
+      <line x1="245" y1="75" x2="365" y2="75" stroke="#2B2420" stroke-width="1" stroke-dasharray="4 3"/>
+      ${stationLabel(355, 92, 'finish')}
+      <g color="#C85A3E">${fig(265, 75, 'run')}${fig(300, 75, 'run')}</g>
+      <!-- Station 3: Jump (bottom-left) — take-off line + jumper -->
+      ${stationLabel(95, 132, 'Long jump')}
+      <rect x="40" y="170" width="50" height="22" fill="#E4D6BF" stroke="#8a5a1a" stroke-width="0.8"/>
+      <line x1="100" y1="168" x2="100" y2="194" stroke="#2B2420" stroke-width="1.2"/>
+      <g color="#8A5CA0">${fig(130, 170, 'jump')}</g>
+      <!-- Station 4: Relay (bottom-right) — baton passers + cones -->
+      ${stationLabel(290, 132, 'Relay')}
+      ${cone(235, 175)}${cone(355, 175)}
+      <g color="#3B6EA8">${fig(270, 170, 'run')}${fig(320, 170, 'stand')}</g>
+      <line x1="282" y1="168" x2="308" y2="168" stroke="#C48A1A" stroke-width="2"/>
     </svg>`;
-    if (f.key === 'gym') return `<svg viewBox="0 0 360 200" width="100%" style="max-width:460px; border:1px solid #bbb; border-radius:6px; background:#F5F0E8;">
-      <rect x="10" y="10" width="340" height="180" fill="none" stroke="#8a5a1a" stroke-width="2"/>
-      <rect x="30" y="30" width="60" height="40" fill="#E4D6BF" stroke="#8a5a1a"/><text x="60" y="55" font-size="10" fill="#333" text-anchor="middle">Balance</text>
-      <rect x="140" y="30" width="60" height="40" fill="#E4D6BF" stroke="#8a5a1a"/><text x="170" y="55" font-size="10" fill="#333" text-anchor="middle">Travel</text>
-      <rect x="250" y="30" width="90" height="40" fill="#E4D6BF" stroke="#8a5a1a"/><text x="295" y="55" font-size="10" fill="#333" text-anchor="middle">Rolling mats</text>
-      <rect x="30" y="110" width="310" height="60" fill="#F9ECD4" stroke="#8a5a1a"/><text x="185" y="145" font-size="11" fill="#333" text-anchor="middle">Floor work area — all pupils</text>
+
+    if (f.key === 'gym') return `<svg viewBox="0 0 400 220" width="100%" style="max-width:500px; border:1px solid #cbbba0; border-radius:8px; background:#F7F1E3;">
+      <rect x="14" y="14" width="372" height="192" fill="#FBF6EA" stroke="#8a5a1a" stroke-width="2" rx="3"/>
+      <!-- Top row — three apparatus stations -->
+      <rect x="30" y="40" width="90" height="40" fill="#E4D6BF" stroke="#8a5a1a" rx="3"/>
+      ${stationLabel(75, 34, 'Balance bench')}
+      <g color="#2D5F3F">${fig(75, 58, 'balance')}</g>
+      <rect x="155" y="40" width="90" height="40" fill="#E4D6BF" stroke="#8a5a1a" rx="3"/>
+      ${stationLabel(200, 34, 'Travel mats')}
+      <g color="#C85A3E">${fig(185, 58, 'run')}${fig(220, 58, 'stand')}</g>
+      <rect x="280" y="40" width="90" height="40" fill="#E4D6BF" stroke="#8a5a1a" rx="3"/>
+      ${stationLabel(325, 34, 'Rolling mat')}
+      <g color="#8A5CA0">${fig(310, 58, 'stand')}${fig(340, 58, 'jump')}</g>
+      <!-- Floor area -->
+      <rect x="30" y="110" width="340" height="80" fill="#FDF1D6" stroke="#8a5a1a" rx="3"/>
+      ${stationLabel(200, 104, 'Floor work area — whole class')}
+      <g color="#3B6EA8">
+        ${fig(80, 150, 'balance')}${fig(130, 160, 'stand')}${fig(180, 150, 'balance')}
+        ${fig(230, 160, 'stand')}${fig(280, 150, 'balance')}${fig(330, 160, 'stand')}
+      </g>
     </svg>`;
-    if (f.key === 'dance') return `<svg viewBox="0 0 360 200" width="100%" style="max-width:460px; border:1px solid #bbb; border-radius:6px; background:#F9F0F5;">
-      <rect x="10" y="10" width="340" height="180" fill="none" stroke="#9c3a4a" stroke-width="2"/>
-      ${[...Array(16)].map((_, i) => {
-        const col = i % 4, row = Math.floor(i / 4);
-        const x = 60 + col * 80, y = 50 + row * 35;
-        return `<circle cx="${x}" cy="${y}" r="6" fill="#9c3a4a"/>`;
-      }).join('')}
-      <text x="180" y="195" font-size="10" fill="#666" text-anchor="middle" font-style="italic">Diamond formation — each pupil can see front</text>
+
+    if (f.key === 'dance') return `<svg viewBox="0 0 400 220" width="100%" style="max-width:500px; border:1px solid #d8bac1; border-radius:8px; background:#FBEEF1;">
+      <rect x="14" y="14" width="372" height="192" fill="#FDF4F6" stroke="#9c3a4a" stroke-width="2" rx="3"/>
+      <!-- Stage cue at front -->
+      <line x1="14" y1="40" x2="386" y2="40" stroke="#9c3a4a" stroke-width="1.2" stroke-dasharray="4 3"/>
+      ${stationLabel(200, 30, 'Front (teacher / mirror)')}
+      <!-- Diamond formation: 4 rows × 4 columns -->
+      ${[...Array(4)].map((_, row) =>
+        [...Array(4)].map((__, col) => {
+          const offset = row % 2 === 1 ? 40 : 0;
+          const x = 65 + col * 80 + offset;
+          const y = 80 + row * 32;
+          return `<g color="#9c3a4a">${fig(x, y, 'dance')}</g>`;
+        }).join('')
+      ).join('')}
     </svg>`;
-    return `<svg viewBox="0 0 360 200" width="100%" style="max-width:460px; border:1px solid #bbb; border-radius:6px; background:#E8F0EC;">
-      <rect x="10" y="10" width="340" height="180" fill="none" stroke="#2D5F3F" stroke-width="2" stroke-dasharray="6 4"/>
-      <text x="180" y="100" font-size="13" fill="#2D5F3F" text-anchor="middle" font-style="italic">Open outdoor space</text>
-      <text x="180" y="120" font-size="10" fill="#666" text-anchor="middle">Mark boundaries with cones</text>
+
+    return `<svg viewBox="0 0 400 220" width="100%" style="max-width:500px; border:1px solid #cfd8cc; border-radius:8px; background:#EEF6EC;">
+      <rect x="14" y="14" width="372" height="192" fill="#F4F9F0" stroke="#2D5F3F" stroke-width="2" stroke-dasharray="6 4" rx="3"/>
+      ${cone(40, 40)}${cone(360, 40)}${cone(40, 180)}${cone(360, 180)}
+      <g color="#2D5F3F">${fig(130, 110, 'run')}${fig(200, 110, 'stand')}${fig(270, 110, 'run')}</g>
+      <text x="200" y="60" font-family="Inter, sans-serif" font-size="12" fill="#2D5F3F" text-anchor="middle" font-weight="600">Open outdoor space</text>
+      <text x="200" y="200" font-family="Inter, sans-serif" font-size="10" fill="#5b4f44" text-anchor="middle" font-style="italic">Mark boundaries with cones</text>
     </svg>`;
   })();
 
@@ -7051,22 +7251,57 @@ function renderTimetable(plan) {
   weekStart.setHours(0,0,0,0);
   const dayDiff = Math.round((today - weekStart) / (1000 * 60 * 60 * 24));
   const todayIdx = (dayDiff >= 0 && dayDiff < 5) ? dayDiff : -1;
-  let html = '<div class="tt-header">Time</div>' + DAYS.map((d, i) => `<div class="tt-header ${i === todayIdx ? 'today' : ''}">${d}</div>`).join('');
+
+  // Explicit grid placement — required so lessons with spanSlots > 1 can
+  // absorb adjacent rows on their own day column without shoving the rest
+  // of the grid around. We track a slotIdx → CSS row number map.
+  let html = '';
+  html += `<div class="tt-header" style="grid-column: 1; grid-row: 1;">Time</div>`;
+  DAYS.forEach((d, i) => {
+    html += `<div class="tt-header ${i === todayIdx ? 'today' : ''}" style="grid-column: ${i + 2}; grid-row: 1;">${escape(d)}</div>`;
+  });
+
+  let row = 2;
+  const slotRow = {};
   slots.forEach((slot, idx) => {
     if (slot.break) {
-      html += `<div class="tt-break">${escape(slot.break)}</div>`;
+      html += `<div class="tt-break" style="grid-column: 1 / -1; grid-row: ${row};">${escape(slot.break)}</div>`;
+      row++;
       return;
     }
-    html += `<div class="tt-cell tt-time">${escape(slot.time || '')}</div>`;
-    const slotLen = slot.length || 0;
-    DAYS.forEach(d => {
-      const lesson = plan.lessons.find(l => l.day === d && l.slotIdx === idx);
+    slotRow[idx] = row;
+    html += `<div class="tt-cell tt-time" style="grid-column: 1; grid-row: ${row};">${escape(slot.time || '')}</div>`;
+    row++;
+  });
+
+  // Build a covered set so we skip emitting empty cells in slots already
+  // absorbed by a spanning lesson on the same day.
+  const covered = new Set();
+  (plan.lessons || []).forEach(l => {
+    const span = l.spanSlots || 1;
+    for (let k = 0; k < span; k++) covered.add(`${l.day}|${l.slotIdx + k}`);
+  });
+
+  DAYS.forEach((d, colIdx) => {
+    slots.forEach((slot, idx) => {
+      if (slot.break) return;
+      if (slotRow[idx] == null) return;
+      const cellRow = slotRow[idx];
+      const gridCol = colIdx + 2;
+      const lesson = (plan.lessons || []).find(x => x.day === d && x.slotIdx === idx);
       if (lesson) {
+        const span = Math.max(1, lesson.spanSlots || 1);
         const isPinned = lesson.fixed ? 'fixed-pinned' : '';
-        // Pinned lessons stay put — they're anchored to the slot by choice.
         const dragAttrs = lesson.fixed ? '' : `draggable="true" ondragstart="onTileDragStart(event, '${lesson.id}')" ondragend="onTileDragEnd(event)"`;
-        html += `<div class="tt-cell lesson-tile ls-${subjectColor(lesson.subject)} ${isPinned}" ${dragAttrs}
-          data-lesson-id="${lesson.id}" data-minutes="${lesson.minutes}" data-day="${d}" data-slot-idx="${idx}"
+        const gridCss = `grid-column: ${gridCol}; grid-row: ${cellRow} / span ${span};`;
+        const resizeHandle = lesson.fixed ? '' :
+          `<div class="tt-resize-handle no-print" draggable="false" aria-hidden="true"
+             onmousedown="startResize(event, '${lesson.id}')" ontouchstart="startResize(event, '${lesson.id}')"
+             title="Drag to extend / shrink"></div>`;
+        const spanLabel = span > 1 ? ` · ${span} slots` : '';
+        html += `<div class="tt-cell lesson-tile ls-${subjectColor(lesson.subject)} ${isPinned} ${span > 1 ? 'spans-multi' : ''}" ${dragAttrs}
+          style="${gridCss}"
+          data-lesson-id="${lesson.id}" data-minutes="${lesson.minutes}" data-span="${span}" data-day="${d}" data-slot-idx="${idx}"
           tabindex="0" role="button" aria-label="Open ${escape(lesson.title)} (${escape(lesson.day)}, ${lesson.minutes} minutes)"
           onclick="openLesson('${lesson.id}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openLesson('${lesson.id}');}"
           ondragover="onTileDragOver(event)" ondragleave="onTileDragLeave(event)" ondrop="onTileDrop(event)">
@@ -7076,18 +7311,138 @@ function renderTimetable(plan) {
             <div class="t-subject">${subjectLabel(lesson.subject)}</div>
             <div class="t-title">${escape(lesson.title)}</div>
           </div>
-          <div class="t-meta">${lesson.minutes} min</div>
+          <div class="t-meta">${lesson.minutes} min${spanLabel}</div>
+          ${resizeHandle}
         </div>`;
-      } else {
-        // Empty slots accept drops too, so teachers can move a lesson into an open cell of matching length.
-        html += `<div class="tt-cell lesson-tile ls-empty" data-empty="1" data-day="${d}" data-slot-idx="${idx}" data-minutes="${slotLen}"
-          ondragover="onTileDragOver(event)" ondragleave="onTileDragLeave(event)" ondrop="onTileDrop(event)">—</div>`;
+        return;
       }
+      if (covered.has(`${d}|${idx}`)) return;
+      const slotLen = slot.length || 0;
+      html += `<div class="tt-cell lesson-tile ls-empty" style="grid-column: ${gridCol}; grid-row: ${cellRow};"
+        data-empty="1" data-day="${d}" data-slot-idx="${idx}" data-minutes="${slotLen}" data-span="1"
+        ondragover="onTileDragOver(event)" ondragleave="onTileDragLeave(event)" ondrop="onTileDrop(event)">—</div>`;
     });
   });
+
   grid.innerHTML = html;
   renderTimetableLegend(plan, emojiFor);
   renderBulkBar();
+}
+
+/* =========================================================================
+   DRAG-TO-EXTEND
+   Teachers grab the bottom-edge handle of a lesson tile and drag down to
+   absorb empty slots below (or up to release them). Quantises to whole-slot
+   increments. Extension is blocked by: breaks, pinned slots, other lessons,
+   end of the school day. Span is stored per-lesson as `lesson.spanSlots`
+   (default 1); `lesson.minutes` stays in sync as the sum of absorbed slot
+   lengths so existing drag-swap and time-audit continue to work.
+   ========================================================================= */
+const ResizeState = { lessonId: null, startY: 0, baseSpan: 1, maxSpan: 1, tile: null, slotHeight: 60, currentSpan: 1, prevDraggable: null };
+
+function startResize(evt, lessonId) {
+  // Touch event or mouse event.
+  const point = evt.touches ? evt.touches[0] : evt;
+  evt.preventDefault();
+  evt.stopPropagation();
+  const plan = currentPlan();
+  if (!plan) return;
+  const lesson = plan.lessons.find(l => l.id === lessonId);
+  if (!lesson || lesson.fixed) return;
+  const slots = plan.timetable || TIMETABLE_SLOTS;
+  const tile = document.querySelector(`.lesson-tile[data-lesson-id="${lessonId}"]`);
+  if (!tile) return;
+
+  // Compute max span: count consecutive non-break, non-occupied slots after
+  // this lesson on the same day.
+  let maxSpan = 1;
+  for (let k = 1; k + lesson.slotIdx < slots.length; k++) {
+    const next = slots[lesson.slotIdx + k];
+    if (!next || next.break) break;
+    const blocking = (plan.lessons || []).find(l =>
+      l.id !== lessonId && l.day === lesson.day && l.slotIdx === lesson.slotIdx + k);
+    if (blocking) break;
+    maxSpan = k + 1;
+  }
+
+  // Measure slot row height from the DOM so drag delta maps cleanly to slots.
+  const timeCells = document.querySelectorAll('.tt-time');
+  let slotHeight = 60;
+  if (timeCells.length >= 2) {
+    const a = timeCells[0].getBoundingClientRect();
+    const b = timeCells[1].getBoundingClientRect();
+    slotHeight = Math.max(30, b.top - a.top);
+  } else if (timeCells.length === 1) {
+    slotHeight = Math.max(30, timeCells[0].getBoundingClientRect().height + 4);
+  }
+
+  ResizeState.lessonId = lessonId;
+  ResizeState.startY = point.clientY;
+  ResizeState.baseSpan = Math.max(1, lesson.spanSlots || 1);
+  ResizeState.currentSpan = ResizeState.baseSpan;
+  ResizeState.maxSpan = maxSpan;
+  ResizeState.tile = tile;
+  ResizeState.slotHeight = slotHeight;
+  // HTML5 drag on the parent tile would fire if we let it — suspend while resizing.
+  ResizeState.prevDraggable = tile.getAttribute('draggable');
+  tile.setAttribute('draggable', 'false');
+  tile.classList.add('resizing');
+  document.body.classList.add('resizing-lesson');
+  document.addEventListener('mousemove', onResizeMove);
+  document.addEventListener('mouseup', endResize);
+  document.addEventListener('touchmove', onResizeMove, { passive: false });
+  document.addEventListener('touchend', endResize);
+}
+
+function onResizeMove(evt) {
+  if (!ResizeState.lessonId) return;
+  evt.preventDefault();
+  const point = evt.touches ? evt.touches[0] : evt;
+  const dy = point.clientY - ResizeState.startY;
+  const delta = Math.round(dy / ResizeState.slotHeight);
+  const newSpan = Math.max(1, Math.min(ResizeState.maxSpan, ResizeState.baseSpan + delta));
+  if (newSpan === ResizeState.currentSpan) return;
+  ResizeState.currentSpan = newSpan;
+  if (ResizeState.tile) {
+    const m = (ResizeState.tile.style.gridRow || '').match(/^(\d+)\s*\/\s*span\s+\d+/);
+    if (m) ResizeState.tile.style.gridRow = `${m[1]} / span ${newSpan}`;
+  }
+}
+
+function endResize() {
+  if (!ResizeState.lessonId) return;
+  const plan = currentPlan();
+  const lesson = plan && plan.lessons.find(l => l.id === ResizeState.lessonId);
+  const newSpan = ResizeState.currentSpan || 1;
+  if (lesson && newSpan !== (lesson.spanSlots || 1)) {
+    const slots = plan.timetable || TIMETABLE_SLOTS;
+    lesson.spanSlots = newSpan;
+    let total = 0;
+    for (let k = 0; k < newSpan; k++) total += (slots[lesson.slotIdx + k]?.length) || 0;
+    if (total > 0) lesson.minutes = total;
+    save();
+    try {
+      logEvent('lesson_resize', { planId: plan.id, lessonId: lesson.id,
+        subject: lesson.subject, day: lesson.day, slotIdx: lesson.slotIdx,
+        spanSlots: newSpan, minutes: lesson.minutes });
+    } catch(e) {}
+    toast(`${subjectLabel(lesson.subject)} · ${lesson.minutes} min`);
+  }
+  if (ResizeState.tile) {
+    ResizeState.tile.classList.remove('resizing');
+    // Restore draggable so drag-swap works next time.
+    if (ResizeState.prevDraggable === null) ResizeState.tile.removeAttribute('draggable');
+    else ResizeState.tile.setAttribute('draggable', ResizeState.prevDraggable);
+  }
+  document.body.classList.remove('resizing-lesson');
+  document.removeEventListener('mousemove', onResizeMove);
+  document.removeEventListener('mouseup', endResize);
+  document.removeEventListener('touchmove', onResizeMove);
+  document.removeEventListener('touchend', endResize);
+  ResizeState.lessonId = null;
+  ResizeState.tile = null;
+  ResizeState.prevDraggable = null;
+  if (plan) renderTimetable(plan);
 }
 
 // ============================================================================
@@ -7097,7 +7452,7 @@ function renderTimetable(plan) {
 // stuff a 50-min lesson into a 30-min slot. Empty slots of matching length are
 // also valid drop targets (moves the lesson rather than swapping).
 // ============================================================================
-const DragState = { srcId: null, srcMinutes: 0 };
+const DragState = { srcId: null, srcMinutes: 0, srcSpan: 1 };
 
 function onTileDragStart(evt, lessonId) {
   const plan = currentPlan();
@@ -7106,15 +7461,21 @@ function onTileDragStart(evt, lessonId) {
   if (!lesson || lesson.fixed) { evt.preventDefault(); return; }
   DragState.srcId = lessonId;
   DragState.srcMinutes = lesson.minutes;
+  DragState.srcSpan = lesson.spanSlots || 1;
   evt.dataTransfer.effectAllowed = 'move';
   try { evt.dataTransfer.setData('text/plain', lessonId); } catch(e) {}
   evt.currentTarget.classList.add('drag-src');
   document.body.classList.add('dragging-lesson');
-  // Paint every same-length, non-pinned tile as a drop target.
+  // Paint every same-length, same-span, non-pinned tile as a drop target.
+  // Requiring matching span keeps spanning-lesson swaps coherent — you can't
+  // drop a 2-slot lesson into a 1-slot hole.
+  const srcSpan = lesson.spanSlots || 1;
   document.querySelectorAll('.lesson-tile[data-minutes]').forEach(el => {
     if (el === evt.currentTarget) return;
     const isPinned = el.classList.contains('fixed-pinned');
-    const ok = !isPinned && Number(el.dataset.minutes) === lesson.minutes;
+    const sameMin = Number(el.dataset.minutes) === lesson.minutes;
+    const sameSpan = Number(el.dataset.span || 1) === srcSpan;
+    const ok = !isPinned && sameMin && sameSpan;
     el.classList.add(ok ? 'drop-ok' : 'drop-blocked');
   });
 }
@@ -7127,6 +7488,7 @@ function onTileDragEnd(evt) {
   });
   DragState.srcId = null;
   DragState.srcMinutes = 0;
+  DragState.srcSpan = 1;
 }
 
 function onTileDragOver(evt) {
@@ -7136,6 +7498,8 @@ function onTileDragOver(evt) {
   if (tgt.classList.contains('fixed-pinned')) return;
   const tgtMin = Number(tgt.dataset.minutes);
   if (tgtMin !== DragState.srcMinutes) return;
+  const tgtSpan = Number(tgt.dataset.span || 1);
+  if (tgtSpan !== (DragState.srcSpan || 1)) return;
   evt.preventDefault(); // allows drop
   evt.dataTransfer.dropEffect = 'move';
   tgt.classList.add('drop-hover');
@@ -7209,8 +7573,9 @@ function renderTimetableLegend(plan, emojiFor) {
 
 function subjectColor(id) {
   // Map subject id → CSS modifier (ls-english, ls-gaeilge, ls-maths, ls-sese,
-  //   ls-pe, ls-arts, ls-other). Subjects outside the core six collapse to 'other'.
-  const known = ['english','gaeilge','maths','sese','pe','arts'];
+  //   ls-pe, ls-arts, ls-sphe, ls-religion, ls-other). Every core DES subject
+  //   now has its own hue; anything else collapses to 'other'.
+  const known = ['english','gaeilge','maths','sese','pe','arts','sphe','religion'];
   return known.includes(id) ? id : 'other';
 }
 function subjectChipClass(id) {
@@ -7223,8 +7588,8 @@ function subjectChipClass(id) {
     sese:     'chip-accent',
     pe:       'chip-purple',
     arts:     'chip-pink',
-    sphe:     'chip-blue',
-    religion: 'chip-other',
+    sphe:     'chip-sphe',
+    religion: 'chip-religion',
   };
   return map[id] || '';
 }
@@ -7563,7 +7928,103 @@ function renderLessonPlan(l) {
     <div class="side-card">
       <h4>Theme thread</h4>
       <p style="font-size:13px; margin:0;">${escape(l.theme)}</p>
+    </div>
+    ${renderFeedbackCard(l)}`;
+}
+
+/* =========================================================================
+   LESSON FEEDBACK
+   Captured feedback lands in the learning log (`seachtain.learning.v1`)
+   as `lesson_feedback` events. The shape is deliberately backend-ready so
+   it can ship straight to a server once one exists.
+   ========================================================================= */
+function renderFeedbackCard(l) {
+  const existing = l.feedback;
+  if (existing && !existing.editing) {
+    return `<div class="side-card feedback-card">
+      <h4>Your feedback</h4>
+      <div class="fb-submitted">
+        <span>${existing.rating === 'up' ? '👍 Worked well' : existing.rating === 'mid' ? '🤔 Needed tweaks' : '👎 Off the mark'}${existing.tags?.length ? ' · ' + existing.tags.map(escape).join(', ') : ''}</span>
+        <button class="btn btn-ghost btn-sm" onclick="editFeedback('${l.id}')" style="padding:4px 10px; font-size:12px;">Edit</button>
+      </div>
+      ${existing.comment ? `<p style="font-size:12px; color: var(--ink-soft); margin-top:8px; margin-bottom:0;">"${escape(existing.comment)}"</p>` : ''}
     </div>`;
+  }
+  const r = existing?.rating || '';
+  const tags = existing?.tags || [];
+  const comment = existing?.comment || '';
+  const tagSet = ['Too long for class', 'Too short', 'Not age-appropriate', 'Pitched well', 'Pupils engaged', 'Vocab off', 'Materials wrong', 'Great diff'];
+  return `<div class="side-card feedback-card">
+    <h4>How did it go?</h4>
+    <div class="fc-hint">A quick take helps Seachtain generate better next time.</div>
+    <div class="feedback-chips">
+      <button class="fb-chip ${r === 'up' ? 'active' : ''}" data-rating="up" onclick="setFeedbackRating('${l.id}', 'up')">👍 Worked well</button>
+      <button class="fb-chip ${r === 'mid' ? 'active' : ''}" data-rating="mid" onclick="setFeedbackRating('${l.id}', 'mid')">🤔 Needed tweaks</button>
+      <button class="fb-chip ${r === 'down' ? 'active' : ''}" data-rating="down" onclick="setFeedbackRating('${l.id}', 'down')">👎 Off the mark</button>
+    </div>
+    <div class="fb-tags">
+      ${tagSet.map(t => `<button class="fb-tag ${tags.includes(t) ? 'active' : ''}" onclick="toggleFeedbackTag('${l.id}', '${escape(t)}')">${escape(t)}</button>`).join('')}
+    </div>
+    <textarea id="fb-comment-${l.id}" placeholder="What would've made this land better? (optional)">${escape(comment)}</textarea>
+    <div style="display:flex; gap:8px; justify-content:flex-end;">
+      <button class="btn btn-primary btn-sm" onclick="submitFeedback('${l.id}')">Submit</button>
+    </div>
+  </div>`;
+}
+
+function getLessonById(lessonId) {
+  for (const p of State.plans) {
+    const l = (p.lessons || []).find(x => x.id === lessonId);
+    if (l) return { plan: p, lesson: l };
+  }
+  return null;
+}
+
+function setFeedbackRating(lessonId, rating) {
+  const hit = getLessonById(lessonId);
+  if (!hit) return;
+  hit.lesson.feedback = { ...(hit.lesson.feedback || {}), rating, editing: true };
+  renderLessonPlan(hit.lesson);
+}
+
+function toggleFeedbackTag(lessonId, tag) {
+  const hit = getLessonById(lessonId);
+  if (!hit) return;
+  const fb = hit.lesson.feedback = { ...(hit.lesson.feedback || {}), editing: true };
+  const tags = new Set(fb.tags || []);
+  if (tags.has(tag)) tags.delete(tag); else tags.add(tag);
+  fb.tags = [...tags];
+  renderLessonPlan(hit.lesson);
+}
+
+function submitFeedback(lessonId) {
+  const hit = getLessonById(lessonId);
+  if (!hit) return;
+  const fb = hit.lesson.feedback || {};
+  const commentEl = document.getElementById('fb-comment-' + lessonId);
+  fb.comment = commentEl ? commentEl.value.trim() : '';
+  if (!fb.rating) { toast('Pick a rating first'); return; }
+  fb.at = new Date().toISOString();
+  fb.editing = false;
+  hit.lesson.feedback = fb;
+  save();
+  try {
+    logEvent('lesson_feedback', {
+      planId: hit.plan.id, lessonId, subject: hit.lesson.subject,
+      grade: hit.plan.grade || hit.plan.gradeId, day: hit.lesson.day,
+      minutes: hit.lesson.minutes, rating: fb.rating, tags: fb.tags || [],
+      comment: fb.comment || ''
+    });
+  } catch(e) {}
+  toast('Thanks — feedback saved to the learning log.');
+  renderLessonPlan(hit.lesson);
+}
+
+function editFeedback(lessonId) {
+  const hit = getLessonById(lessonId);
+  if (!hit || !hit.lesson.feedback) return;
+  hit.lesson.feedback.editing = true;
+  renderLessonPlan(hit.lesson);
 }
 
 function renderLessonGuide(l) {
@@ -8230,8 +8691,18 @@ function renderLibrary() {
   }
   const filter = document.querySelector('.lib-filter.active')?.dataset.lfilter || 'all';
   let filtered = State.plans;
+  // Archived plans only show when the Archived filter is active — they
+  // stay out of the way otherwise.
+  if (filter === 'archived') filtered = filtered.filter(p => p.archived);
+  else filtered = filtered.filter(p => !p.archived);
   if (filter === 'theme') filtered = filtered.filter(p => p.theme && p.theme !== 'none');
   if (filter === 'standard') filtered = filtered.filter(p => !p.theme || p.theme === 'none');
+  if (!filtered.length) {
+    grid.innerHTML = filter === 'archived'
+      ? `<div class="empty" style="grid-column: 1 / -1; text-align:center; padding: 40px; color: var(--ink-soft);"><div style="font-size: 32px; margin-bottom: 8px;">🗄</div><h3>No archived plans</h3><p style="font-size:13px;">When you archive a plan it moves here — restore it anytime.</p></div>`
+      : `<div class="empty" style="grid-column: 1 / -1; text-align:center; padding: 40px; color: var(--ink-soft);"><div style="font-size: 32px; margin-bottom: 8px;">📚</div><h3>Nothing here yet</h3><p style="font-size:13px;">Plans you create will show up under this filter.</p></div>`;
+    return;
+  }
   grid.innerHTML = filtered.map(renderPlanCard).reverse().join('');
 }
 document.getElementById('lib-filters').addEventListener('click', (e) => {
@@ -8275,6 +8746,108 @@ function toast(msg) {
   window._toastT = setTimeout(() => el.classList.remove('show'), 2000);
 }
 function closeModal() { document.getElementById('modal').classList.remove('show'); }
+
+/* Generic confirm dialog — reuses the existing modal shell with a custom
+   title/body/CTA. Pass `danger:true` to style the primary button red. */
+function confirmAction({ title, body, okLabel = 'Confirm', danger = false, onConfirm }) {
+  const m = document.getElementById('modal');
+  document.getElementById('modal-title').textContent = title || 'Confirm';
+  document.getElementById('modal-body').innerHTML = body || '';
+  const ok = document.getElementById('modal-ok');
+  ok.textContent = okLabel;
+  ok.className = 'btn ' + (danger ? 'btn-danger' : 'btn-primary');
+  ok.onclick = () => { try { onConfirm && onConfirm(); } finally { closeModal(); ok.onclick = null; ok.className = 'btn btn-primary'; } };
+  m.classList.add('show');
+}
+
+/* =========================================================================
+   PLAN MANAGEMENT — delete & archive
+   ========================================================================= */
+function archivePlan(planId) {
+  const p = State.plans.find(x => x.id === planId);
+  if (!p) return;
+  p.archived = true;
+  p.archivedAt = new Date().toISOString();
+  save();
+  toast(`Archived "${p.title}" — find it under Archived in My plans.`);
+  if (State.view === 'plan' && State.currentPlanId === planId) goto('dashboard');
+  else if (State.view === 'dashboard') renderDashboard();
+  else if (State.view === 'library') renderLibrary();
+}
+
+function unarchivePlan(planId) {
+  const p = State.plans.find(x => x.id === planId);
+  if (!p) return;
+  p.archived = false;
+  delete p.archivedAt;
+  save();
+  toast(`Restored "${p.title}".`);
+  if (State.view === 'library') renderLibrary();
+  else if (State.view === 'dashboard') renderDashboard();
+}
+
+function deletePlan(planId) {
+  const p = State.plans.find(x => x.id === planId);
+  if (!p) return;
+  confirmAction({
+    title: 'Delete this plan?',
+    body: `<p style="margin:0;"><strong>"${escape(p.title)}"</strong> (week of ${escape(p.weekDateReadable || '')}) will be permanently removed. This can't be undone.</p>`,
+    okLabel: 'Delete plan',
+    danger: true,
+    onConfirm: () => {
+      State.plans = State.plans.filter(x => x.id !== planId);
+      save();
+      toast('Plan deleted.');
+      if (State.view === 'plan' && State.currentPlanId === planId) goto('dashboard');
+      else if (State.view === 'dashboard') renderDashboard();
+      else if (State.view === 'library') renderLibrary();
+    }
+  });
+}
+
+function planKebabMenu(evt, planId) {
+  evt.stopPropagation();
+  evt.preventDefault();
+  const existing = document.querySelector('.plan-kebab-menu');
+  if (existing) existing.remove();
+  const p = State.plans.find(x => x.id === planId);
+  if (!p) return;
+  const btn = evt.currentTarget;
+  const rect = btn.getBoundingClientRect();
+  const menu = document.createElement('div');
+  menu.className = 'plan-kebab-menu';
+  menu.style.cssText = `position: fixed; top: ${rect.bottom + 6}px; left: ${rect.right - 180}px; z-index: 1000;`;
+  const items = [];
+  items.push(`<button class="pk-item" onclick="event.stopPropagation(); openPlan('${planId}'); closeKebab();">Open</button>`);
+  if (p.archived) {
+    items.push(`<button class="pk-item" onclick="event.stopPropagation(); unarchivePlan('${planId}'); closeKebab();">Restore from archive</button>`);
+  } else {
+    items.push(`<button class="pk-item" onclick="event.stopPropagation(); archivePlan('${planId}'); closeKebab();">Archive</button>`);
+  }
+  items.push(`<button class="pk-item pk-danger" onclick="event.stopPropagation(); closeKebab(); deletePlan('${planId}');">Delete plan</button>`);
+  menu.innerHTML = items.join('');
+  document.body.appendChild(menu);
+  const dismiss = () => { closeKebab(); };
+  setTimeout(() => document.addEventListener('click', dismiss, { once: true }), 0);
+}
+function closeKebab() {
+  const m = document.querySelector('.plan-kebab-menu');
+  if (m) m.remove();
+}
+function archiveCurrentPlan() {
+  const p = currentPlan();
+  if (!p) return;
+  confirmAction({
+    title: p.archived ? 'Restore this plan?' : 'Archive this plan?',
+    body: `<p style="margin:0;">"${escape(p.title)}" will ${p.archived ? 'be restored to the dashboard.' : 'be hidden from the dashboard. You can restore it from My plans → Archived.'}</p>`,
+    okLabel: p.archived ? 'Restore' : 'Archive',
+    onConfirm: () => (p.archived ? unarchivePlan(p.id) : archivePlan(p.id))
+  });
+}
+function deleteCurrentPlan() {
+  const p = currentPlan();
+  if (p) deletePlan(p.id);
+}
 
 /* =========================================================================
    BOOT
