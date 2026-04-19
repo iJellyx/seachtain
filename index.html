@@ -310,6 +310,34 @@
     margin-top: 10px; padding: 8px 12px; background: var(--primary-soft);
     border-radius: 8px; font-size: 12px; line-height: 1.4;
   }
+  .insights-rec { margin-top: 10px; display: flex; flex-direction: column; gap: 6px; }
+  .insights-rec .ir-tip {
+    padding: 8px 12px; background: var(--gold-soft); color: #5c4a12;
+    border-radius: 8px; font-size: 12px; line-height: 1.45;
+  }
+  .fb-summary { margin: 8px 0 12px; }
+  .fb-summary-label { font-size: 11px; color: var(--ink-faint); letter-spacing: 0.04em; text-transform: uppercase; margin-bottom: 6px; }
+  .fb-bar { display: flex; height: 28px; border-radius: 8px; overflow: hidden; background: var(--surface-alt); font-size: 11px; font-weight: 600; }
+  .fb-bar .fb-seg { display: flex; align-items: center; justify-content: center; gap: 4px; min-width: 28px; padding: 0 6px; }
+  .fb-bar .fb-up   { background: #D7E8DB; color: #1d4a30; }
+  .fb-bar .fb-mid  { background: #F6E4B8; color: #6b4e0a; }
+  .fb-bar .fb-down { background: #F5D9CB; color: #7a2d1a; }
+
+  /* Weekly prep progress strip — sits on the dashboard to show how much of
+     the target week has been reviewed. Designed as an encouraging nudge,
+     never a gate. */
+  .prep-progress {
+    background: var(--surface); border: 1px solid var(--line); border-radius: 14px;
+    padding: 16px 20px; margin-bottom: 18px; box-shadow: var(--shadow-sm);
+  }
+  .prep-progress .pp-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 14px; margin-bottom: 10px; }
+  .prep-progress .pp-label { font-size: 11px; color: var(--ink-faint); text-transform: uppercase; letter-spacing: 0.08em; font-weight: 600; }
+  .prep-progress .pp-title { font-family: 'Fraunces', serif; font-size: 16px; font-weight: 600; margin-top: 2px; }
+  .prep-progress .pp-stat { font-family: 'Fraunces', serif; font-size: 18px; color: var(--primary); font-variant-numeric: tabular-nums; }
+  .prep-progress .pp-stat strong { font-size: 22px; }
+  .prep-progress .pp-bar { height: 6px; border-radius: 3px; background: var(--surface-alt); overflow: hidden; }
+  .prep-progress .pp-fill { height: 100%; background: linear-gradient(90deg, var(--primary), #4a8a5f); transition: width 0.4s; }
+  .prep-progress .pp-hint { margin-top: 8px; font-size: 12px; color: var(--ink-soft); }
   .user-name { font-size: 13px; font-weight: 600; }
   .user-sub { font-size: 11px; color: var(--ink-faint); }
   .main { padding: 0 0 80px; max-width: 1200px; }
@@ -1215,6 +1243,45 @@
   }
   .coverage-strand.covered { background: #E4F0E6; color: #235438; font-weight: 600; }
 
+  /* Term long-view — horizontal grid of strand × week */
+  .coverage-tabs { display: flex; gap: 4px; margin-bottom: 18px; border-bottom: 1px solid var(--line); }
+  .cov-tab {
+    padding: 8px 14px; font-size: 13px; font-weight: 500;
+    color: var(--ink-soft); border-bottom: 2px solid transparent;
+    margin-bottom: -1px; cursor: pointer; background: none; border-left: none; border-top: none; border-right: none;
+  }
+  .cov-tab:hover { color: var(--ink); }
+  .cov-tab.active { color: var(--primary); border-bottom-color: var(--primary); font-weight: 600; }
+  .cv-summary-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 10px; }
+  .cv-summary-item { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; display: grid; grid-template-columns: 1fr auto; row-gap: 6px; font-size: 13px; }
+  .cv-summary-item strong { font-family: 'Fraunces', serif; font-variant-numeric: tabular-nums; }
+  .cv-summary-item .cv-bar { grid-column: 1 / -1; height: 5px; background: var(--surface-alt); border-radius: 3px; overflow: hidden; }
+  .cv-summary-item .cv-bar-fill { height: 100%; border-radius: 3px; transition: width 0.3s; }
+  /* use subject-tinted fill by borrowing the left-accent colour */
+  .cv-bar-fill.ls-english  { background: #3B6EA8; }
+  .cv-bar-fill.ls-gaeilge  { background: #2D5F3F; }
+  .cv-bar-fill.ls-maths    { background: #C48A1A; }
+  .cv-bar-fill.ls-sese     { background: #C85A3E; }
+  .cv-bar-fill.ls-pe       { background: #8A5CA0; }
+  .cv-bar-fill.ls-arts     { background: #C0566A; }
+  .cv-bar-fill.ls-sphe     { background: #3E8F83; }
+  .cv-bar-fill.ls-religion { background: #7A5E8C; }
+  .cv-bar-fill.ls-other    { background: #A89B8E; }
+
+  .cv-term-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); }
+  .cv-term-table { border-collapse: collapse; width: 100%; font-size: 12px; }
+  .cv-term-table th, .cv-term-table td { border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); padding: 6px 8px; text-align: center; white-space: nowrap; }
+  .cv-term-table th { background: var(--surface-alt); font-weight: 600; color: var(--ink-soft); text-transform: uppercase; font-size: 10px; letter-spacing: 0.05em; }
+  .cv-term-table th.cv-wk.current { background: var(--primary-soft); color: var(--primary); }
+  .cv-term-table th.cv-strand-head { text-align: left; min-width: 170px; position: sticky; left: 0; background: var(--surface-alt); z-index: 2; }
+  .cv-term-table td.cv-strand { text-align: left; font-size: 12px; color: var(--ink); padding-left: 14px; position: sticky; left: 0; background: var(--surface); z-index: 1; }
+  .cv-term-table tr.cv-subject-row td { background: linear-gradient(90deg, var(--surface-alt), transparent); font-family: 'Fraunces', serif; font-size: 13px; font-weight: 600; text-align: left; padding: 10px 14px; border-bottom: 1px solid var(--line-strong); }
+  .cv-term-table tr.cv-subject-row .cv-subj-icon { font-family: Inter, sans-serif; font-size: 16px; margin-right: 6px; }
+  .cv-term-table td.cv-cell { min-width: 36px; }
+  .cv-term-table td.cv-hit { font-weight: 700; }
+  .cv-term-table td.cv-miss { color: var(--line-strong); }
+  .cv-term-table td.cv-none { background: repeating-linear-gradient(45deg, transparent 0 4px, #F2EADB 4px 8px); }
+
   /* ===== Library ===== */
   .lib-filters { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
   .lib-filter {
@@ -1360,6 +1427,8 @@
 
       <div id="now-hero-mount" class="no-print"></div>
 
+      <div id="prep-progress-strip" class="no-print"></div>
+
       <div class="stat-grid">
         <div class="stat card">
           <div class="stat-label">Plans generated</div>
@@ -1433,6 +1502,18 @@
           <div id="profile-hint-step1" class="callout callout-primary" style="margin-bottom: 18px;">
             <h4>Using your profile</h4>
             <p style="margin:0; font-size:14px;">We've pre-filled this step from your <a onclick="goto('class')" style="cursor:pointer;">profile</a>. Tweak it just for this week if you'd like — your profile won't change.</p>
+          </div>
+          <div id="copy-last-week-card" class="card" style="margin-bottom: 18px; display: none; background: var(--primary-soft); border-color: var(--primary); border-left: 4px solid var(--primary);">
+            <div style="display:flex; justify-content: space-between; align-items: center; gap: 14px; flex-wrap: wrap;">
+              <div>
+                <h4 style="font-family: 'Fraunces', serif; font-size: 15px; margin: 0 0 4px;">Use last week as a starting point?</h4>
+                <div id="copy-last-week-sub" style="font-size: 13px; color: var(--ink-soft); margin: 0;">—</div>
+              </div>
+              <div style="display:flex; gap:6px;">
+                <button class="btn btn-primary btn-sm" onclick="copyLastWeek()">Yes, copy last week →</button>
+                <button class="btn btn-ghost btn-sm" onclick="dismissCopyLastWeek()">No thanks</button>
+              </div>
+            </div>
           </div>
           <div class="card card-lg">
             <h2 style="margin-bottom: 4px;">Your class this week</h2>
@@ -3653,9 +3734,52 @@ function renderDashboard() {
 
   renderPrepRitual();
   renderNowHero();
+  renderPrepProgress();
   renderTodayPanel();
   renderWeekStrip();
   renderInsightsPanel();
+}
+
+// Weekly prep progress — shows how many lessons for the target week have
+// been previewed or edited. Encourages review without being a gate.
+function renderPrepProgress() {
+  const el = document.getElementById('prep-progress-strip');
+  if (!el) return;
+  // Pick the plan to measure: "this week" if it exists, else the closest
+  // upcoming plan.
+  const now = new Date();
+  const todayPlan = findPlanForDate(now);
+  const plan = todayPlan || (() => {
+    const upcoming = State.plans
+      .filter(p => !p.archived && p.weekDate)
+      .sort((a, b) => a.weekDate.localeCompare(b.weekDate))
+      .find(p => new Date(p.weekDate) >= now);
+    return upcoming || null;
+  })();
+  if (!plan || !plan.lessons?.length) { el.innerHTML = ''; return; }
+  const total = plan.lessons.length;
+  const reviewed = plan.lessons.filter(l => l.previewedAt || l.teacherOverride || l.feedback).length;
+  const pct = Math.min(100, Math.round((reviewed / total) * 100));
+  const isThisWeek = plan === todayPlan;
+  const label = isThisWeek ? "This week's prep" : "Next week's prep";
+  const hint = reviewed === 0
+    ? `Tap any lesson to start previewing.`
+    : reviewed === total
+      ? `Every lesson previewed — nicely prepped.`
+      : `${reviewed} of ${total} lessons previewed.`;
+  el.innerHTML = `
+    <div class="prep-progress">
+      <div class="pp-head">
+        <div>
+          <div class="pp-label">${label}</div>
+          <div class="pp-title">${escape(plan.title)}</div>
+        </div>
+        <div class="pp-stat"><strong>${reviewed}</strong> / ${total}</div>
+      </div>
+      <div class="pp-bar"><div class="pp-fill" style="width:${pct}%"></div></div>
+      <div class="pp-hint">${hint}</div>
+    </div>
+  `;
 }
 
 /* =========================================================================
@@ -3938,6 +4062,7 @@ function renderInsightsPanel() {
   const counts = {};
   const subjectEdits = {};
   const recent = [];
+  const feedback = []; // feedback events get their own bucket
   const thirtyDaysAgo = Date.now() - 30 * 24 * 60 * 60 * 1000;
   for (const e of log) {
     counts[e.type] = (counts[e.type] || 0) + 1;
@@ -3945,6 +4070,7 @@ function renderInsightsPanel() {
       subjectEdits[e.meta.subject] = (subjectEdits[e.meta.subject] || 0) + 1;
     }
     if (new Date(e.at).getTime() >= thirtyDaysAgo) recent.push(e);
+    if (e.type === 'lesson_feedback') feedback.push(e);
   }
   const mostEditedSubject = Object.keys(subjectEdits).sort((a,b) => subjectEdits[b] - subjectEdits[a])[0];
   const mostEditedLabel = mostEditedSubject ? (subjectLabel(mostEditedSubject) || mostEditedSubject) : null;
@@ -3952,17 +4078,69 @@ function renderInsightsPanel() {
     { label: 'Block swaps', value: counts.block_swap || 0, icon: '↔️' },
     { label: 'Teacher overrides', value: counts.lesson_override || 0, icon: '✍️' },
     { label: 'Regenerations', value: counts.lesson_regenerate || 0, icon: '🔄' },
-    { label: 'Plans generated', value: counts.plan_generated || 0, icon: '📅' },
+    { label: 'Lesson feedback', value: counts.lesson_feedback || 0, icon: '💬' },
   ];
+
+  // Build feedback summary with a rating breakdown + recommendations. The
+  // teacher's feedback should visibly shape what we do next — otherwise
+  // they stop giving it.
+  const ratingCounts = { up: 0, mid: 0, down: 0 };
+  const tagCounts = {};
+  const subjectRatings = {}; // sid → { up, mid, down }
+  feedback.forEach(ev => {
+    const r = ev.meta?.rating;
+    if (r && ratingCounts[r] != null) ratingCounts[r]++;
+    const sid = ev.meta?.subject;
+    if (sid) {
+      subjectRatings[sid] = subjectRatings[sid] || { up: 0, mid: 0, down: 0 };
+      if (r && subjectRatings[sid][r] != null) subjectRatings[sid][r]++;
+    }
+    (ev.meta?.tags || []).forEach(t => { tagCounts[t] = (tagCounts[t] || 0) + 1; });
+  });
+
+  // Recommendation: any subject rated "down" 2+ times?
+  const worrySubject = Object.entries(subjectRatings)
+    .filter(([,r]) => r.down >= 2)
+    .sort(([,a],[,b]) => b.down - a.down)[0];
+  const topTag = Object.entries(tagCounts).sort((a,b) => b[1] - a[1])[0];
+  const recHtml = (() => {
+    if (!feedback.length) return '';
+    const tips = [];
+    if (worrySubject) {
+      const [sid, r] = worrySubject;
+      tips.push(`<strong>${escape(subjectLabel(sid))}</strong> flagged <strong>${r.down}×</strong> as off the mark — try regenerating with a different pitch.`);
+    }
+    if (topTag && topTag[1] >= 2) {
+      tips.push(`You've used <strong>"${escape(topTag[0])}"</strong> ${topTag[1]}× — the regenerator will factor this in.`);
+    }
+    if (ratingCounts.up >= 3 && ratingCounts.down === 0) {
+      tips.push(`All green so far — ${ratingCounts.up} lessons landed well. Nice going.`);
+    }
+    return tips.length ? `<div class="insights-rec">${tips.map(t => `<div class="ir-tip">💡 ${t}</div>`).join('')}</div>` : '';
+  })();
+
+  const total = ratingCounts.up + ratingCounts.mid + ratingCounts.down;
+  const feedbackBarHtml = total ? `
+    <div class="fb-summary">
+      <div class="fb-summary-label">Lesson feedback ${total > 0 ? `· ${total} rated` : ''}</div>
+      <div class="fb-bar">
+        ${ratingCounts.up   ? `<div class="fb-seg fb-up"   style="flex: ${ratingCounts.up};"   title="${ratingCounts.up} worked well">👍 ${ratingCounts.up}</div>` : ''}
+        ${ratingCounts.mid  ? `<div class="fb-seg fb-mid"  style="flex: ${ratingCounts.mid};"  title="${ratingCounts.mid} needed tweaks">🤔 ${ratingCounts.mid}</div>` : ''}
+        ${ratingCounts.down ? `<div class="fb-seg fb-down" style="flex: ${ratingCounts.down};" title="${ratingCounts.down} off the mark">👎 ${ratingCounts.down}</div>` : ''}
+      </div>
+    </div>` : '';
+
   host.innerHTML = `
     <div class="today-head"><h3>Your patterns</h3><span class="today-badge">${recent.length} this month</span></div>
-    <div class="today-date">Learned from your edits · stays on this device</div>
+    <div class="today-date">Learned from your edits & feedback · stays on this device</div>
+    ${feedbackBarHtml}
     <div class="insights-rows">
       ${rows.map(r => `<div class="insights-row"><span class="ir-icon">${r.icon}</span><span class="ir-label">${r.label}</span><span class="ir-val">${r.value}</span></div>`).join('')}
     </div>
+    ${recHtml}
     ${mostEditedLabel ? `<div class="insights-hint">Most overridden: <strong>${escape(mostEditedLabel)}</strong>. Next drafts will stay closer to your style here.</div>` : ''}
-    <div class="today-mini-cta">
-      <button class="btn btn-ghost btn-sm" onclick="exportLearning()">Export log (JSON)</button>
+    <div class="today-mini-cta" style="display:flex; gap:8px; justify-content:center;">
+      <button class="btn btn-ghost btn-sm" onclick="exportLearning()">Export log</button>
       <button class="btn btn-ghost btn-sm" onclick="clearLearning()">Clear</button>
     </div>
   `;
@@ -4356,10 +4534,47 @@ function renderWizardStep() {
   document.getElementById('wizard-back').style.visibility = State.wizardStep === 1 ? 'hidden' : 'visible';
   document.getElementById('wizard-next').textContent = State.wizardStep === 4 ? 'Generate plan →' : 'Next →';
 
-  if (State.wizardStep === 1) renderGradeOptions();
+  if (State.wizardStep === 1) { renderGradeOptions(); renderCopyLastWeekCard(); }
   if (State.wizardStep === 2) renderThemeOptions();
   if (State.wizardStep === 3) renderSubjectRows();
   if (State.wizardStep === 4) renderReviewSummary();
+}
+
+// Surface a "copy last week" option if there's a prior plan to clone from.
+// Clones the previous plan's theme, fixed slots, and subject minute targets
+// into the draft so teachers don't retune from scratch each week.
+function lastUsablePlan() {
+  const candidates = State.plans
+    .filter(p => !p.archived && p.weekDate)
+    .sort((a, b) => (a.weekDate < b.weekDate ? 1 : -1));
+  return candidates[0] || null;
+}
+function renderCopyLastWeekCard() {
+  const card = document.getElementById('copy-last-week-card');
+  const sub = document.getElementById('copy-last-week-sub');
+  if (!card || !sub) return;
+  const prev = lastUsablePlan();
+  const dismissed = State.draft._copyLastDismissed;
+  if (!prev || dismissed) { card.style.display = 'none'; return; }
+  card.style.display = '';
+  sub.textContent = `Reuse "${prev.title}" (${prev.gradeName}, ${prev.lessons.length} lessons) as this week's draft — keeps your theme, fixed slots and subject minutes.`;
+}
+function copyLastWeek() {
+  const prev = lastUsablePlan();
+  if (!prev) return;
+  State.draft.grade = prev.grade || prev.gradeId || State.draft.grade;
+  State.draft.pupils = prev.pupils || State.draft.pupils;
+  State.draft.sen = prev.sen ?? State.draft.sen;
+  State.draft.medium = prev.medium || State.draft.medium;
+  if (prev.subjects) State.draft.subjects = { ...prev.subjects };
+  if (prev.theme) State.draft.theme = prev.theme;
+  State.draft._copyLastDismissed = true;
+  renderWizardStep();
+  toast(`Copied settings from "${prev.title}" — tweak anything before generating.`);
+}
+function dismissCopyLastWeek() {
+  State.draft._copyLastDismissed = true;
+  renderCopyLastWeekCard();
 }
 
 function wizardStep(delta) {
@@ -6596,6 +6811,39 @@ function currentPlan() {
 function openSubPack() {
   const plan = currentPlan();
   if (!plan) { toast('Open a plan first'); return; }
+  // Give the teacher a chance to add a personal note for the substitute —
+  // class-specific things only the regular teacher knows (allergies, seating,
+  // pupils going through something). Saved per plan.
+  if (!plan._subPackNotePromptedThisSession) {
+    plan._subPackNotePromptedThisSession = true;
+    openSubPackNoteModal(plan);
+    return;
+  }
+  renderSubPackDoc(plan);
+}
+
+function openSubPackNoteModal(plan) {
+  const existing = plan.subNote || '';
+  const m = document.getElementById('modal');
+  document.getElementById('modal-title').textContent = 'A note for the substitute';
+  document.getElementById('modal-body').innerHTML =
+    `<p style="margin: 0 0 10px; font-size: 13px; color: var(--ink-soft);">Anything the cover teacher should know — allergies, seating, pupils who need a gentle day, fire drill quirks. Kept with this plan.</p>
+     <textarea id="sub-pack-note-field" style="width:100%; min-height: 110px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 8px; font-family: inherit; font-size: 13px; resize: vertical;" placeholder="e.g. Niamh has a nut allergy. Oisín is fragile this week — pair him with Aoife. Fire drill: out the back door, line up on the yard.">${escape(existing)}</textarea>`;
+  const ok = document.getElementById('modal-ok');
+  ok.textContent = 'Open Sub Pack →';
+  ok.className = 'btn btn-primary';
+  ok.onclick = () => {
+    const field = document.getElementById('sub-pack-note-field');
+    plan.subNote = field ? field.value.trim() : '';
+    save();
+    closeModal();
+    ok.onclick = null;
+    renderSubPackDoc(plan);
+  };
+  m.classList.add('show');
+}
+
+function renderSubPackDoc(plan) {
   const P = State.profile || {};
   const slots = plan.timetable || TIMETABLE_SLOTS;
   const days = ['Monday','Tuesday','Wednesday','Thursday','Friday'];
@@ -6789,7 +7037,12 @@ function openSubPack() {
     </table>
   </div>
 
-  <div class="sp-section-card sp-notes">
+  ${plan.subNote ? `<div class="sp-section-card sp-notes">
+    <h4>From the class teacher</h4>
+    <p style="margin:0; white-space: pre-wrap;">${esc(plan.subNote)}</p>
+  </div>` : ''}
+
+  <div class="sp-section-card sp-notes" style="${plan.subNote ? 'background: #F4EEE2; border-left-color: #C48A1A;' : ''}">
     <h4>If something comes up</h4>
     <p style="margin:0;">If you need help: office / principal first. For behaviour issues, the class has agreed responses — check the staffroom folder. Fire drill: out the back door, line up on the yard. Pupils with medical notes are flagged in the school's care plan binder — please ask the office.</p>
   </div>
@@ -6908,35 +7161,43 @@ function renderTimeAudit(plan) {
 
 // === Coverage tracker ===
 // Groups lessons by subject and lists NCCA strands they touched (derived from lesson.strand or guide.curriculum).
-function renderCoverage(plan) {
-  const el = document.getElementById('coverage-content');
-  if (!el) return;
-  // All canonical strands per subject (abbreviated NCCA strands)
-  const STRANDS = {
-    english:  ['Oral language','Reading','Writing','Grammar/phonics'],
-    gaeilge:  ['Teanga ó bhéal','Léitheoireacht','Scríbhneoireacht','Gramadach'],
-    maths:    ['Number','Algebra','Shape & space','Measures','Data'],
-    sese:     ['History','Geography','Science'],
-    pe:       ['Athletics','Games','Gymnastics','Dance','Outdoor','Aquatics'],
-    arts:     ['Visual Art','Music','Drama'],
-    sphe:     ['Myself','Myself & others','Myself & wider world'],
-    religion: ['Christian story','Christian faith','Prayer'],
-  };
-  // Extract keywords from lesson guide.curriculum to mark strand as covered
+// Canonical NCCA 2023 Primary Curriculum Framework strands per subject —
+// abbreviated for on-screen display. Kept as a module-level constant so
+// the term long-view and the weekly coverage card share exactly the same
+// strand list.
+const COVERAGE_STRANDS = {
+  english:  ['Oral language','Reading','Writing','Grammar/phonics'],
+  gaeilge:  ['Teanga ó bhéal','Léitheoireacht','Scríbhneoireacht','Gramadach'],
+  maths:    ['Number','Algebra','Shape & space','Measures','Data'],
+  sese:     ['History','Geography','Science'],
+  pe:       ['Athletics','Games','Gymnastics','Dance','Outdoor','Aquatics'],
+  arts:     ['Visual Art','Music','Drama'],
+  sphe:     ['Myself','Myself & others','Myself & wider world'],
+  religion: ['Christian story','Christian faith','Prayer'],
+};
+
+function planStrandCoverage(plan) {
   const covered = {};
-  plan.lessons.forEach(l => {
+  (plan.lessons || []).forEach(l => {
     const subj = l.subject;
     covered[subj] = covered[subj] || new Set();
     const txt = ((l.guide?.curriculum || '') + ' ' + (l.strand || '') + ' ' + (l.title || '')).toLowerCase();
-    (STRANDS[subj] || []).forEach(s => {
+    (COVERAGE_STRANDS[subj] || []).forEach(s => {
       const k = s.split(' ')[0].toLowerCase().replace('/',' ').split(' ')[0];
       if (txt.includes(k) || txt.includes(s.toLowerCase())) covered[subj].add(s);
     });
   });
+  return covered;
+}
+
+function renderCoverage(plan) {
+  const el = document.getElementById('coverage-content');
+  if (!el) return;
+  const covered = planStrandCoverage(plan);
   const subjectsInPlan = Array.from(new Set(plan.lessons.map(l => l.subject)));
-  el.innerHTML = `<div class="coverage-grid">` + subjectsInPlan.map(sid => {
+  const weekCards = `<div class="coverage-grid">` + subjectsInPlan.map(sid => {
     const subj = SUBJECTS.find(s => s.id === sid) || { name: sid, icon: '📘' };
-    const strands = STRANDS[sid] || [];
+    const strands = COVERAGE_STRANDS[sid] || [];
     const cov = covered[sid] || new Set();
     return `
       <div class="coverage-card">
@@ -6947,10 +7208,131 @@ function renderCoverage(plan) {
         </div>
         <div style="font-size:11px; margin-top:8px; color: var(--ink-faint);">${cov.size} of ${strands.length} strand${strands.length===1?'':'s'} this week</div>
       </div>`;
-  }).join('') + `</div>
-  <div style="margin-top:18px; padding: 12px 16px; background: var(--surface-alt); border-radius: 10px; font-size: 13px; color: var(--ink-soft);">
-    <strong>How to use:</strong> Over a fortnight / month, aim for all strands to show at least one ✓. Fresh ticks each week means you're spiralling rather than repeating.
-  </div>`;
+  }).join('') + `</div>`;
+
+  el.innerHTML = `
+    <div class="coverage-tabs no-print">
+      <button class="cov-tab active" data-cov-view="week" onclick="setCoverageView('week')">This week</button>
+      <button class="cov-tab" data-cov-view="term" onclick="setCoverageView('term')">Term long-view</button>
+    </div>
+    <div id="coverage-body">${weekCards}
+      <div style="margin-top:18px; padding: 12px 16px; background: var(--surface-alt); border-radius: 10px; font-size: 13px; color: var(--ink-soft);">
+        <strong>How to use:</strong> Over a fortnight / month, aim for all strands to show at least one ✓. Fresh ticks each week means you're spiralling rather than repeating.
+      </div>
+    </div>
+  `;
+}
+
+function setCoverageView(view) {
+  document.querySelectorAll('.cov-tab').forEach(t => t.classList.toggle('active', t.dataset.covView === view));
+  const body = document.getElementById('coverage-body');
+  if (!body) return;
+  const plan = currentPlan();
+  if (!plan) return;
+  if (view === 'week') {
+    body.innerHTML = (() => {
+      const covered = planStrandCoverage(plan);
+      const subjectsInPlan = Array.from(new Set(plan.lessons.map(l => l.subject)));
+      return `<div class="coverage-grid">` + subjectsInPlan.map(sid => {
+        const subj = SUBJECTS.find(s => s.id === sid) || { name: sid, icon: '📘' };
+        const strands = COVERAGE_STRANDS[sid] || [];
+        const cov = covered[sid] || new Set();
+        return `
+          <div class="coverage-card">
+            <h5>${subj.icon} ${escape(subj.name)}</h5>
+            <div class="coverage-strands">
+              ${strands.map(s => `<span class="coverage-strand ${cov.has(s) ? 'covered' : ''}">${cov.has(s) ? '✓ ' : ''}${escape(s)}</span>`).join('')}
+              ${strands.length === 0 ? '<em>No canonical strands defined for this subject.</em>' : ''}
+            </div>
+            <div style="font-size:11px; margin-top:8px; color: var(--ink-faint);">${cov.size} of ${strands.length} strand${strands.length===1?'':'s'} this week</div>
+          </div>`;
+      }).join('') + `</div>
+      <div style="margin-top:18px; padding: 12px 16px; background: var(--surface-alt); border-radius: 10px; font-size: 13px; color: var(--ink-soft);">
+        <strong>How to use:</strong> Over a fortnight / month, aim for all strands to show at least one ✓. Fresh ticks each week means you're spiralling rather than repeating.
+      </div>`;
+    })();
+  } else {
+    body.innerHTML = renderTermCoverage(plan);
+  }
+}
+
+// Term long-view — a 12-week horizontal grid showing which strands were
+// covered in each weekly plan. Gives teachers the "am I spiralling across
+// the term?" view their Cúntas Míosúil depends on.
+function renderTermCoverage(currentPlanRef) {
+  // Pick a 12-week window ending at the current plan's week (or today's).
+  const anchor = currentPlanRef?.weekDate ? new Date(currentPlanRef.weekDate) : mondayOf(new Date());
+  const weeks = [];
+  for (let i = -8; i <= 3; i++) {
+    const d = new Date(anchor);
+    d.setDate(d.getDate() + i * 7);
+    weeks.push(ymd(d));
+  }
+
+  // Map weekYmd → plan (first non-archived match).
+  const planByWeek = {};
+  for (const p of State.plans) {
+    if (p.archived || !p.weekDate) continue;
+    if (!planByWeek[p.weekDate]) planByWeek[p.weekDate] = p;
+  }
+
+  const subjects = Object.keys(COVERAGE_STRANDS);
+  const headerCells = weeks.map(w => {
+    const d = new Date(w);
+    const label = d.toLocaleDateString('en-IE', { day: 'numeric', month: 'short' });
+    const isCurrent = currentPlanRef && currentPlanRef.weekDate === w;
+    return `<th class="cv-wk ${isCurrent ? 'current' : ''}">${escape(label)}</th>`;
+  }).join('');
+
+  const subjectRows = subjects.map(sid => {
+    const subj = SUBJECTS.find(s => s.id === sid) || { name: sid, icon: '📘' };
+    const strands = COVERAGE_STRANDS[sid] || [];
+    const rows = strands.map(strand => {
+      const cells = weeks.map(w => {
+        const plan = planByWeek[w];
+        if (!plan) return `<td class="cv-cell cv-none"></td>`;
+        const covered = planStrandCoverage(plan);
+        const hit = (covered[sid] || new Set()).has(strand);
+        return `<td class="cv-cell ${hit ? 'cv-hit ls-' + subjectColor(sid) : 'cv-miss'}" title="${escape(plan.title)} · ${escape(plan.weekDateReadable || w)}">${hit ? '✓' : ''}</td>`;
+      }).join('');
+      return `<tr><td class="cv-strand">${escape(strand)}</td>${cells}</tr>`;
+    }).join('');
+    return `<tr class="cv-subject-row"><td colspan="${weeks.length + 1}"><span class="cv-subj-icon">${subj.icon}</span> ${escape(subj.name)}</td></tr>${rows}`;
+  }).join('');
+
+  // Compute a per-subject term completeness percentage — how many strands
+  // have at least one tick across the 12-week window.
+  const summary = subjects.map(sid => {
+    const strands = COVERAGE_STRANDS[sid] || [];
+    if (!strands.length) return '';
+    const covered = new Set();
+    weeks.forEach(w => {
+      const plan = planByWeek[w];
+      if (!plan) return;
+      const c = planStrandCoverage(plan)[sid];
+      if (c) c.forEach(x => covered.add(x));
+    });
+    const pct = Math.round((covered.size / strands.length) * 100);
+    const subj = SUBJECTS.find(s => s.id === sid) || { name: sid, icon: '📘' };
+    return `<div class="cv-summary-item"><span>${subj.icon} ${escape(subj.name)}</span><span><strong>${covered.size}/${strands.length}</strong> strands</span><div class="cv-bar"><div class="cv-bar-fill ls-${subjectColor(sid)}" style="width:${pct}%"></div></div></div>`;
+  }).join('');
+
+  const planCount = weeks.filter(w => planByWeek[w]).length;
+  return `
+    <div class="cv-summary-grid">${summary}</div>
+    <div style="margin: 18px 0 10px; font-size: 13px; color: var(--ink-soft);">
+      <strong>${planCount}</strong> plan${planCount === 1 ? '' : 's'} across this 12-week window. Hover any cell for the week's title.
+    </div>
+    <div class="cv-term-wrap">
+      <table class="cv-term-table">
+        <thead><tr><th class="cv-strand-head">Strand</th>${headerCells}</tr></thead>
+        <tbody>${subjectRows}</tbody>
+      </table>
+    </div>
+    <div style="margin-top:14px; padding: 12px 16px; background: var(--primary-soft); border-radius: 10px; font-size: 13px; color: var(--primary);">
+      <strong>Reading this grid:</strong> every row is a strand; every column is a week. Green-leaning coverage means you've threaded that strand through the term. Long gaps in a strand row are the first place to aim next.
+    </div>
+  `;
 }
 
 // === Parent note generator ===
@@ -7798,6 +8180,15 @@ function bulkPrint() {
    ========================================================================= */
 function openLesson(lessonId) {
   State.currentLessonId = lessonId;
+  // Mark lesson as previewed — drives the "weekly prep progress" strip on
+  // the dashboard so teachers see momentum toward next week.
+  const hit = getLessonById(lessonId);
+  if (hit) {
+    if (!hit.lesson.previewedAt) {
+      hit.lesson.previewedAt = new Date().toISOString();
+      save();
+    }
+  }
   goto('lesson');
 }
 
@@ -8647,6 +9038,27 @@ function regenerateLesson() {
     toast('This is your own lesson — regenerate isn\'t available while override is on.');
     return;
   }
+  // Warn if the teacher has already put work into this lesson. Regeneration
+  // today only swaps opening + plenary variants, but it'll wipe any inline
+  // edits they made to those fields — and worse once AI regenerate lands.
+  const hasEdits = !!l.edits || (typeof l.plan?.opening === 'string' && l.plan.opening !== l.plan._originalOpening && l.plan._originalOpening);
+  const hasFeedback = !!l.feedback?.rating;
+  if (hasEdits || hasFeedback) {
+    const reasons = [];
+    if (hasEdits) reasons.push('inline edits');
+    if (hasFeedback) reasons.push('submitted feedback');
+    confirmAction({
+      title: 'Regenerate this lesson?',
+      body: `<p style="margin:0 0 8px;">This lesson has <strong>${reasons.join(' and ')}</strong>.</p><p style="margin:0; font-size:13px; color: var(--ink-soft);">Regenerating will replace the opening and plenary with fresh variants. Your feedback stays in the learning log either way.</p>`,
+      okLabel: 'Regenerate anyway',
+      onConfirm: () => doRegenerateLesson(l),
+    });
+    return;
+  }
+  doRegenerateLesson(l);
+}
+
+function doRegenerateLesson(l) {
   const newOpening = OPENING_VARIANTS[Math.floor(Math.random() * OPENING_VARIANTS.length)];
   const newPlenary = PLENARY_VARIANTS[Math.floor(Math.random() * PLENARY_VARIANTS.length)];
   l.plan.opening = newOpening;
@@ -8659,12 +9071,25 @@ function regenerateLesson() {
 function regeneratePlan() {
   const plan = State.plans.find(p => p.id === State.currentPlanId);
   if (!plan) return;
-  plan.lessons.forEach(l => {
-    l.plan.opening = OPENING_VARIANTS[Math.floor(Math.random() * OPENING_VARIANTS.length)];
-  });
-  save();
-  renderPlan();
-  toast('✓ Week refreshed — lesson openings swapped for variety.');
+  const editedCount = (plan.lessons || []).filter(l => l.teacherOverride || l.feedback?.rating).length;
+  const apply = () => {
+    plan.lessons.forEach(l => {
+      l.plan.opening = OPENING_VARIANTS[Math.floor(Math.random() * OPENING_VARIANTS.length)];
+    });
+    save();
+    renderPlan();
+    toast('✓ Week refreshed — lesson openings swapped for variety.');
+  };
+  if (editedCount > 0) {
+    confirmAction({
+      title: 'Regenerate the whole week?',
+      body: `<p style="margin:0 0 8px;"><strong>${editedCount}</strong> lesson${editedCount === 1 ? ' has' : 's have'} edits or feedback already.</p><p style="margin:0; font-size:13px; color: var(--ink-soft);">Regenerating swaps the opening for every lesson. Lessons you've taken over with teacher-override aren't touched.</p>`,
+      okLabel: 'Regenerate week',
+      onConfirm: apply,
+    });
+    return;
+  }
+  apply();
 }
 function exportPlan() {
   const plan = State.plans.find(p => p.id === State.currentPlanId);
