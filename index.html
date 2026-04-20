@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Seachtain — Weekly planning for Irish primary teachers</title>
+<title>Planner Bee — Weekly planning for Irish primary teachers</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -357,6 +357,60 @@
   .ai-banner .ai-banner-text strong { font-family: 'Fraunces', serif; }
   .ai-banner .btn { padding: 5px 10px; font-size: 12px; }
 
+  /* =========================================================================
+     MASCOT — Planner Bee (the character, not the logo mark).
+     Appears in landing/onboarding/empty states. Not inside lesson content.
+     See BRAND.md for tone & usage.
+     ========================================================================= */
+  .bee { display: inline-block; line-height: 0; }
+  .bee svg { display: block; width: 100%; height: auto; }
+  .bee .bee-wing { transform-origin: 60px 48px; animation: bee-flap 0.28s ease-in-out infinite alternate; }
+  .bee .bee-wing.bee-wing-back { transform-origin: 52px 46px; animation-delay: 0.04s; }
+  @keyframes bee-flap {
+    from { transform: rotate(-6deg); }
+    to   { transform: rotate(6deg); }
+  }
+  .bee.bee-hover { animation: bee-hover 3.2s ease-in-out infinite; }
+  @keyframes bee-hover {
+    0%, 100% { transform: translateY(0); }
+    50%      { transform: translateY(-6px); }
+  }
+  .bee-sm { width: 48px; }
+  .bee-md { width: 96px; }
+  .bee-lg { width: 160px; }
+  .bee-xl { width: 220px; }
+  /* Speech bubble that can be attached to the mascot for guidance tips. */
+  .bee-bubble {
+    background: var(--surface); border: 1px solid var(--line); border-radius: 14px;
+    padding: 12px 16px; font-size: 13px; line-height: 1.5; color: var(--ink);
+    max-width: 280px; box-shadow: var(--shadow-sm);
+    position: relative;
+  }
+  .bee-bubble::before {
+    content: ''; position: absolute; left: -7px; top: 18px;
+    width: 12px; height: 12px; background: var(--surface);
+    border-left: 1px solid var(--line); border-bottom: 1px solid var(--line);
+    transform: rotate(45deg);
+  }
+  .bee-bubble strong { font-family: 'Fraunces', serif; }
+  .bee-with-bubble { display: flex; align-items: flex-start; gap: 16px; }
+
+  /* Profile hero — warmer replacement for the stock page-head block */
+  .profile-hero {
+    display: flex; align-items: flex-start; gap: 22px;
+    background: linear-gradient(135deg, #FAF3E0 0%, #F4EEE2 55%, #E8F0E8 100%);
+    border: 1px solid var(--line); border-radius: 18px;
+    padding: 24px 28px; margin-bottom: 24px;
+    box-shadow: var(--shadow-sm);
+  }
+  .profile-hero .bee { flex-shrink: 0; }
+  .profile-hero h1 { font-family: 'Fraunces', serif; font-size: 28px; font-weight: 600; letter-spacing: -0.01em; }
+  .profile-hero-actions { display: flex; flex-direction: column; gap: 8px; align-items: flex-end; flex-shrink: 0; }
+  @media (max-width: 720px) {
+    .profile-hero { flex-direction: column; padding: 20px; gap: 14px; }
+    .profile-hero-actions { flex-direction: row; align-items: center; align-self: stretch; justify-content: flex-start; }
+  }
+
   /* Voice notes — quick thoughts attached to a lesson. No audio stored,
      just transcribed text via the Web Speech API. */
   .voice-notes-card .voice-rec-btn .vrec-dot {
@@ -599,6 +653,7 @@
     max-width: 1080px; margin: 0 auto; padding: 72px 48px 40px;
     text-align: center;
   }
+  .landing-bee { margin: 0 auto 18px; }
   .landing-eyebrow {
     display: inline-block; font-size: 12px; font-weight: 700;
     letter-spacing: 0.12em; text-transform: uppercase;
@@ -851,6 +906,21 @@
     background: var(--primary-soft); color: var(--primary);
     border-radius: 10px; font-size: 13px; line-height: 1.5;
   }
+
+  .ob-step5-head {
+    display: flex; gap: 20px; align-items: flex-start;
+    margin-bottom: 24px;
+  }
+  .ob-step5-head .bee { flex-shrink: 0; margin-top: 4px; }
+  @media (max-width: 560px) {
+    .ob-step5-head { flex-direction: column; gap: 14px; }
+  }
+  .ob-step1-bee {
+    display: flex; align-items: center; gap: 16px; margin-bottom: 20px;
+  }
+  .ob-step1-bee .bee { flex-shrink: 0; }
+  .ob-step1-bee-msg { font-size: 14px; color: var(--ink-soft); line-height: 1.5; }
+  .ob-step1-bee-msg strong { color: var(--ink); font-family: 'Fraunces', serif; }
 
   .ob-summary {
     background: var(--surface); border: 1px solid var(--line);
@@ -1932,8 +2002,8 @@
         </svg>
       </div>
       <div>
-        <div class="brand-name">Seachtain</div>
-        <div class="brand-sub">Pleanáil Sheachtainiúil</div>
+        <div class="brand-name">Planner Bee</div>
+        <div class="brand-sub">Weekly planning</div>
       </div>
     </div>
     <button class="btn btn-primary sidebar-new-plan" onclick="startNewPlan()">
@@ -1997,8 +2067,8 @@
             </svg>
           </div>
           <div>
-            <div class="brand-name" style="font-size: 22px;">Seachtain</div>
-            <div class="brand-sub">Pleanáil Sheachtainiúil</div>
+            <div class="brand-name" style="font-size: 22px;">Planner Bee</div>
+            <div class="brand-sub">Weekly planning, done.</div>
           </div>
         </div>
         <div class="landing-top-actions">
@@ -2008,9 +2078,10 @@
       </div>
 
       <section class="landing-hero">
+        <div class="bee bee-lg bee-hover landing-bee" data-bee-pose="wave" data-bee-hover="1" aria-hidden="true"></div>
         <div class="landing-eyebrow">Built for Irish primary teachers · NCCA 2023</div>
         <h1 class="landing-headline">Reclaim your<br><em>Sunday evening.</em></h1>
-        <p class="landing-sub">Seachtain plans your full week — lessons, worksheets, differentiation, Gaeilge threading, sub cover — in about a minute. Grounded in the 2023 NCCA Primary Framework. Pitched to your class. Ready before the kettle boils.</p>
+        <p class="landing-sub">Planner Bee drafts your full week — lessons, worksheets, differentiation, Gaeilge threading, sub cover — in about a minute. Grounded in the 2023 NCCA Primary Framework. Pitched to your class. Ready before the kettle boils.</p>
         <div class="landing-cta-row">
           <button class="btn btn-primary btn-lg" onclick="openAuthOverlay()">Get started free →</button>
           <button class="btn btn-ghost btn-lg" onclick="startLandingDemo()">See a demo week</button>
@@ -2099,7 +2170,7 @@
 
       <section class="landing-section landing-solution">
         <div class="landing-section-inner">
-          <h2>Seachtain plans your week while you have a cup of tea.</h2>
+          <h2>Planner Bee plans your week while you have a cup of tea.</h2>
           <p class="landing-lead">It knows which class you teach, how many pupils, your school-day times, your fixed slots, your Gaeilge comfort, and the 2023 NCCA Primary Framework back-to-front. You hit one button; it drafts the full week. You tweak what needs tweaking. You teach.</p>
         </div>
       </section>
@@ -2117,7 +2188,7 @@
             <div class="lh-step">
               <div class="lh-num">2</div>
               <h3>We draft the week</h3>
-              <p>Claude writes every lesson — pitched to your grade band, grounded in real NCCA strands, with the weekly theme threaded through every subject.</p>
+              <p>Planner Bee drafts every lesson — pitched to your grade band, grounded in real NCCA strands, with the weekly theme threaded through every subject.</p>
             </div>
             <div class="lh-step">
               <div class="lh-num">3</div>
@@ -2141,7 +2212,7 @@
             <div class="lb-item">
               <div class="lb-icon" style="background: #D7E8DB; color: #1d4a30;">🍀</div>
               <h3>Gaeilge that works for you</h3>
-              <p>Gaelscoil, Gaeltacht, or English-medium — set it once. Seachtain dials the Irish up or down to match your confidence.</p>
+              <p>Gaelscoil, Gaeltacht, or English-medium — set it once. Planner Bee dials the Irish up or down to match your confidence.</p>
             </div>
             <div class="lb-item">
               <div class="lb-icon" style="background: #F5D9CB; color: #7a2d1a;">🖨</div>
@@ -2156,7 +2227,7 @@
             <div class="lb-item">
               <div class="lb-icon" style="background: #E3D6EF; color: #4a2c63;">⏱</div>
               <h3>DES minutes, auto-balanced</h3>
-              <p>1,400 minutes a week (1,100 for Infants). Seachtain enforces the floor, flags when you're short, and distributes across days.</p>
+              <p>1,400 minutes a week (1,100 for Infants). Planner Bee enforces the floor, flags when you're short, and distributes across days.</p>
             </div>
             <div class="lb-item">
               <div class="lb-icon" style="background: #CFE8E3; color: #16433e;">💬</div>
@@ -2187,15 +2258,15 @@
             </div>
             <div class="lf-item">
               <h4>Is my data safe?</h4>
-              <p>EU-region hosting. Row-level security means nobody else sees your data, full stop. No pupil information is ever stored — Seachtain is teacher-facing only. You can export or delete everything any time.</p>
+              <p>EU-region hosting. Row-level security means nobody else sees your data, full stop. No pupil information is ever stored — Planner Bee is teacher-facing only. You can export or delete everything any time.</p>
             </div>
             <div class="lf-item">
               <h4>How much does it cost?</h4>
               <p>Free while in beta. When paid plans land, we'll give beta teachers a fair deal and plenty of notice. We're not here to nickel-and-dime a profession that's already stretched.</p>
             </div>
             <div class="lf-item">
-              <h4>Do I have to use the AI?</h4>
-              <p>No. Seachtain also generates fully-formed lessons offline — no AI call needed. AI regenerate is there when you want to reshape a lesson, not when you don't.</p>
+              <h4>What if I just want to write it myself?</h4>
+              <p>You can. Every lesson can be overridden with your own content, your own materials, your own flow. Planner Bee is a starting point, never a straitjacket — take as much or as little as you like.</p>
             </div>
             <div class="lf-item">
               <h4>What if the 2023 curriculum changes?</h4>
@@ -2221,7 +2292,7 @@
       </section>
 
       <footer class="landing-footer">
-        <div>© 2026 Seachtain · Made with care for Irish primary teachers · Dublin</div>
+        <div>© 2026 Planner Bee · Made with care for Irish primary teachers · Dublin</div>
         <div>
           <a onclick="openAuthOverlay()" style="cursor: pointer;">Sign in</a>
           · <a href="mailto:james@socialenviro.ie">Get in touch</a>
@@ -2241,6 +2312,10 @@
           <div class="ob-eyebrow">First things first</div>
           <h1 class="ob-title">Let's set up your classroom.</h1>
           <p class="ob-lead">We'll tune every lesson to your class, your school day, and your Gaeilge comfort. Takes about 90 seconds.</p>
+          <div class="ob-step1-bee">
+            <div class="bee bee-sm" data-bee-pose="wave" aria-hidden="true"></div>
+            <div class="ob-step1-bee-msg"><strong>Hi, I'm Planner Bee.</strong> I'll keep you company while we get you set up. Anything you put in here you can change later from <em>My profile</em>.</div>
+          </div>
           <div class="ob-card">
             <div class="field">
               <label for="ob-teacher">Your name</label>
@@ -2305,7 +2380,7 @@
         <div class="ob-step" data-ob-step="3">
           <div class="ob-eyebrow">Gaeilge</div>
           <h1 class="ob-title">What's your Gaeilge setup?</h1>
-          <p class="ob-lead">Gaelscoil, Gaeltacht, or English-medium — set it once. Seachtain dials the Irish up or down to match.</p>
+          <p class="ob-lead">Gaelscoil, Gaeltacht, or English-medium — set it once. Planner Bee dials the Irish up or down to match.</p>
           <div class="ob-card">
             <div class="field">
               <label>School medium</label>
@@ -2387,9 +2462,14 @@
 
         <!-- Step 5: All set -->
         <div class="ob-step" data-ob-step="5">
-          <div class="ob-eyebrow">Ready when you are</div>
-          <h1 class="ob-title">Your classroom is set up.</h1>
-          <p class="ob-lead">Everything you just told us is saved to your account. Plans, lessons, feedback — all pitched to this from now on.</p>
+          <div class="ob-step5-head">
+            <div class="bee bee-md" data-bee-pose="celebrate" aria-hidden="true"></div>
+            <div>
+              <div class="ob-eyebrow">Ready when you are</div>
+              <h1 class="ob-title" style="margin-bottom: 8px;">Your classroom is set up.</h1>
+              <p class="ob-lead" style="margin-bottom: 0;">Everything you just told us is saved to your account. Plans, lessons, feedback — all pitched to this from now on.</p>
+            </div>
+          </div>
           <div class="ob-summary" id="ob-summary"></div>
           <div class="ob-finish-actions">
             <button class="btn btn-primary btn-lg" onclick="finishOnboardingWithPlan()">✨ Build my first week →</button>
@@ -2601,7 +2681,7 @@
 
         <div class="wizard-footer">
           <button class="btn btn-ghost" id="wizard-back" onclick="wizardStep(-1)">← Back</button>
-          <button class="btn btn-ghost" id="wizard-next-ai" onclick="wizardAIGenerate()" style="display:none;">✨ AI generate</button>
+          <button class="btn btn-ghost" id="wizard-next-ai" onclick="wizardAIGenerate()" style="display:none;">✨ Let Bee draft it</button>
           <button class="btn btn-primary" id="wizard-next" onclick="wizardStep(1)">Next →</button>
         </div>
       </div>
@@ -2717,7 +2797,7 @@
             <div id="parent-note-output" class="parent-note-card" contenteditable="true"></div>
             <div style="margin-top: 12px; display:flex; gap:8px; flex-wrap: wrap;">
               <button class="btn btn-ghost btn-sm" onclick="copyParentNote()">📋 Copy text</button>
-              <button class="btn btn-ghost btn-sm" onclick="aiRewriteParentNote()" title="Rewrite with Claude — reads this week's lessons & your tone">✨ AI rewrite</button>
+              <button class="btn btn-ghost btn-sm" onclick="aiRewriteParentNote()" title="Let Bee rewrite this — matches this week's lessons and your tone">✨ Rewrite with Bee</button>
               <button class="btn btn-ghost btn-sm" onclick="renderParentNote(currentPlan(), true)">↻ Offline rewrite</button>
               <button class="btn btn-ghost btn-sm" onclick="printParentNote()">🖨 Print / PDF</button>
               <span class="muted" style="font-size: 12px; margin-left: auto; align-self:center;" id="pn-word-count"></span>
@@ -2743,8 +2823,8 @@
         <div style="display:flex; gap:8px;">
           <button class="btn btn-ghost" onclick="toggleEdit()" id="edit-btn">✎ Edit</button>
           <button class="btn btn-ghost" onclick="window.print()">🖨 Print</button>
-          <button class="btn btn-ghost" onclick="openAIRegenerateModal()" title="Rewrite this lesson with Claude, grounded in NCCA and your class profile">✨ AI regenerate</button>
-          <button class="btn btn-ghost" onclick="regenerateLesson()" title="Swap opening / plenary for variety (offline)">↻ Regenerate</button>
+          <button class="btn btn-ghost" onclick="openAIRegenerateModal()" title="Reshape this lesson against NCCA and your class profile">✨ Fresh draft</button>
+          <button class="btn btn-ghost" onclick="regenerateLesson()" title="Swap opening / plenary for variety">↻ Quick refresh</button>
         </div>
       </div>
 
@@ -2834,12 +2914,14 @@
 
     <!-- ============ PROFILE ============ -->
     <section id="view-class" class="view">
-      <div class="page-head">
-        <div class="title-block">
-          <h1>My class profile</h1>
-          <div class="sub">Set this once. Every new plan uses these details as defaults — no re-typing.</div>
+      <div class="profile-hero">
+        <div class="bee bee-md" data-bee-pose="clipboard" aria-hidden="true"></div>
+        <div style="flex:1; min-width: 0;">
+          <div class="ob-eyebrow" style="margin-bottom: 10px;">Your classroom</div>
+          <h1 style="margin: 0 0 6px;">About you & your class</h1>
+          <div class="sub" style="color: var(--ink-soft); font-size: 15px; line-height: 1.5;">Set this once — Planner Bee uses it to pitch every lesson. Tweak anything any time; your plans will pick up the changes.</div>
         </div>
-        <div style="display:flex; gap:8px; align-items:center; flex-wrap: wrap;">
+        <div class="profile-hero-actions">
           <span class="chip chip-primary" id="profile-saved-badge" style="display:none;">✓ Profile saved</span>
           <button class="btn btn-ghost" onclick="startOnboarding()" title="Walk through the guided setup again">✨ Run setup walkthrough</button>
         </div>
@@ -3015,8 +3097,8 @@
         </svg>
       </div>
       <div>
-        <h2 id="auth-title" style="margin:0; font-size: 22px;">Welcome to Seachtain</h2>
-        <div style="font-size: 12px; color: var(--ink-faint); letter-spacing: 0.08em; text-transform: uppercase; font-weight: 600; margin-top: 2px;">Pleanáil Sheachtainiúil</div>
+        <h2 id="auth-title" style="margin:0; font-size: 22px;">Welcome to Planner Bee</h2>
+        <div style="font-size: 12px; color: var(--ink-faint); letter-spacing: 0.08em; text-transform: uppercase; font-weight: 600; margin-top: 2px;">Weekly planning, done.</div>
       </div>
     </div>
     <p class="auth-lead">Sign in so your plans, profile and history are saved across devices. We'll email you a magic link — no password to remember.</p>
@@ -4928,16 +5010,16 @@ const PATH_TO_VIEW = {
   '/new-plan':   'create',
 };
 const VIEW_TITLES = {
-  landing:    'Seachtain — Weekly planning for Irish primary teachers',
-  onboarding: 'Welcome · Seachtain',
-  dashboard:  'Dashboard · Seachtain',
-  plan:       'Week plan · Seachtain',
-  lesson:     'Lesson · Seachtain',
-  library:    'My plans · Seachtain',
-  themes:     'Themes · Seachtain',
-  class:      'My profile · Seachtain',
-  create:     'New plan · Seachtain',
-  generating: 'Generating… · Seachtain',
+  landing:    'Planner Bee — Weekly planning for Irish primary teachers',
+  onboarding: 'Welcome · Planner Bee',
+  dashboard:  'Dashboard · Planner Bee',
+  plan:       'Week plan · Planner Bee',
+  lesson:     'Lesson · Planner Bee',
+  library:    'My plans · Planner Bee',
+  themes:     'Themes · Planner Bee',
+  class:      'My profile · Planner Bee',
+  create:     'New plan · Planner Bee',
+  generating: 'Drafting… · Planner Bee',
 };
 
 function viewFromPath(pathname) {
@@ -4964,9 +5046,11 @@ function goto(view, opts = {}) {
       else if (window.location.pathname !== path) history.pushState({ view }, '', path);
     } catch (e) { /* file:// or restricted — non-fatal */ }
   }
-  document.title = VIEW_TITLES[view] || 'Seachtain';
+  document.title = VIEW_TITLES[view] || 'Planner Bee';
   window.scrollTo({ top: 0, behavior: 'smooth' });
   renderSeasonalAccent();
+  // Mount any mascots dropped into this view's markup.
+  try { mountBees(el); } catch(e) {}
   if (view === 'dashboard') renderDashboard();
   if (view === 'library') renderLibrary();
   if (view === 'themes') renderThemes();
@@ -6464,7 +6548,7 @@ function generatePlanAI() {
   // Step 1: build offline plan first — gives us a usable skeleton + fallback.
   const offlinePlan = buildPlanFromDraft();
   barEl.style.width = '22%';
-  stageEl.textContent = 'Packaging class profile & NCCA context for Claude…';
+  stageEl.textContent = 'Gathering your class profile & NCCA context…';
 
   // Step 2: build the skeleton for the AI endpoint.
   const skeleton = (offlinePlan.lessons || [])
@@ -6491,7 +6575,7 @@ function generatePlanAI() {
   ).join('\n\n');
 
   barEl.style.width = '40%';
-  stageEl.textContent = 'Claude is drafting the week — this takes ~20 seconds…';
+  stageEl.textContent = 'Bee is drafting your week — usually about 20 seconds…';
 
   fetch('/api/generate-week', {
     method: 'POST',
@@ -6539,12 +6623,12 @@ function generatePlanAI() {
         save();
         logEvent('plan_generated', { planId: offlinePlan.id, grade: offlinePlan.grade, theme: offlinePlan.theme, weekDate: offlinePlan.weekDate, ai: true });
         goto('plan');
-        toast('✨ Week generated by Claude — review and tweak anything.');
+        toast('✨ Week drafted — review and tweak anything.');
       }, 400);
     })
     .catch(err => {
       console.warn('AI week generation failed', err);
-      stageEl.textContent = 'AI unavailable — falling back to offline variants…';
+      stageEl.textContent = 'Bee is busy — falling back to the offline draft…';
       setTimeout(() => {
         State.plans.push(offlinePlan);
         State.currentPlanId = offlinePlan.id;
@@ -8196,7 +8280,7 @@ function renderMondayBriefing(plan) {
       <div style="flex:1;">
         <h4>Monday morning briefing</h4>
         <div class="mb-sub">Fresh start</div>
-        <div class="mb-empty">No prior plan on file — this is your first week with Seachtain. The children will settle quicker if Monday opens with a clear routine walkthrough.</div>
+        <div class="mb-empty">No prior plan on file — this is your first week with Planner Bee. The children will settle quicker if Monday opens with a clear routine walkthrough.</div>
       </div>`;
     el.style.display = 'flex';
     return;
@@ -9042,7 +9126,7 @@ async function aiRewriteParentNote() {
   ).join('\n');
 
   el.setAttribute('data-pre-ai', currentDraft);
-  el.innerText = '✨ Claude is writing the note — usually 5–10 seconds…';
+  el.innerText = '✨ Bee is writing the note — usually 5–10 seconds…';
 
   try {
     const resp = await fetch('/api/rewrite-parent-note', {
@@ -9070,12 +9154,12 @@ async function aiRewriteParentNote() {
     if (!data.note) throw new Error('Empty response');
     el.innerText = data.note;
     updateParentNoteWordCount();
-    toast('✨ Rewritten by Claude.');
+    toast('✨ Rewritten by Bee.');
   } catch (e) {
     console.warn('AI parent-note rewrite failed', e);
     el.innerText = el.getAttribute('data-pre-ai') || currentDraft;
     updateParentNoteWordCount();
-    toast('AI unavailable — kept your previous note.');
+    toast('Bee is busy — kept your previous note.');
   }
 }
 
@@ -9762,7 +9846,7 @@ function renderLessonPlan(l) {
   const aiBanner = l.aiGeneratedAt ? `
     <div class="ai-banner">
       <div class="ai-banner-icon">✨</div>
-      <div class="ai-banner-text"><strong>AI-regenerated</strong> ${l.aiDirection ? ' · ' + escape(l.aiDirection) : ''}. ${l._preAI ? 'Not right? ' : ''}</div>
+      <div class="ai-banner-text"><strong>Fresh draft by Bee</strong>${l.aiDirection ? ' · ' + escape(l.aiDirection) : ''}. ${l._preAI ? 'Not right? ' : ''}</div>
       ${l._preAI ? `<button class="btn btn-ghost" onclick="revertAIRegeneration()">↺ Revert</button>` : ''}
     </div>` : '';
   const tabSubtitle = `<div class="tab-subtitle"><strong>Lesson plan · what you'll do, minute by minute.</strong> Swap to <em>Teacher notes</em> for watch-outs, differentiation, and the pupil-facing opening line.</div>`;
@@ -9965,7 +10049,7 @@ function renderFeedbackCard(l) {
   const tagSet = ['Too long for class', 'Too short', 'Not age-appropriate', 'Pitched well', 'Pupils engaged', 'Vocab off', 'Materials wrong', 'Great diff'];
   return `<div class="side-card feedback-card">
     <h4>How did it go?</h4>
-    <div class="fc-hint">A quick take helps Seachtain generate better next time.</div>
+    <div class="fc-hint">A quick take helps Planner Bee draft better next time.</div>
     <div class="feedback-chips">
       <button class="fb-chip ${r === 'up' ? 'active' : ''}" data-rating="up" onclick="setFeedbackRating('${l.id}', 'up')">👍 Worked well</button>
       <button class="fb-chip ${r === 'mid' ? 'active' : ''}" data-rating="mid" onclick="setFeedbackRating('${l.id}', 'mid')">🤔 Needed tweaks</button>
@@ -10137,7 +10221,7 @@ function renderLessonResources(l) {
       <h3>Your own materials</h3>
       <div class="teacher-materials">
         <h4>📎 Attach what you'll actually use</h4>
-        <div class="tm-hint">Seachtain's output is a starting point. Drop in your own printouts, images, or a link — they'll sit with this lesson forever.</div>
+        <div class="tm-hint">The draft is a starting point. Drop in your own printouts, images, or a link — they'll sit with this lesson forever.</div>
         ${attachmentsHtml}
         ${linksHtml}
         ${emptyState}
@@ -10157,7 +10241,7 @@ function renderLessonResources(l) {
   // "Use my own lesson" override: if set, plan/guide/worksheet are hidden in favour of the teacher's version.
   const overrideBanner = l.teacherOverride
     ? `<div class="override-banner">
-         <div>👤 <strong>Your own lesson</strong> — you've replaced the draft with your own version. Seachtain's suggestion is saved in case you want to go back.</div>
+         <div>👤 <strong>Your own lesson</strong> — you've replaced the draft with your own version. The original draft is saved in case you want to go back.</div>
          <button class="btn btn-ghost" onclick="revertLessonOverride()">↺ Revert to draft</button>
        </div>`
     : `<div class="override-banner" style="background:#FBF5E4; border-color:#E6DDC6;">
@@ -10313,7 +10397,7 @@ function renderOneWorksheet(l, sheet, tier, showKey) {
         <span class="r" title="I need help">🤔</span>
       </div>
     </div>
-    <div class="ws-footer">${escape(P.school || '')} · ${escape(l.day)} · ${escape(tierLabel)} tier · Generated by Seachtain</div>
+    <div class="ws-footer">${escape(P.school || '')} · ${escape(l.day)} · ${escape(tierLabel)} tier · Planner Bee</div>
   </div>`;
 }
 
@@ -10646,7 +10730,7 @@ function revertLessonOverride() {
   save();
   logEvent('lesson_revert', { planId: State.currentPlanId, lessonId: l.id, subject: l.subject });
   renderLesson();
-  toast('↺ Reverted to Seachtain\'s draft.');
+  toast('↺ Reverted to the original draft.');
 }
 
 function regenerateLesson() {
@@ -10713,13 +10797,13 @@ function openAIRegenerateModal() {
     return;
   }
   const m = document.getElementById('modal');
-  document.getElementById('modal-title').textContent = 'AI regenerate this lesson';
+  document.getElementById('modal-title').textContent = 'Fresh draft of this lesson';
   const feedbackHint = l.feedback?.rating
     ? `<div class="callout callout-primary" style="margin-bottom: 14px;"><h4>Your feedback is on file</h4><p style="margin:0; font-size:13px;">${l.feedback.rating === 'up' ? '👍' : l.feedback.rating === 'mid' ? '🤔' : '👎'} ${escape((l.feedback.tags || []).join(', ') || '(no tags)')}${l.feedback.comment ? ` — "${escape(l.feedback.comment)}"` : ''}. The model will see this.</p></div>`
     : '';
   document.getElementById('modal-body').innerHTML = `
     ${feedbackHint}
-    <p style="margin: 0 0 8px; font-size: 13px; color: var(--ink-soft);">How should Claude reshape this lesson? Pick any combination, or just hit Regenerate.</p>
+    <p style="margin: 0 0 8px; font-size: 13px; color: var(--ink-soft);">How should Bee reshape this lesson? Pick any combination, or hit Fresh draft.</p>
     <div id="ai-direction-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 12px;">
       ${AI_DIRECTIONS.map(d => `
         <label class="ai-dir" style="border:1px solid var(--line); border-radius: 8px; padding: 8px 10px; font-size: 13px; cursor: pointer;">
@@ -10795,13 +10879,13 @@ async function runAIRegenerate(l) {
     if (!data.lesson) throw new Error('Empty response');
     applyAIRegeneratedLesson(l, data.lesson, directionText);
     closeModal();
-    toast('✨ Lesson regenerated by Claude — review and give feedback.');
+    toast('✨ Fresh draft ready — review and give feedback.');
   } catch (e) {
     console.warn('AI regenerate failed', e);
     if (status) {
       status.innerHTML = `<div style="padding: 10px 12px; background: var(--gold-soft); color: #7a5e0e; border-radius: 8px; font-size: 13px;">
-        <strong>AI isn't available right now:</strong> ${escape(e.message || 'unknown error')}.<br>
-        <span style="font-size: 12px;">Falling back to offline variants preserves your flow. Add <code>ANTHROPIC_API_KEY</code> to Vercel to enable live generation.</span>
+        <strong>Bee is having a moment:</strong> ${escape(e.message || 'unknown error')}.<br>
+        <span style="font-size: 12px;">The offline draft keeps you moving. If this keeps happening on your deployment, check the API key is configured.</span>
       </div>`;
     }
     ok.disabled = false;
@@ -11093,16 +11177,16 @@ const AuthModule = (() => {
     try {
       const r = await fetch('/api/config');
       if (r.ok) cfg = await r.json();
-    } catch (e) { console.warn('[Seachtain] /api/config fetch failed', e); }
+    } catch (e) { console.warn('[Planner Bee] /api/config fetch failed', e); }
     configLoaded = true;
     // Validate: both keys must be present, URL must be absolute (https://...).
     const urlLooksGood = typeof cfg.supabaseUrl === 'string' && /^https?:\/\/[^/\s]+/.test(cfg.supabaseUrl);
     if (!urlLooksGood || !cfg.supabaseAnonKey || typeof window.supabase?.createClient !== 'function') {
       if (cfg.supabaseUrl && !urlLooksGood) {
-        console.warn('[Seachtain] SUPABASE_URL is set but malformed — expected https://YOUR-PROJECT.supabase.co, got:', cfg.supabaseUrl);
+        console.warn('[Planner Bee] SUPABASE_URL is set but malformed — expected https://YOUR-PROJECT.supabase.co, got:', cfg.supabaseUrl);
       }
       if (!cfg.supabaseUrl && !cfg.supabaseAnonKey) {
-        console.info('[Seachtain] Running in local-only mode. Set SUPABASE_URL and SUPABASE_ANON_KEY in Vercel to enable accounts.');
+        console.info('[Planner Bee] Running in local-only mode. Set SUPABASE_URL and SUPABASE_ANON_KEY in Vercel to enable accounts.');
       }
       showLocalBanner();
       return;
@@ -11112,7 +11196,7 @@ const AuthModule = (() => {
         auth: { detectSessionInUrl: true, persistSession: true, autoRefreshToken: true },
       });
     } catch (e) {
-      console.error('[Seachtain] Supabase client init failed', e);
+      console.error('[Planner Bee] Supabase client init failed', e);
       showLocalBanner();
       return;
     }
@@ -11123,7 +11207,7 @@ const AuthModule = (() => {
     const errQuery = new URLSearchParams(window.location.search || '');
     const authErr = errHash.get('error_description') || errQuery.get('error_description');
     if (authErr) {
-      console.warn('[Seachtain] Supabase auth error in URL:', authErr);
+      console.warn('[Planner Bee] Supabase auth error in URL:', authErr);
       toast('Sign-in link problem: ' + authErr);
     }
 
@@ -11346,7 +11430,7 @@ function submitSignIn(evt) {
       submitBtn.disabled = false;
     })
     .catch((e) => {
-      console.error('[Seachtain] sign-in failed', e);
+      console.error('[Planner Bee] sign-in failed', e);
       status.className = 'auth-status err';
       const msg = (e && e.message) || '';
       // Common failure modes get a friendlier message.
@@ -11445,6 +11529,119 @@ async function handleSignOut() {
    dashboard on subsequent visits. Signed-in users never see the landing.
    ========================================================================= */
 /* =========================================================================
+   PLANNER BEE MASCOT
+   Reusable SVG component. Drop `<div class="bee" data-bee-pose="wave">`
+   anywhere and call `mountBees()` to render. Consistent anatomy across
+   poses: amber body, three stripes, translucent wings, small smile.
+   ========================================================================= */
+const BEE_POSES = {
+  // Base flying pose — greeting / landing hero
+  wave: () => beeSvg({
+    tiltDeg: -4,
+    rightArm: `<path class="bee-arm" d="M96 72 Q110 56 106 42" stroke="#4B2E2A" stroke-width="3" stroke-linecap="round" fill="none"/>
+               <circle cx="106" cy="42" r="4.5" fill="#4B2E2A"/>`,
+    leftArm: `<path d="M34 78 Q26 82 24 90" stroke="#4B2E2A" stroke-width="3" stroke-linecap="round" fill="none"/>`,
+    extras: '',
+  }),
+  // Thinking — finger to chin, one eye slightly closed
+  think: () => beeSvg({
+    tiltDeg: 2,
+    rightArm: `<path d="M86 72 Q80 66 74 64" stroke="#4B2E2A" stroke-width="3" stroke-linecap="round" fill="none"/>`,
+    leftArm: `<path d="M34 78 Q28 84 26 92" stroke="#4B2E2A" stroke-width="3" stroke-linecap="round" fill="none"/>`,
+    extras: `<circle cx="62" cy="64" r="2" fill="#2B2420"/>`,
+    eyes: { left: { cx: 50, cy: 60, r: 2.5 }, right: { cx: 62, cy: 60, r: 1.5, squint: true } },
+    mouth: 'thinking',
+  }),
+  // Pointing — gesture toward the right
+  point: () => beeSvg({
+    tiltDeg: -2,
+    rightArm: `<path d="M96 72 L118 66" stroke="#4B2E2A" stroke-width="3" stroke-linecap="round" fill="none"/>
+               <circle cx="118" cy="66" r="4" fill="#4B2E2A"/>`,
+    leftArm: `<path d="M34 78 Q30 84 30 92" stroke="#4B2E2A" stroke-width="3" stroke-linecap="round" fill="none"/>`,
+    extras: '',
+  }),
+  // Clipboard — for empty states, "nothing here yet"
+  clipboard: () => beeSvg({
+    tiltDeg: 0,
+    rightArm: `<path d="M92 74 L92 90" stroke="#4B2E2A" stroke-width="3" stroke-linecap="round" fill="none"/>`,
+    leftArm: `<path d="M38 74 L38 90" stroke="#4B2E2A" stroke-width="3" stroke-linecap="round" fill="none"/>`,
+    extras: `<rect x="42" y="86" width="46" height="30" rx="2" fill="#F4EEE2" stroke="#4B2E2A" stroke-width="2"/>
+             <rect x="55" y="82" width="20" height="6" rx="1.5" fill="#4B2E2A"/>
+             <line x1="48" y1="96" x2="80" y2="96" stroke="#A89B8E" stroke-width="1.5"/>
+             <line x1="48" y1="102" x2="76" y2="102" stroke="#A89B8E" stroke-width="1.5"/>
+             <line x1="48" y1="108" x2="72" y2="108" stroke="#A89B8E" stroke-width="1.5"/>`,
+  }),
+  // Celebrating — arms up, "all done!"
+  celebrate: () => beeSvg({
+    tiltDeg: 0,
+    rightArm: `<path d="M96 72 L108 50" stroke="#4B2E2A" stroke-width="3" stroke-linecap="round" fill="none"/>
+               <circle cx="108" cy="50" r="4" fill="#4B2E2A"/>`,
+    leftArm: `<path d="M34 72 L22 50" stroke="#4B2E2A" stroke-width="3" stroke-linecap="round" fill="none"/>
+              <circle cx="22" cy="50" r="4" fill="#4B2E2A"/>`,
+    extras: `<circle cx="18" cy="38" r="2" fill="#D4A72C"/>
+             <circle cx="112" cy="38" r="2" fill="#D4A72C"/>
+             <circle cx="28" cy="28" r="1.5" fill="#C85A3E"/>`,
+    mouth: 'wide',
+  }),
+};
+
+function beeSvg({ tiltDeg = 0, rightArm = '', leftArm = '', extras = '', eyes, mouth }) {
+  const e = eyes || { left: { cx: 50, cy: 60, r: 2.5 }, right: { cx: 62, cy: 60, r: 2.5 } };
+  const m = mouth === 'thinking'
+    ? `<path d="M52 70 Q56 72 60 70" stroke="#2B2420" stroke-width="2" fill="none" stroke-linecap="round"/>`
+    : mouth === 'wide'
+    ? `<path d="M48 66 Q56 76 64 66" stroke="#2B2420" stroke-width="2.2" fill="none" stroke-linecap="round"/>`
+    : `<path d="M50 68 Q56 72 62 68" stroke="#2B2420" stroke-width="2" fill="none" stroke-linecap="round"/>`;
+  const squintRight = e.right.squint ? `<line x1="${e.right.cx - 2.5}" y1="${e.right.cy}" x2="${e.right.cx + 2.5}" y2="${e.right.cy}" stroke="#2B2420" stroke-width="2" stroke-linecap="round"/>` : `<circle cx="${e.right.cx}" cy="${e.right.cy}" r="${e.right.r}" fill="#2B2420"/>`;
+  return `<svg viewBox="-5 0 135 140" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Planner Bee mascot">
+    <g transform="rotate(${tiltDeg} 60 70)">
+      <!-- Wings (back) -->
+      <g class="bee-wing bee-wing-back">
+        <ellipse cx="52" cy="42" rx="18" ry="26" fill="#E8F0E8" opacity="0.72" stroke="#2D5F3F" stroke-width="1.4" transform="rotate(-18 52 42)"/>
+      </g>
+      <!-- Wings (front) -->
+      <g class="bee-wing">
+        <ellipse cx="72" cy="44" rx="18" ry="26" fill="#F4EEE2" opacity="0.82" stroke="#2D5F3F" stroke-width="1.4" transform="rotate(20 72 44)"/>
+      </g>
+      <!-- Body -->
+      <ellipse cx="60" cy="78" rx="34" ry="32" fill="#D4A72C" stroke="#8F6A14" stroke-width="1.5"/>
+      <!-- Stripes -->
+      <path d="M30 68 Q60 80 90 68" stroke="#4B2E2A" stroke-width="6.5" fill="none" stroke-linecap="round"/>
+      <path d="M28 84 Q60 96 92 84" stroke="#4B2E2A" stroke-width="6.5" fill="none" stroke-linecap="round"/>
+      <path d="M32 99 Q60 108 88 99" stroke="#4B2E2A" stroke-width="6.5" fill="none" stroke-linecap="round"/>
+      <!-- Antenna -->
+      <path d="M56 46 Q52 34 50 26" stroke="#4B2E2A" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+      <circle cx="50" cy="26" r="3.2" fill="#4B2E2A"/>
+      <!-- Face: cheeks -->
+      <ellipse cx="44" cy="68" rx="4" ry="2.8" fill="#E89F87" opacity="0.6"/>
+      <ellipse cx="68" cy="68" rx="4" ry="2.8" fill="#E89F87" opacity="0.6"/>
+      <!-- Eyes -->
+      <circle cx="${e.left.cx}" cy="${e.left.cy}" r="${e.left.r}" fill="#2B2420"/>
+      ${squintRight}
+      <!-- Mouth -->
+      ${m}
+      <!-- Arms -->
+      ${rightArm}
+      ${leftArm}
+      <!-- Extras per-pose (items being held etc.) -->
+      ${extras}
+    </g>
+  </svg>`;
+}
+
+function mountBees(root) {
+  const scope = root || document;
+  scope.querySelectorAll('.bee[data-bee-pose]').forEach(el => {
+    if (el.dataset.beeMounted) return;
+    const pose = el.dataset.beePose || 'wave';
+    const factory = BEE_POSES[pose] || BEE_POSES.wave;
+    el.innerHTML = factory();
+    el.dataset.beeMounted = '1';
+    if (el.dataset.beeHover === '1') el.classList.add('bee-hover');
+  });
+}
+
+/* =========================================================================
    ONBOARDING — 5-step profile setup for new teachers.
    Triggered after the first successful magic-link sign-in (or manually
    from the profile page). Writes directly into State.profile and saves
@@ -11490,6 +11687,9 @@ function renderOnboardingStep() {
   if (back) back.style.visibility = step === 1 ? 'hidden' : 'visible';
   const next = document.getElementById('ob-next');
   if (next) next.textContent = (step === OB_TOTAL_STEPS - 1) ? 'Finish →' : 'Next →';
+
+  // Mount any mascots in this step (they're only visible once the step is active).
+  try { mountBees(document.getElementById('view-onboarding')); } catch(e) {}
 
   // Per-step setup
   if (step === 1) obPrefillStep1();
@@ -11677,7 +11877,7 @@ function finishOnboarding() {
   saveProfileStore();
   updateSidebarFromProfile();
   try { logEvent('onboarding_completed', { grade: State.profile.grade, medium: State.profile.medium }); } catch(e){}
-  toast('Profile saved. Welcome to Seachtain.');
+  toast('Profile saved. Welcome to Planner Bee.');
   goto('dashboard');
 }
 
