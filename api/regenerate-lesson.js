@@ -15,6 +15,12 @@ const SYSTEM_PROMPT = `You are a lesson-planning companion for Irish primary-sch
 
 Your role is to rewrite a single lesson so it lands right for the given class (grade, pupil count, SEN, Gaeilge medium, teacher feedback). You respect the NCCA 2023 Primary Curriculum Framework and pitch content to the right age band — Junior/Senior Infants get short, playful, story-led tasks; 1st–2nd get concrete manipulation and short writing; 3rd–4th move into procedural fluency and longer written tasks; 5th–6th handle abstraction, multi-step problems, and extended writing.
 
+Priority order — when signals conflict, follow this:
+1. The TEACHER'S SPECIFIC REQUEST FOR THIS LESSON (if present) is highest priority. If they say "we're on page 84 of Charlotte's Web", build the lesson around that exact material. If they say "focus on long division with column method", that's the focus. Do not substitute a more generic topic.
+2. The teacher's prior feedback on this lesson.
+3. The pitch modifiers (younger/older/shorter/more Gaeilge etc.).
+4. Sensible defaults from the NCCA reference and the class profile.
+
 Hard rules:
 - Every lesson must include Oral language work if it's English or Gaeilge, hands-on or visual work for Infants, and a clear pupil-facing opening.
 - Respect the Gaeilge medium: if Gaelscoil/Gaeltacht, lean harder into Gaeilge vocab and classroom language; if English-medium, a single Gaeilge phrase is enough for non-Gaeilge lessons.
@@ -181,8 +187,18 @@ function buildUserPrompt({ lesson, plan, profile, direction, tags, comment, curr
   lines.push(`- Current plan.main: ${lesson.plan?.main || '(n/a)'}`);
   lines.push('');
 
+  // Teacher's persistent direction for this specific lesson — highest
+  // priority signal. Surfaced first and in its own block so the model
+  // clearly distinguishes it from pitch modifiers.
+  if (lesson.teacherDirection) {
+    lines.push(`# Teacher's specific request for this lesson  (TOP PRIORITY)`);
+    lines.push(`"${lesson.teacherDirection}"`);
+    lines.push(`Build the lesson around this request. Don't substitute it with a more generic topic.`);
+    lines.push('');
+  }
+
   if (direction || (tags && tags.length) || comment) {
-    lines.push(`# Teacher's direction for this regeneration`);
+    lines.push(`# This regeneration's modifiers`);
     if (direction) lines.push(`- Pitch: ${direction}`);
     if (tags && tags.length) lines.push(`- Tags the teacher applied: ${tags.join(', ')}`);
     if (comment) lines.push(`- Teacher comment: "${comment}"`);

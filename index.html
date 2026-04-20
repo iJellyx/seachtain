@@ -369,8 +369,36 @@
     box-shadow: 0 2px 6px rgba(196, 138, 26, 0.30), 0 1px 2px rgba(59, 42, 10, 0.10), inset 0 1px 0 rgba(255,255,255,0.35);
     font-weight: 700;
     position: relative;
+    overflow: hidden;
+    padding-right: 34px;  /* room for the honeycomb motif on the right edge */
     transition: transform 0.12s, box-shadow 0.15s, filter 0.15s;
   }
+  /* Honeycomb motif on the right edge of primary buttons — subtle nod to
+     Planner Bee's identity. Intentionally low-contrast so it reads as
+     texture, not decoration. */
+  .btn-ai::after,
+  .btn-primary::after {
+    content: '';
+    position: absolute;
+    right: 8px; top: 50%; transform: translateY(-50%);
+    width: 18px; height: 32px;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 18 32'><path d='M9 1 L16 5 L16 13 L9 17 L2 13 L2 5 Z' fill='none' stroke='currentColor' stroke-width='1.2'/><path d='M9 15 L16 19 L16 27 L9 31 L2 27 L2 19 Z' fill='none' stroke='currentColor' stroke-width='1.2'/></svg>");
+    background-repeat: no-repeat;
+    background-position: center;
+    opacity: 0.22;
+    pointer-events: none;
+  }
+  /* Primary gets a slightly tighter right-padding — needs less room than btn-ai */
+  .btn-primary {
+    position: relative;
+    overflow: hidden;
+    padding-right: 28px;
+  }
+  /* Small variants don't get the honeycomb — keeps the motif for the hero CTAs only */
+  .btn-sm::after { display: none !important; }
+  .btn-primary.no-honey::after, .btn-ai.no-honey::after { display: none; }
+  .btn-primary.no-honey { padding-right: 16px; }
+  .btn-ai.no-honey { padding-right: 16px; }
   .btn-ai:hover {
     filter: brightness(1.06);
     transform: translateY(-1px);
@@ -405,6 +433,56 @@
     line-height: 1.5;
   }
   .ai-badge::before { content: '✨'; font-size: 11px; }
+
+  /* =========================================================================
+     LESSON DIRECTION CARD — a prominent teacher input that feeds every
+     AI regenerate + the whole-week generator. Persisted per-lesson.
+     Honeycomb-edged card to fit the Planner Bee motif.
+     ========================================================================= */
+  .lesson-direction {
+    background: linear-gradient(135deg, #FEFBEF 0%, #FBF5DC 100%);
+    border: 1px solid rgba(196, 138, 26, 0.22);
+    border-radius: 14px;
+    padding: 18px 20px; margin-bottom: 22px;
+    position: relative; overflow: hidden;
+  }
+  .lesson-direction::before {
+    content: '';
+    position: absolute; top: 0; right: 0; width: 110px; height: 110px;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 110 110'><g fill='none' stroke='%23C48A1A' stroke-width='1'><path d='M60 0 L90 15 L90 45 L60 60 L30 45 L30 15 Z'/><path d='M95 45 L125 60 L125 90 L95 105 L65 90 L65 60 Z'/><path d='M30 45 L60 60 L60 90 L30 105 L0 90 L0 60 Z'/></g></svg>");
+    background-repeat: no-repeat; background-position: top right;
+    opacity: 0.12; pointer-events: none;
+  }
+  .lesson-direction > * { position: relative; }
+  .ld-head {
+    display: flex; justify-content: space-between; align-items: flex-start;
+    gap: 12px; margin-bottom: 12px; flex-wrap: wrap;
+  }
+  .ld-head h4 {
+    font-family: 'Fraunces', serif; font-size: 15px; font-weight: 600;
+    margin: 0 0 4px; color: var(--ink);
+  }
+  .ld-hint { font-size: 12px; color: var(--ink-soft); line-height: 1.5; margin: 0; max-width: 560px; }
+  .ld-textarea {
+    width: 100%; min-height: 64px; resize: vertical;
+    padding: 10px 12px; border: 1px solid rgba(196, 138, 26, 0.25);
+    border-radius: 8px; background: rgba(255, 255, 255, 0.7);
+    font-family: inherit; font-size: 14px; color: var(--ink); line-height: 1.5;
+  }
+  .ld-textarea:focus {
+    outline: none; border-color: var(--primary);
+    background: white;
+    box-shadow: 0 0 0 3px rgba(45, 95, 63, 0.12);
+  }
+  .ld-meta {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-top: 8px; font-size: 11px; color: var(--ink-faint);
+  }
+  .ld-status { font-weight: 500; }
+  .ld-status.saving { color: var(--accent); }
+  .ld-status.saved { color: var(--primary); }
+  .ld-count { font-variant-numeric: tabular-nums; }
+  .ld-count.near-limit { color: var(--accent); font-weight: 600; }
 
   /* =========================================================================
      ABBIE — class-assistant mascot.
@@ -3105,8 +3183,26 @@
         <div style="display:flex; gap:8px;">
           <button class="btn btn-ghost" onclick="toggleEdit()" id="edit-btn">✎ Edit</button>
           <button class="btn btn-ghost" onclick="window.print()">🖨 Print</button>
-          <button class="btn btn-ai" onclick="openAIRegenerateModal()" title="Reshape this lesson against NCCA and your class profile"><span class="ai-spark">✨</span> Fresh draft with Bee</button>
+          <button class="btn btn-ai" onclick="openAIRegenerateModal()" title="Rewrite this lesson with Bee, grounded in your direction + NCCA"><span class="ai-spark">✨</span> Regenerate</button>
           <button class="btn btn-offline btn-sm" onclick="regenerateLesson()" title="Swap opening / plenary for variety — no AI">↻ Quick refresh</button>
+        </div>
+      </div>
+
+      <!-- Lesson-specific direction: the teacher tells Bee exactly what they
+           need — page numbers, topic focus, previous misstep to avoid. Used
+           automatically by Regenerate. Saved per lesson. -->
+      <div class="lesson-direction no-print" id="lesson-direction-card">
+        <div class="ld-head">
+          <div>
+            <h4>Your direction for this lesson</h4>
+            <p class="ld-hint">Tell Bee exactly what this lesson needs to cover — a page number, a specific topic, a previous misstep to avoid. Any <strong>Regenerate</strong> will use this automatically.</p>
+          </div>
+          <span class="ai-badge" style="flex-shrink: 0;">Feeds Regenerate</span>
+        </div>
+        <textarea id="lesson-direction-text" class="ld-textarea" placeholder="e.g. Focus on long division using column method. / We're on page 84 of Charlotte's Web — this chapter. / Pupils struggled with place value last week, reinforce that." maxlength="600" oninput="onLessonDirectionInput()" onblur="saveLessonDirection()"></textarea>
+        <div class="ld-meta">
+          <span id="lesson-direction-status" class="ld-status">Saved automatically</span>
+          <span class="ld-count" id="lesson-direction-count">0 / 600</span>
         </div>
       </div>
 
@@ -6882,13 +6978,16 @@ function generatePlanAI() {
   barEl.style.width = '22%';
   stageEl.textContent = 'Gathering your class profile & NCCA context…';
 
-  // Step 2: build the skeleton for the AI endpoint.
+  // Step 2: build the skeleton for the AI endpoint. If a teacher has
+  // stored a per-lesson direction on a prior run, carry it into the new
+  // generation so the whole-week build respects those specifics.
   const skeleton = (offlinePlan.lessons || [])
     .filter(l => !l.coachBrief) // PE keeps its offline coach-brief for now (the SVG pitch)
     .map(l => ({
       day: l.day, slotIdx: l.slotIdx, subject: l.subject,
       minutes: l.minutes, fixed: !!l.fixed,
       time: ((offlinePlan.timetable || TIMETABLE_SLOTS)[l.slotIdx] || {}).time || '',
+      teacherDirection: l.teacherDirection || undefined,
     }));
   // If there's nothing to regenerate with AI (every lesson is PE), just ship the offline plan.
   if (!skeleton.length) {
@@ -10135,11 +10234,60 @@ function renderLesson() {
   const wsTabLabel = document.getElementById('worksheet-tab-label');
   if (wsTabLabel) wsTabLabel.textContent = l.coachBrief ? "Coach's brief" : 'Pupil sheet';
 
+  // Hydrate the lesson direction textarea from the persisted value.
+  const dirText = document.getElementById('lesson-direction-text');
+  const dirStatus = document.getElementById('lesson-direction-status');
+  const dirCount = document.getElementById('lesson-direction-count');
+  if (dirText) {
+    dirText.value = l.teacherDirection || '';
+    if (dirStatus) {
+      dirStatus.textContent = l.teacherDirection ? 'Saved · feeds Regenerate' : 'Saved automatically';
+      dirStatus.className = 'ld-status saved';
+    }
+    if (dirCount) {
+      const len = (l.teacherDirection || '').length;
+      dirCount.textContent = `${len} / 600`;
+      dirCount.classList.toggle('near-limit', len > 520);
+    }
+  }
+
   renderLessonPlan(l);
   renderLessonGuide(l);
   renderWorksheet(l);
   renderLessonResources(l);
   lessonTab(State.ltab);
+}
+
+// Debounced persistence for the lesson direction textarea. Saves locally
+// and syncs to Supabase via the existing save() pipeline.
+let _lessonDirTimer = null;
+function onLessonDirectionInput() {
+  const dirText = document.getElementById('lesson-direction-text');
+  const dirStatus = document.getElementById('lesson-direction-status');
+  const dirCount = document.getElementById('lesson-direction-count');
+  if (!dirText) return;
+  if (dirStatus) { dirStatus.textContent = 'Saving…'; dirStatus.className = 'ld-status saving'; }
+  if (dirCount) {
+    const len = (dirText.value || '').length;
+    dirCount.textContent = `${len} / 600`;
+    dirCount.classList.toggle('near-limit', len > 520);
+  }
+  if (_lessonDirTimer) clearTimeout(_lessonDirTimer);
+  _lessonDirTimer = setTimeout(saveLessonDirection, 600);
+}
+function saveLessonDirection() {
+  const l = currentLesson();
+  const dirText = document.getElementById('lesson-direction-text');
+  const dirStatus = document.getElementById('lesson-direction-status');
+  if (!l || !dirText) return;
+  const val = (dirText.value || '').trim();
+  const changed = val !== (l.teacherDirection || '');
+  l.teacherDirection = val;
+  if (changed) save();
+  if (dirStatus) {
+    dirStatus.textContent = val ? 'Saved · feeds Regenerate' : 'Saved automatically';
+    dirStatus.className = 'ld-status saved';
+  }
 }
 
 // Compute per-phase minute budget that sums close to l.minutes
@@ -10204,7 +10352,7 @@ function renderLessonPlan(l) {
   const aiBanner = l.aiGeneratedAt ? `
     <div class="ai-banner">
       <div class="ai-banner-icon">✨</div>
-      <div class="ai-banner-text"><strong>Fresh draft by Bee</strong>${l.aiDirection ? ' · ' + escape(l.aiDirection) : ''}. ${l._preAI ? 'Not right? ' : ''}</div>
+      <div class="ai-banner-text"><strong>Regenerated by Bee</strong>${l.aiDirection ? ' · ' + escape(l.aiDirection) : ''}. ${l._preAI ? 'Not right? ' : ''}</div>
       ${l._preAI ? `<button class="btn btn-ghost" onclick="revertAIRegeneration()">↺ Revert</button>` : ''}
     </div>` : '';
   const tabSubtitle = `<div class="tab-subtitle"><strong>Lesson plan · what you'll do, minute by minute.</strong> Swap to <em>Teacher notes</em> for watch-outs, differentiation, and the pupil-facing opening line.</div>`;
@@ -11155,13 +11303,13 @@ function openAIRegenerateModal() {
     return;
   }
   const m = document.getElementById('modal');
-  document.getElementById('modal-title').innerHTML = 'Fresh draft of this lesson <span class="ai-badge" style="vertical-align: middle; margin-left: 8px;">Bee-powered</span>';
+  document.getElementById('modal-title').innerHTML = 'Regenerate this lesson <span class="ai-badge" style="vertical-align: middle; margin-left: 8px;">Bee-powered</span>';
   const feedbackHint = l.feedback?.rating
     ? `<div class="callout callout-primary" style="margin-bottom: 14px;"><h4>Your feedback is on file</h4><p style="margin:0; font-size:13px;">${l.feedback.rating === 'up' ? '👍' : l.feedback.rating === 'mid' ? '🤔' : '👎'} ${escape((l.feedback.tags || []).join(', ') || '(no tags)')}${l.feedback.comment ? ` — "${escape(l.feedback.comment)}"` : ''}. The model will see this.</p></div>`
     : '';
   document.getElementById('modal-body').innerHTML = `
     ${feedbackHint}
-    <p style="margin: 0 0 8px; font-size: 13px; color: var(--ink-soft);">How should Bee reshape this lesson? Pick any combination, or hit Fresh draft.</p>
+    <p style="margin: 0 0 8px; font-size: 13px; color: var(--ink-soft);">How should Bee reshape this lesson? Pick any combination, or hit Regenerate to use your saved direction.</p>
     <div id="ai-direction-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 12px;">
       ${AI_DIRECTIONS.map(d => `
         <label class="ai-dir" style="border:1px solid var(--line); border-radius: 8px; padding: 8px 10px; font-size: 13px; cursor: pointer;">
@@ -11174,21 +11322,28 @@ function openAIRegenerateModal() {
     <div id="ai-regen-status" style="margin-top: 10px; font-size: 12px; color: var(--ink-soft);"></div>
   `;
   const ok = document.getElementById('modal-ok');
-  ok.innerHTML = '<span class="ai-spark">✨</span> Fresh draft';
+  ok.innerHTML = '<span class="ai-spark">✨</span> Regenerate';
   ok.className = 'btn btn-ai btn-ai-lg';
   ok.onclick = () => runAIRegenerate(l);
   m.classList.add('show');
 }
 
 async function runAIRegenerate(l) {
+  // Make sure the latest direction is captured before we build the payload.
+  saveLessonDirection();
+  const persistedDirection = (l.teacherDirection || '').trim();
+
   const dirs = Array.from(document.querySelectorAll('#ai-direction-grid input:checked')).map(x => x.value);
   const free = (document.getElementById('ai-direction-free')?.value || '').trim();
+  // Combined direction text = persisted lesson direction + modal pitches +
+  // modal free-text. Persisted direction comes first so Bee prioritises it.
   const directionText = [
+    persistedDirection ? `Teacher's specific request for this lesson: ${persistedDirection}` : '',
     dirs.map(id => {
       const d = AI_DIRECTIONS.find(x => x.id === id);
       return d ? d.label + ' — ' + d.hint : id;
     }).join('; '),
-    free
+    free,
   ].filter(Boolean).join(' | ');
 
   const plan = currentPlan();
@@ -11199,8 +11354,23 @@ async function runAIRegenerate(l) {
   const ok = document.getElementById('modal-ok');
   const status = document.getElementById('ai-regen-status');
   ok.disabled = true;
-  ok.textContent = 'Generating…';
-  if (status) status.innerHTML = '<span class="ai-spinner"></span> Thinking… this usually takes 6–12 seconds.';
+  ok.textContent = 'Regenerating…';
+  // Rotate in-flight status messages so the modal feels alive during the
+  // ~6–12s call. First line acknowledges the direction if it was set.
+  const inflightMessages = [
+    persistedDirection ? 'Reading your direction for this lesson…' : 'Reading your class profile…',
+    'Picking the right NCCA strand…',
+    'Pitching to your grade band…',
+    'Writing outcomes and success criteria…',
+    'Polishing differentiation…',
+    'Nearly there…',
+  ];
+  let msgIdx = 0;
+  if (status) status.innerHTML = `<span class="ai-spinner"></span> ${escape(inflightMessages[0])}`;
+  const inflightInterval = setInterval(() => {
+    msgIdx = Math.min(msgIdx + 1, inflightMessages.length - 1);
+    if (status) status.innerHTML = `<span class="ai-spinner"></span> ${escape(inflightMessages[msgIdx])}`;
+  }, 2000);
 
   try {
     const resp = await fetch('/api/regenerate-lesson', {
@@ -11211,6 +11381,7 @@ async function runAIRegenerate(l) {
           id: l.id, subject: l.subject, title: l.title, focus: l.focus,
           day: l.day, minutes: l.minutes,
           plan: l.plan, outcomes: l.outcomes, vocab: l.vocab, feedback: l.feedback,
+          teacherDirection: persistedDirection || undefined,
         },
         plan: {
           gradeName: plan.gradeName, grade: plan.grade, gradeId: plan.gradeId,
@@ -11229,6 +11400,7 @@ async function runAIRegenerate(l) {
         curriculum,
       }),
     });
+    clearInterval(inflightInterval);
     if (!resp.ok) {
       const err = await resp.json().catch(() => ({}));
       throw new Error(err.error || `HTTP ${resp.status}`);
@@ -11237,8 +11409,9 @@ async function runAIRegenerate(l) {
     if (!data.lesson) throw new Error('Empty response');
     applyAIRegeneratedLesson(l, data.lesson, directionText);
     closeModal();
-    toast('✨ Fresh draft ready — review and give feedback.');
+    toast('✨ Regenerated — review and give feedback.');
   } catch (e) {
+    clearInterval(inflightInterval);
     console.warn('AI regenerate failed', e);
     if (status) {
       status.innerHTML = `<div style="padding: 10px 12px; background: var(--gold-soft); color: #7a5e0e; border-radius: 8px; font-size: 13px;">
@@ -11990,7 +12163,7 @@ const ABBIE_TIPS = {
   ],
   plan: [
     { id: 'plan-resize',   label: 'Stretchy lessons', text: "Any lesson block on the week can be resized — grab the bottom edge and drag. I'll respect your breaks and any pinned slots." },
-    { id: 'plan-fresh',    label: 'Fresh draft',      text: "Open any lesson and hit <strong>Fresh draft</strong> to reshape it. You can ask for a younger pitch, more Gaeilge, a different angle — whatever's needed." },
+    { id: 'plan-fresh',    label: 'Regenerate a lesson', text: "Open any lesson, type your direction (page numbers, focus, anything specific) at the top, then hit <strong>Regenerate</strong>. Bee uses your direction, your class profile and the NCCA to reshape it." },
     { id: 'plan-subpack',  label: 'Sub Pack',         text: "Heading out for a day? Hit <strong>Sub Pack</strong> on the plan and you'll get a printable brief with your note, the day's lessons, and the school-day layout." },
   ],
   lesson: [
@@ -12153,7 +12326,7 @@ function abbiePersistChat() {
 const ABBIE_SUGGESTIONS = {
   dashboard:  ["How do I start a week?", "What is Monday Morning Mode?", "How do I see past plans?"],
   plan:       ["How do I extend a lesson?", "Can I change a subject's slot?", "What's the Sub Pack?"],
-  lesson:     ["How does Fresh draft work?", "How do I override a lesson?", "Add a voice note?"],
+  lesson:     ["How does Regenerate use my direction?", "How do I override a lesson?", "Add a voice note?"],
   library:    ["How do I archive a plan?", "Restore an archived plan?"],
   class:      ["How do I change my grade?", "What does DES minimum mean?", "Can I set fixed slots?"],
   themes:     ["Pick a theme for the term?", "What does a theme actually do?"],

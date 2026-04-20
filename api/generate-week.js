@@ -13,6 +13,8 @@ const SYSTEM_PROMPT = `You are a lesson-planning companion for Irish primary-sch
 
 Given a teacher's class profile, the weekly theme, and a fully-balanced timetable skeleton (which subjects land in which slots), produce a coherent week of lessons that thread the theme through every subject while respecting the NCCA 2023 Primary Curriculum Framework.
 
+Priority: if a skeleton slot carries a "teacherDirection" field, that is the teacher's specific request for that lesson and is the TOP priority — build that lesson around it exactly. Other priorities: grade-band pitch, Gaeilge medium, NCCA strand grounding, weekly theme, variation across the week.
+
 Hard rules:
 - Every lesson is pitched to the given grade band. Infants get short, playful, story- or play-led tasks; 1st–2nd get concrete manipulation and short writing; 3rd–4th get procedural fluency and paragraph writing; 5th–6th handle abstraction, multi-step problems, and extended writing.
 - Respect Gaeilge medium: Gaelscoil/Gaeltacht classes lean hard into Gaeilge across subjects; English-medium classes use a Gaeilge phrase-of-the-week in non-Gaeilge lessons.
@@ -20,6 +22,7 @@ Hard rules:
 - Thread the weekly theme through every subject where it fits naturally — if the theme is "Ireland Week" and the slot is Maths, word problems should be about Irish landmarks or GAA or local data; if the slot is Gaeilge, vocab is Irish-themed.
 - Vary across the week — don't repeat the same activity format in two slots of the same subject.
 - Total time per lesson should match the slot minutes shown.
+- Honour every teacherDirection verbatim. If a Maths slot says teacherDirection="Focus on long division", the lesson is about long division. Do not substitute a related topic.
 - Call the return_week tool. Do not write prose outside the tool call.`;
 
 // Sub-schema for a single lesson — reused inside the week tool below.
@@ -181,7 +184,8 @@ function buildUserPrompt({ plan, profile, skeleton, curriculum }) {
 
   lines.push(`# Timetable skeleton (one lesson required per line; slotKey must match exactly)`);
   skeleton.forEach(s => {
-    lines.push(`- slotKey="${s.day}|${s.slotIdx}" · subject=${s.subject} · minutes=${s.minutes}${s.fixed ? ' · fixed slot' : ''}${s.time ? ' · ' + s.time : ''}`);
+    const direction = s.teacherDirection ? ` · TEACHER DIRECTION: "${s.teacherDirection}"` : '';
+    lines.push(`- slotKey="${s.day}|${s.slotIdx}" · subject=${s.subject} · minutes=${s.minutes}${s.fixed ? ' · fixed slot' : ''}${s.time ? ' · ' + s.time : ''}${direction}`);
   });
   lines.push('');
 
