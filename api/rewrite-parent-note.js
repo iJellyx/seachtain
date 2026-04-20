@@ -42,10 +42,10 @@ module.exports = async function handler(req, res) {
   }
   if (!body || typeof body !== 'object') return bad(res, 400, 'Missing body');
 
-  const { plan, profile, lessonsSummary, mode, toggles, currentDraft } = body;
+  const { plan, profile, lessonsSummary, homeworkSummary, mode, toggles, currentDraft } = body;
   if (!plan || !profile) return bad(res, 400, 'plan and profile required');
 
-  const userPrompt = buildUserPrompt({ plan, profile, lessonsSummary, mode, toggles, currentDraft });
+  const userPrompt = buildUserPrompt({ plan, profile, lessonsSummary, homeworkSummary, mode, toggles, currentDraft });
 
   const payload = {
     model: MODEL,
@@ -75,7 +75,7 @@ module.exports = async function handler(req, res) {
   }
 };
 
-function buildUserPrompt({ plan, profile, lessonsSummary, mode, toggles, currentDraft }) {
+function buildUserPrompt({ plan, profile, lessonsSummary, homeworkSummary, mode, toggles, currentDraft }) {
   const lines = [];
   lines.push(`# Teacher`);
   lines.push(`- Name: ${profile.teacher || 'class teacher'}`);
@@ -94,6 +94,13 @@ function buildUserPrompt({ plan, profile, lessonsSummary, mode, toggles, current
   if (lessonsSummary) {
     lines.push(`# Lessons taught this week`);
     lines.push(lessonsSummary);
+    lines.push('');
+  }
+  if (homeworkSummary && toggles?.homework) {
+    lines.push(`# Homework attached to lessons this week`);
+    lines.push(homeworkSummary);
+    lines.push('');
+    lines.push(`When the homework toggle is on, reference the actual homework above — days it's set, what pupils will do, parent-facing notes where useful. Don't just say "daily maths practice" if there's real homework to mention.`);
     lines.push('');
   }
   lines.push(`# Tone / length`);

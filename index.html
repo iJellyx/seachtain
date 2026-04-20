@@ -531,6 +531,124 @@
   .ld-copy-item-warn { color: var(--accent); font-size: 11px; margin-top: 4px; }
   .ld-copy-actions { display: flex; justify-content: flex-end; gap: 8px; }
 
+  /* Cúntas AI toolbar */
+  .cuntas-toolbar {
+    display: flex; justify-content: space-between; align-items: center;
+    gap: 10px; flex-wrap: wrap;
+    padding: 10px 14px; margin-bottom: 18px;
+    background: var(--surface-alt); border: 1px solid var(--line);
+    border-radius: 10px;
+  }
+  .cuntas-toolbar-actions { display: flex; gap: 6px; flex-wrap: wrap; }
+  .cuntas-status {
+    padding: 10px 14px; margin-bottom: 18px;
+    background: var(--primary-soft); color: var(--primary);
+    border-radius: 10px; font-size: 13px;
+  }
+
+  /* Friday reflection — dashboard prompt + full walk-through */
+  .reflection-prompt {
+    display: flex; align-items: center; gap: 16px;
+    background: linear-gradient(135deg, #FEFBEF 0%, #F5E9D6 100%);
+    border: 1px solid rgba(196, 138, 26, 0.30);
+    border-radius: 14px; padding: 16px 20px; margin-bottom: 22px;
+    box-shadow: var(--shadow-sm);
+  }
+  .reflection-prompt .abbie { flex-shrink: 0; }
+  .reflection-prompt .rp-body { flex: 1; min-width: 0; }
+  .reflection-prompt .rp-label {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.12em;
+    text-transform: uppercase; color: #8B6910; margin-bottom: 2px;
+  }
+  .reflection-prompt .rp-title {
+    font-family: 'Fraunces', serif; font-size: 20px; font-weight: 600;
+    color: var(--ink); margin-bottom: 3px;
+  }
+  .reflection-prompt .rp-hint { font-size: 13px; color: var(--ink-soft); }
+  .reflection-prompt .rp-actions { display: flex; gap: 8px; flex-wrap: wrap; flex-shrink: 0; }
+  @media (max-width: 720px) {
+    .reflection-prompt { flex-direction: column; align-items: flex-start; }
+    .reflection-prompt .rp-actions { width: 100%; }
+    .reflection-prompt .rp-actions .btn { flex: 1 1 auto; justify-content: center; }
+  }
+
+  .reflection-view { display: none; background: var(--bg); min-height: 100vh; }
+  .reflection-view.active { display: block; }
+  .rf-step-head {
+    display: flex; align-items: flex-start; gap: 20px;
+    margin-bottom: 22px; margin-top: 16px;
+  }
+  .rf-step-head .rf-emoji {
+    font-size: 64px; flex-shrink: 0; line-height: 1;
+    filter: drop-shadow(0 4px 10px rgba(43, 36, 32, 0.12));
+  }
+  .rf-ratings {
+    display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px;
+    margin-bottom: 20px;
+  }
+  .rf-rating {
+    display: flex; flex-direction: column; align-items: center; gap: 4px;
+    padding: 16px 12px; background: var(--surface);
+    border: 2px solid var(--line); border-radius: 14px;
+    cursor: pointer; transition: all 0.15s; font-family: inherit;
+    color: var(--ink);
+  }
+  .rf-rating:hover { border-color: var(--line-strong); background: var(--surface-alt); }
+  .rf-rating.active {
+    border-color: var(--primary); background: var(--primary-soft);
+    box-shadow: 0 0 0 3px rgba(45, 95, 63, 0.12);
+  }
+  .rf-rating-icon { font-size: 28px; }
+  .rf-rating-label { font-size: 13px; font-weight: 600; color: var(--ink-soft); }
+  .rf-rating.active .rf-rating-label { color: var(--primary); }
+
+  .rf-tags {
+    display: flex; flex-wrap: wrap; gap: 6px;
+    margin-bottom: 18px;
+  }
+  .rf-tag {
+    padding: 6px 12px; border-radius: 999px;
+    background: var(--surface-alt); border: 1px solid var(--line);
+    font-size: 12px; color: var(--ink-soft); cursor: pointer;
+    font-family: inherit;
+  }
+  .rf-tag:hover { border-color: var(--line-strong); color: var(--ink); }
+  .rf-tag.active {
+    background: var(--primary-soft); border-color: var(--primary);
+    color: var(--primary); font-weight: 600;
+  }
+  .rf-note-label {
+    display: block; font-size: 12px; font-weight: 600; color: var(--ink);
+    margin-bottom: 6px;
+  }
+  .rf-note {
+    width: 100%; min-height: 64px; resize: vertical;
+    padding: 10px 12px; border: 1px solid var(--line);
+    border-radius: 8px; font-family: inherit; font-size: 14px;
+    color: var(--ink); background: var(--surface);
+  }
+  .rf-note:focus {
+    outline: none; border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(45, 95, 63, 0.12);
+  }
+
+  .rf-summary {
+    background: var(--surface); border: 1px solid var(--line);
+    border-radius: 14px; padding: 18px 22px; margin-top: 24px;
+  }
+  .rf-sum-row {
+    display: flex; justify-content: space-between;
+    padding: 8px 0; border-bottom: 1px solid var(--line);
+    font-size: 14px;
+  }
+  .rf-sum-row:last-child { border-bottom: none; }
+  .rf-skip-row .faint { color: var(--ink-faint); font-style: italic; }
+
+  @media (max-width: 560px) {
+    .rf-step-head { flex-direction: column; gap: 12px; }
+    .rf-ratings { grid-template-columns: 1fr; }
+  }
+
   /* Homework tab */
   .homework-empty {
     display: flex; gap: 20px; align-items: flex-start;
@@ -3015,6 +3133,20 @@
       </div>
     </section>
     <!-- ============ END ONBOARDING ============ -->
+
+    <!-- ============ FRIDAY REFLECTION (end-of-week walk-through) ============ -->
+    <section id="view-reflection" class="view reflection-view">
+      <div class="onboarding-shell">
+        <div class="ob-progress" id="rf-progress" aria-label="Reflection progress"></div>
+        <div class="ob-step-count" id="rf-step-count">Subject 1 of 1</div>
+        <div id="rf-body"></div>
+        <div class="ob-footer" id="rf-footer">
+          <button type="button" class="btn btn-ghost" id="rf-skip" onclick="reflectionNext(true)">Skip</button>
+          <button type="button" class="btn btn-primary" id="rf-next" onclick="reflectionNext(false)">Save & next →</button>
+        </div>
+      </div>
+    </section>
+    <!-- ============ END REFLECTION ============ -->
     <!-- ============ DASHBOARD ============ -->
     <section id="view-dashboard" class="view">
       <div class="page-head">
@@ -3034,6 +3166,8 @@
       </div>
 
       <div id="now-hero-mount" class="no-print"></div>
+
+      <div id="reflection-prompt" class="no-print"></div>
 
       <div id="prep-progress-strip" class="no-print"></div>
 
@@ -5593,6 +5727,7 @@ function renderSeasonalAccent() {
 const VIEW_TO_PATH = {
   landing:    '/welcome',
   onboarding: '/onboarding',
+  reflection: '/reflection',
   dashboard:  '/dashboard',
   plan:       '/plan',
   lesson:     '/lesson',
@@ -5607,6 +5742,7 @@ const PATH_TO_VIEW = {
   '/':           'dashboard',   // routed dynamically — landing for unauthed new users, dashboard otherwise
   '/welcome':    'landing',
   '/onboarding': 'onboarding',
+  '/reflection': 'reflection',
   '/dashboard':  'dashboard',
   '/plan':       'plan',
   '/lesson':     'lesson',
@@ -5618,6 +5754,7 @@ const PATH_TO_VIEW = {
 const VIEW_TITLES = {
   landing:    'Planner Bee — Weekly planning for Irish primary teachers',
   onboarding: 'Welcome · Planner Bee',
+  reflection: 'Friday reflection · Planner Bee',
   dashboard:  'Dashboard · Planner Bee',
   plan:       'Week plan · Planner Bee',
   lesson:     'Lesson · Planner Bee',
@@ -5639,11 +5776,13 @@ function goto(view, opts = {}) {
   const el = document.getElementById('view-' + view);
   if (el) { el.classList.add('active'); el.classList.add('print-active'); }
   document.querySelectorAll('.nav-item').forEach(n => n.classList.toggle('active', n.dataset.nav === view));
-  // Landing + onboarding hide the sidebar + season strip. Every other view restores them.
+  // Landing + onboarding + reflection hide the sidebar + season strip.
+  // Every other view restores them.
   document.body.classList.toggle('landing-mode', view === 'landing');
-  document.body.classList.toggle('onboarding-mode', view === 'onboarding');
+  document.body.classList.toggle('onboarding-mode', view === 'onboarding' || view === 'reflection');
   // When entering onboarding, make sure the current step is drawn.
   if (view === 'onboarding') renderOnboardingStep();
+  if (view === 'reflection') renderReflectionStep();
   // Push URL unless this is a back/forward pop (opts.replace) or the view has no path.
   const path = VIEW_TO_PATH[view];
   if (path && !opts.skipHistory) {
@@ -5702,10 +5841,44 @@ function renderDashboard() {
 
   renderPrepRitual();
   renderNowHero();
+  renderReflectionPrompt();
   renderPrepProgress();
   renderTodayPanel();
   renderWeekStrip();
   renderInsightsPanel();
+}
+
+// Friday reflection prompt — gently nudges the teacher to run the
+// end-of-week walk-through after Friday afternoon. Dismissable,
+// skipped entirely if already done for this week.
+function renderReflectionPrompt() {
+  const el = document.getElementById('reflection-prompt');
+  if (!el) return;
+  if (!shouldShowReflectionPrompt()) { el.innerHTML = ''; return; }
+  const plan = mostRecentTaughtPlan();
+  if (!plan) { el.innerHTML = ''; return; }
+  el.innerHTML = `
+    <div class="reflection-prompt">
+      <div class="abbie abbie-sm" data-abbie-pose="tablet" aria-hidden="true"></div>
+      <div class="rp-body">
+        <div class="rp-label">Friday reflection</div>
+        <div class="rp-title">How did this week go?</div>
+        <div class="rp-hint">A quick rating per subject · about 60 seconds. Feeds next week's draft.</div>
+      </div>
+      <div class="rp-actions">
+        <button class="btn btn-primary" onclick="startReflection()">Start reflection →</button>
+        <button class="btn btn-ghost btn-sm" onclick="dismissReflectionPrompt()">Later</button>
+      </div>
+    </div>
+  `;
+  try { mountAbbie(el); } catch(e){}
+}
+
+function dismissReflectionPrompt() {
+  const plan = mostRecentTaughtPlan();
+  if (plan) { plan._reflectionDismissedAt = new Date().toISOString(); save(); }
+  const el = document.getElementById('reflection-prompt');
+  if (el) el.innerHTML = '';
 }
 
 // Weekly prep progress — shows how many lessons for the target week have
@@ -9570,7 +9743,29 @@ function upcomingDatesFor(plan) {
 }
 
 function homeworkFor(plan) {
-  // Summarise core homework by subject: one line.
+  // Prefer real per-lesson homework the teacher generated. Fall back to
+  // generic per-subject lines when no actual homework is attached.
+  const lessonsWithHw = (plan.lessons || []).filter(l => l.homework && (l.homework.title || l.homework.instructions));
+  if (lessonsWithHw.length) {
+    // Group homework by day so parents see it chronologically.
+    const daysOrder = ['Monday','Tuesday','Wednesday','Thursday','Friday'];
+    const byDay = {};
+    lessonsWithHw.forEach(l => { (byDay[l.day] = byDay[l.day] || []).push(l); });
+    const dayLines = daysOrder
+      .filter(d => byDay[d])
+      .map(d => {
+        const items = byDay[d].map(l => {
+          const hw = l.homework;
+          const subj = subjectLabel(l.subject);
+          const title = hw.title || (subj + ' task');
+          const mins = hw.estimatedMinutes ? ` (~${hw.estimatedMinutes} min)` : '';
+          return `${subj}: ${title}${mins}`;
+        });
+        return `${d} — ${items.join('; ')}`;
+      });
+    return 'Homework this week:\n' + dayLines.join('\n');
+  }
+  // Legacy fallback: generic per-subject lines for plans without homework.
   const bits = [];
   const bySubj = {};
   plan.lessons.forEach(l => { (bySubj[l.subject] = bySubj[l.subject] || []).push(l); });
@@ -9579,6 +9774,27 @@ function homeworkFor(plan) {
   if (bySubj.maths?.length) bits.push('daily maths practice');
   if (bySubj.sese?.length) bits.push('one small SESE task');
   return bits.length ? 'Homework this week: ' + bits.join(', ') + '.' : '';
+}
+
+// Build a structured homework summary for the AI rewrite endpoint —
+// gives the model real content to weave in naturally, rather than the
+// compact text used by the offline renderer.
+function homeworkSummaryForAI(plan) {
+  const lessonsWithHw = (plan.lessons || []).filter(l => l.homework && (l.homework.title || l.homework.instructions));
+  if (!lessonsWithHw.length) return '';
+  const daysOrder = ['Monday','Tuesday','Wednesday','Thursday','Friday'];
+  return lessonsWithHw
+    .sort((a,b) => daysOrder.indexOf(a.day) - daysOrder.indexOf(b.day))
+    .map(l => {
+      const hw = l.homework;
+      const parts = [
+        `${l.day} · ${subjectLabel(l.subject)} · ${hw.title || 'homework'}${hw.estimatedMinutes ? ` (~${hw.estimatedMinutes} min)` : ''}`,
+        hw.instructions ? `  What to do: ${hw.instructions}` : '',
+        (Array.isArray(hw.tasks) && hw.tasks.length) ? `  Tasks: ${hw.tasks.join('; ')}` : '',
+        hw.parentNote ? `  Note for parents: ${hw.parentNote}` : '',
+      ].filter(Boolean);
+      return parts.join('\n');
+    }).join('\n');
 }
 
 function renderParentNote(plan, rotate) {
@@ -9773,6 +9989,12 @@ function copyParentNote() {
 }
 
 async function aiRewriteParentNote() {
+  // Rate limit: max 6 parent-note rewrites per minute (they're relatively heavy).
+  if (!RateLimit.check('parent_note', 6)) {
+    const wait = RateLimit.retryAfter('parent_note');
+    toast(`Let me catch up — try again in ${wait}s.`);
+    return;
+  }
   const plan = currentPlan();
   if (!plan) return;
   const el = document.getElementById('parent-note-output');
@@ -9784,6 +10006,10 @@ async function aiRewriteParentNote() {
   const lessonsSummary = (plan.lessons || []).map(l =>
     `- ${l.day} ${subjectLabel(l.subject)}: ${l.title}${l.focus ? ' — ' + l.focus : ''}`
   ).join('\n');
+  // If any lessons have real homework attached, hand it to the model so
+  // the parent note can weave it in properly instead of saying "daily
+  // maths practice" generically.
+  const homeworkSummary = homeworkSummaryForAI(plan);
 
   el.setAttribute('data-pre-ai', currentDraft);
   el.innerText = '✨ Bee is writing the note — usually 5–10 seconds…';
@@ -9803,7 +10029,7 @@ async function aiRewriteParentNote() {
           teacher: State.profile.teacher, salutation: State.profile.salutation,
           school: State.profile.school,
         },
-        lessonsSummary, mode, toggles, currentDraft,
+        lessonsSummary, homeworkSummary, mode, toggles, currentDraft,
       }),
     });
     if (!resp.ok) {
@@ -10299,15 +10525,153 @@ function renderCuntas(plan) {
     if (!bySubject[l.subject]) bySubject[l.subject] = [];
     bySubject[l.subject].push(l);
   });
-  let html = '';
-  Object.keys(bySubject).forEach(sid => {
-    const subj = SUBJECTS.find(s => s.id === sid) || { name: 'Other' };
-    const titles = bySubject[sid].map(l => `"${l.title}"`).join(', ');
-    html += `<div class="lesson-section"><h3>${subj.name}</h3>
-      <p>This week pupils engaged in ${bySubject[sid].length} lesson(s): ${titles}. Learning objectives linked to NCCA 2023 Primary Curriculum Framework. Differentiated worksheets used across support, core and extension tiers. ${bySubject[sid].length > 1 ? 'Content threaded through the week via the ' + plan.themeName + ' theme.' : ''}</p>
-    </div>`;
+
+  // Toolbar with AI regeneration + the generated label if present.
+  let toolbar = `<div class="cuntas-toolbar no-print">
+    <div class="cuntas-toolbar-left">
+      ${plan.cuntasAi ? `<span class="ai-badge">Bee-regenerated · ${escape(new Date(plan.cuntasAi.generatedAt).toLocaleDateString('en-IE', { day: 'numeric', month: 'short' }))}</span>` : `<span class="faint" style="font-size:12px;">Offline template — good for a quick draft.</span>`}
+    </div>
+    <div class="cuntas-toolbar-actions">
+      <button class="btn btn-ai btn-sm no-honey" onclick="generateCuntasAI()" title="Write a fuller Cúntas from what was actually taught + your feedback"><span class="ai-spark">✨</span> Regenerate with Bee</button>
+      ${plan.cuntasAi ? `<button class="btn btn-offline btn-sm" onclick="clearCuntasAI()">Back to offline</button>` : ''}
+      <button class="btn btn-ghost btn-sm" onclick="copyCuntasToClipboard()">📋 Copy</button>
+    </div>
+  </div>
+  <div id="cuntas-status" class="cuntas-status no-print" style="display:none;"></div>`;
+
+  let body = '';
+  if (plan.cuntasAi && Array.isArray(plan.cuntasAi.paragraphs)) {
+    // Render Bee's paragraphs in the order subjects appear in the week.
+    const orderMap = {};
+    Object.keys(bySubject).forEach((sid, i) => orderMap[sid] = i);
+    const ordered = [...plan.cuntasAi.paragraphs].sort((a, b) =>
+      (orderMap[a.subject] ?? 99) - (orderMap[b.subject] ?? 99)
+    );
+    ordered.forEach(p => {
+      const subj = SUBJECTS.find(s => s.id === p.subject) || { name: p.subject };
+      body += `<div class="lesson-section"><h3>${escape(subj.name)}</h3>
+        <p>${escape(p.text)}</p>
+      </div>`;
+    });
+  } else {
+    // Offline template fallback.
+    Object.keys(bySubject).forEach(sid => {
+      const subj = SUBJECTS.find(s => s.id === sid) || { name: 'Other' };
+      const titles = bySubject[sid].map(l => `"${l.title}"`).join(', ');
+      body += `<div class="lesson-section"><h3>${subj.name}</h3>
+        <p>This week pupils engaged in ${bySubject[sid].length} lesson(s): ${titles}. Learning objectives linked to NCCA 2023 Primary Curriculum Framework. Differentiated worksheets used across support, core and extension tiers. ${bySubject[sid].length > 1 ? 'Content threaded through the week via the ' + escape(plan.themeName) + ' theme.' : ''}</p>
+      </div>`;
+    });
+  }
+
+  el.innerHTML = toolbar + body;
+}
+
+async function generateCuntasAI() {
+  const plan = currentPlan();
+  if (!plan) return;
+  if (!RateLimit.check('cuntas', 4)) {
+    const wait = RateLimit.retryAfter('cuntas');
+    toast(`Take a breath — try again in ${wait}s.`);
+    return;
+  }
+  const profile = State.profile || {};
+  const status = document.getElementById('cuntas-status');
+  if (status) {
+    status.style.display = 'block';
+    status.innerHTML = '<span class="ai-spinner"></span> Bee is reading this week\'s lessons + your feedback…';
+  }
+
+  // Group lessons by subject for the prompt. Include strand, focus, direction.
+  const lessonsBySubject = {};
+  (plan.lessons || []).forEach(l => {
+    (lessonsBySubject[l.subject] = lessonsBySubject[l.subject] || []).push({
+      title: l.title, focus: l.focus, strand: l.strand, strandUnit: l.strandUnit || null,
+      day: l.day, teacherDirection: l.teacherDirection || null,
+    });
   });
-  el.innerHTML = html;
+
+  // Summarise any feedback from the learning log for this plan's lessons.
+  const lessonIds = new Set((plan.lessons || []).map(l => l.id));
+  const log = loadLearning();
+  const feedbackEntries = log.filter(e => e.type === 'lesson_feedback' && e.meta && lessonIds.has(e.meta.lessonId));
+  const feedbackSummary = feedbackEntries.length
+    ? feedbackEntries.map(e => {
+        const l = (plan.lessons || []).find(x => x.id === e.meta.lessonId);
+        const label = l ? `${l.day} ${subjectLabel(l.subject)} — ${l.title}` : e.meta.lessonId;
+        const rating = e.meta.rating === 'up' ? 'worked well' : e.meta.rating === 'mid' ? 'needed tweaks' : 'off the mark';
+        const tags = (e.meta.tags || []).join(', ');
+        return `- ${label}: ${rating}${tags ? ' (' + tags + ')' : ''}${e.meta.comment ? ' · "' + e.meta.comment + '"' : ''}`;
+      }).join('\n')
+    : '';
+
+  // Build a concatenated NCCA reference for the subjects taught this week.
+  const subjectsInPlan = Object.keys(lessonsBySubject);
+  const curriculum = subjectsInPlan.map(sid =>
+    `=== ${subjectLabel(sid).toUpperCase()} ===\n` + nccaContextFor(sid, plan.grade || plan.gradeId || profile.grade)
+  ).join('\n\n');
+
+  try {
+    const resp = await fetch('/api/generate-cuntas', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({
+        plan: {
+          gradeName: plan.gradeName, grade: plan.grade, gradeId: plan.gradeId,
+          pupils: plan.pupils, medium: plan.medium,
+          weekDate: plan.weekDate, weekDateReadable: plan.weekDateReadable,
+          themeName: plan.themeName,
+        },
+        profile: {
+          teacher: profile.teacher, school: profile.school,
+          grade: profile.grade, pupils: profile.pupils, medium: profile.medium,
+        },
+        lessonsBySubject,
+        feedbackSummary,
+        periodLabel: plan.weekDateReadable ? 'Week of ' + plan.weekDateReadable : 'This week',
+        curriculum,
+      }),
+    });
+    if (!resp.ok) {
+      const err = await resp.json().catch(() => ({}));
+      throw new Error(err.error || `HTTP ${resp.status}`);
+    }
+    const data = await resp.json();
+    if (!data.cuntas) throw new Error('Empty response');
+    plan.cuntasAi = { ...data.cuntas, generatedAt: new Date().toISOString() };
+    save();
+    try { logEvent('cuntas_generated', { planId: plan.id, grade: plan.grade || plan.gradeId }); } catch(e){}
+    renderCuntas(plan);
+    toast('✨ Cúntas regenerated.');
+  } catch (e) {
+    console.warn('Cúntas generation failed', e);
+    if (status) status.innerHTML = `<span style="color: #b2382a;">${escape(e.message || 'Something went wrong.')}</span>`;
+  }
+}
+
+function clearCuntasAI() {
+  const plan = currentPlan();
+  if (!plan || !plan.cuntasAi) return;
+  delete plan.cuntasAi;
+  save();
+  renderCuntas(plan);
+  toast('Back to the offline Cúntas draft.');
+}
+
+function copyCuntasToClipboard() {
+  const el = document.getElementById('cuntas-content');
+  if (!el) return;
+  const text = Array.from(el.querySelectorAll('.lesson-section'))
+    .map(s => `${s.querySelector('h3').textContent}\n${s.querySelector('p').textContent}\n`)
+    .join('\n');
+  if (navigator.clipboard?.writeText) {
+    navigator.clipboard.writeText(text).then(() => toast('Cúntas copied to clipboard'));
+  } else {
+    const ta = document.createElement('textarea');
+    ta.value = text; document.body.appendChild(ta); ta.select();
+    try { document.execCommand('copy'); toast('Copied'); } catch(e){}
+    document.body.removeChild(ta);
+  }
 }
 
 function planTab(tab) {
@@ -10629,6 +10993,12 @@ function renderLessonHomework(l) {
 async function generateHomework(replaceExisting) {
   const l = currentLesson();
   if (!l) return;
+  // Rate limit: max 10 homework generations per minute per session.
+  if (!RateLimit.check('homework', 10)) {
+    const wait = RateLimit.retryAfter('homework');
+    toast(`A lot of homework at once — try again in ${wait}s.`);
+    return;
+  }
   // Capture an optional one-off note from the empty-state textarea, if present.
   const noteEl = document.getElementById('hw-teacher-note');
   const teacherNote = noteEl ? (noteEl.value || '').trim() : '';
@@ -11900,6 +12270,12 @@ function openAIRegenerateModal() {
 }
 
 async function runAIRegenerate(l) {
+  // Rate limit: max 10 regenerates per minute per session.
+  if (!RateLimit.check('regen_lesson', 10)) {
+    const wait = RateLimit.retryAfter('regen_lesson');
+    toast(`A lot of regenerates at once — try again in ${wait}s.`);
+    return;
+  }
   // Make sure the latest direction is captured before we build the payload.
   saveLessonDirection();
   const persistedDirection = (l.teacherDirection || '').trim();
@@ -12828,6 +13204,272 @@ function mountAbbie(root) {
 const mountBees = mountAbbie;
 
 /* =========================================================================
+   FRIDAY REFLECTION RITUAL
+   End-of-week walk-through that asks the teacher how each subject
+   landed. Same look as onboarding — full-screen, one step per subject,
+   progress dots. Each subject rating becomes a week_reflection event
+   plus a rating stamped onto each of that subject's lessons. Feeds the
+   feedback loop for next week's draft automatically.
+   ========================================================================= */
+const Reflection = {
+  subjects: [],    // [{id, name, emoji, lessonIds: []}]
+  step: 0,
+  answers: {},     // subjectId → { rating, tags: [], note: '' }
+  planId: null,
+};
+
+const REFLECTION_TAGS = [
+  'Pupils engaged', 'Too easy', 'Too hard', 'Needs reteach', 'Pupils loved it', 'Vocab off', 'Ran long', 'Missed it',
+];
+
+function startReflection() {
+  const plan = mostRecentTaughtPlan();
+  if (!plan) { toast("No plan to reflect on yet — build a week first."); return; }
+  // Build subject list from plan lessons, in subject canonical order.
+  const order = ['english','gaeilge','maths','sese','pe','arts','sphe','religion'];
+  const bySubject = {};
+  (plan.lessons || []).forEach(l => {
+    (bySubject[l.subject] = bySubject[l.subject] || []).push(l.id);
+  });
+  const subjects = order
+    .filter(sid => bySubject[sid] && bySubject[sid].length)
+    .map(sid => {
+      const s = SUBJECTS.find(x => x.id === sid) || { name: sid, emoji: '📘' };
+      return { id: sid, name: s.name, emoji: s.emoji, lessonIds: bySubject[sid] };
+    });
+  if (!subjects.length) { toast("No lessons in this week's plan to reflect on."); return; }
+  Reflection.subjects = subjects;
+  Reflection.step = 0;
+  Reflection.answers = {};
+  Reflection.planId = plan.id;
+  goto('reflection');
+  renderReflectionStep();
+}
+
+function renderReflectionStep() {
+  const total = Reflection.subjects.length;
+  const stepIdx = Reflection.step;
+  const progress = document.getElementById('rf-progress');
+  const stepCount = document.getElementById('rf-step-count');
+  const body = document.getElementById('rf-body');
+  const footer = document.getElementById('rf-footer');
+  if (!progress || !body) return;
+
+  // Progress dots
+  progress.innerHTML = '';
+  for (let i = 0; i <= total; i++) {
+    const dot = document.createElement('div');
+    dot.className = 'ob-dot' + (i === stepIdx ? ' active' : (i < stepIdx ? ' done' : ''));
+    progress.appendChild(dot);
+  }
+
+  if (stepIdx >= total) {
+    // Final thank-you step.
+    if (stepCount) stepCount.textContent = 'All done';
+    body.innerHTML = `
+      <div class="ob-step5-head" style="margin-top: 20px;">
+        <div class="abbie abbie-md" data-abbie-pose="apple" aria-hidden="true"></div>
+        <div>
+          <div class="ob-eyebrow">Thanks for reflecting</div>
+          <h1 class="ob-title" style="margin-bottom: 8px;">That's a grand week banked.</h1>
+          <p class="ob-lead" style="margin-bottom: 0;">Every rating and note you've just left feeds next week's draft. Subjects that needed tweaks get a fresh pitch; what worked sticks. Enjoy the weekend.</p>
+        </div>
+      </div>
+      <div class="rf-summary">
+        ${Reflection.subjects.map(s => {
+          const a = Reflection.answers[s.id];
+          if (!a) return `<div class="rf-sum-row rf-skip-row"><span>${s.emoji} ${escape(s.name)}</span><span class="faint">Skipped</span></div>`;
+          const label = a.rating === 'up' ? '👍 Worked well' : a.rating === 'mid' ? '🤔 Needed tweaks' : a.rating === 'down' ? '👎 Off the mark' : '—';
+          return `<div class="rf-sum-row"><span>${s.emoji} ${escape(s.name)}</span><span>${label}${a.tags?.length ? ' · ' + a.tags.map(escape).join(', ') : ''}</span></div>`;
+        }).join('')}
+      </div>
+      <div style="display: flex; gap: 10px; justify-content: center; margin-top: 24px; flex-wrap: wrap;">
+        <button class="btn btn-primary btn-lg" onclick="finishReflection()">Back to dashboard</button>
+      </div>
+    `;
+    try { mountAbbie(body); } catch(e){}
+    if (footer) footer.classList.add('hidden');
+    return;
+  }
+
+  // Per-subject step.
+  const s = Reflection.subjects[stepIdx];
+  const a = Reflection.answers[s.id] || { rating: null, tags: [], note: '' };
+  if (stepCount) stepCount.textContent = `Subject ${stepIdx + 1} of ${total}`;
+  if (footer) footer.classList.remove('hidden');
+  const activeTags = new Set(a.tags || []);
+  body.innerHTML = `
+    <div class="rf-step">
+      <div class="rf-step-head">
+        <div class="rf-emoji" aria-hidden="true">${s.emoji}</div>
+        <div>
+          <div class="ob-eyebrow">Friday reflection</div>
+          <h1 class="ob-title" style="margin-bottom: 6px;">How did ${escape(s.name)} go this week?</h1>
+          <p class="ob-lead" style="margin-bottom: 0;">A quick take — I'll use it to pitch next week's draft closer to what's working.</p>
+        </div>
+      </div>
+      <div class="ob-card">
+        <div class="rf-ratings">
+          <button type="button" class="rf-rating ${a.rating === 'up' ? 'active' : ''}" data-r="up" onclick="reflectionPickRating('${s.id}','up')">
+            <span class="rf-rating-icon">👍</span>
+            <span class="rf-rating-label">Worked well</span>
+          </button>
+          <button type="button" class="rf-rating ${a.rating === 'mid' ? 'active' : ''}" data-r="mid" onclick="reflectionPickRating('${s.id}','mid')">
+            <span class="rf-rating-icon">🤔</span>
+            <span class="rf-rating-label">Needed tweaks</span>
+          </button>
+          <button type="button" class="rf-rating ${a.rating === 'down' ? 'active' : ''}" data-r="down" onclick="reflectionPickRating('${s.id}','down')">
+            <span class="rf-rating-icon">👎</span>
+            <span class="rf-rating-label">Off the mark</span>
+          </button>
+        </div>
+        <div class="rf-tags">
+          ${REFLECTION_TAGS.map(t => `
+            <button type="button" class="rf-tag ${activeTags.has(t) ? 'active' : ''}" onclick="reflectionToggleTag('${s.id}','${escape(t)}')">${escape(t)}</button>
+          `).join('')}
+        </div>
+        <label class="rf-note-label">One thing to remember for next week (optional)</label>
+        <textarea id="rf-note" class="rf-note" placeholder="e.g. Column method clicked after the Wednesday example — lead with that next time." oninput="reflectionSyncNote('${s.id}')">${escape(a.note || '')}</textarea>
+      </div>
+    </div>
+  `;
+  const backBtn = document.getElementById('rf-skip');
+  if (backBtn) backBtn.textContent = stepIdx === 0 ? 'Skip' : 'Skip this one';
+  const nextBtn = document.getElementById('rf-next');
+  if (nextBtn) nextBtn.textContent = (stepIdx === total - 1) ? 'Save & finish →' : 'Save & next →';
+}
+
+function reflectionPickRating(subjectId, rating) {
+  Reflection.answers[subjectId] = Reflection.answers[subjectId] || { rating: null, tags: [], note: '' };
+  Reflection.answers[subjectId].rating = rating;
+  // Re-render just the rating buttons (keep tags/note focus alive).
+  document.querySelectorAll('.rf-rating').forEach(b => b.classList.toggle('active', b.dataset.r === rating));
+}
+
+function reflectionToggleTag(subjectId, tag) {
+  Reflection.answers[subjectId] = Reflection.answers[subjectId] || { rating: null, tags: [], note: '' };
+  const tags = new Set(Reflection.answers[subjectId].tags || []);
+  if (tags.has(tag)) tags.delete(tag); else tags.add(tag);
+  Reflection.answers[subjectId].tags = [...tags];
+  // Update chip states in-place.
+  document.querySelectorAll('.rf-tag').forEach(b => {
+    if (b.textContent.trim() === tag) b.classList.toggle('active', tags.has(tag));
+  });
+}
+
+function reflectionSyncNote(subjectId) {
+  const el = document.getElementById('rf-note');
+  if (!el) return;
+  Reflection.answers[subjectId] = Reflection.answers[subjectId] || { rating: null, tags: [], note: '' };
+  Reflection.answers[subjectId].note = el.value || '';
+}
+
+function reflectionNext(skipped) {
+  const s = Reflection.subjects[Reflection.step];
+  if (!s) return;
+  if (!skipped) {
+    const a = Reflection.answers[s.id];
+    if (!a || !a.rating) { toast('Pick a rating, or tap Skip.'); return; }
+    // Log a week_reflection event for the subject.
+    try {
+      logEvent('week_reflection', {
+        planId: Reflection.planId, subject: s.id,
+        rating: a.rating, tags: a.tags || [], note: a.note || '',
+      });
+    } catch(e){}
+    // Also stamp the rating onto each lesson of this subject — feeds the
+    // existing per-lesson feedback loop used by Regenerate.
+    const plan = State.plans.find(p => p.id === Reflection.planId);
+    if (plan) {
+      (plan.lessons || []).filter(l => l.subject === s.id).forEach(l => {
+        l.feedback = {
+          rating: a.rating,
+          tags: a.tags || [],
+          comment: a.note || '',
+          at: new Date().toISOString(),
+          source: 'friday_reflection',
+        };
+      });
+      save();
+    }
+  }
+  Reflection.step += 1;
+  renderReflectionStep();
+}
+
+function finishReflection() {
+  try { logEvent('friday_reflection_completed', { planId: Reflection.planId, subjectCount: Reflection.subjects.length }); } catch(e){}
+  // Mark the plan as reflected-on so the dashboard prompt stops showing this week.
+  const plan = State.plans.find(p => p.id === Reflection.planId);
+  if (plan) { plan.reflectedAt = new Date().toISOString(); save(); }
+  goto('dashboard');
+  toast('Reflection saved. Have a grand weekend.');
+}
+
+// Pick the plan most likely to reflect on: the current week (if taught)
+// or the most recent past plan with lessons.
+function mostRecentTaughtPlan() {
+  const now = new Date();
+  const plans = (State.plans || [])
+    .filter(p => !p.archived && p.weekDate)
+    .sort((a, b) => b.weekDate.localeCompare(a.weekDate));
+  // Prefer this-week's plan if it exists.
+  for (const p of plans) {
+    const ws = new Date(p.weekDate); ws.setHours(0,0,0,0);
+    const we = new Date(ws); we.setDate(we.getDate() + 4);
+    if (now >= ws && now <= we) return p;
+  }
+  // Else fall back to most recent past plan.
+  return plans.find(p => new Date(p.weekDate) < now) || plans[0] || null;
+}
+
+// Called on the dashboard: show the Friday-reflection nudge card if
+// it's late Friday+ and the current week hasn't been reflected on yet.
+function shouldShowReflectionPrompt() {
+  const plan = mostRecentTaughtPlan();
+  if (!plan) return false;
+  if (plan.reflectedAt) return false;
+  if (plan._reflectionDismissedAt) return false;
+  const now = new Date();
+  const day = now.getDay(); // 0 Sun, 5 Fri
+  // Show on Friday afternoons (≥ 13:00) and all weekend.
+  if (day === 5 && now.getHours() >= 13) return true;
+  if (day === 6 || day === 0) return true;
+  return false;
+}
+
+/* =========================================================================
+   RATE LIMIT — client-side sliding window guard on AI endpoints.
+   Prevents a stray repeat-click or rogue tab from burning through the
+   API key. Not a replacement for server-side limiting; first line of
+   defence only. Tracks per-bucket timestamps in memory.
+   ========================================================================= */
+const RateLimit = {
+  _buckets: {},
+  // Returns true if the call is allowed, false if blocked.
+  // windowMs defaults to 60s; max is per-window ceiling.
+  check(bucket, max, windowMs = 60000) {
+    const now = Date.now();
+    const cutoff = now - windowMs;
+    const arr = (this._buckets[bucket] || []).filter(t => t > cutoff);
+    if (arr.length >= max) {
+      this._buckets[bucket] = arr;
+      return false;
+    }
+    arr.push(now);
+    this._buckets[bucket] = arr;
+    return true;
+  },
+  // Seconds until the next slot frees up.
+  retryAfter(bucket, windowMs = 60000) {
+    const arr = this._buckets[bucket] || [];
+    if (!arr.length) return 0;
+    const oldest = Math.min(...arr);
+    return Math.ceil((oldest + windowMs - Date.now()) / 1000);
+  },
+};
+
+/* =========================================================================
    ABBIE HELPER — the floating "Clippy-for-teachers" class assistant.
    Small, ambient, out of the way. Click to see a contextual tip for the
    current view. Appears with a red dot when there's a new tip for the
@@ -13122,6 +13764,12 @@ async function abbieSubmitQuestion(evt) {
   if (!input) return false;
   const q = (input.value || '').trim();
   if (!q) return false;
+  // Rate limit: max 12 chat questions per 60s per session.
+  if (!RateLimit.check('abbie_chat', 12)) {
+    const wait = RateLimit.retryAfter('abbie_chat');
+    abbieAppendMsg('bee', `Give me a breather — too many questions too quickly. Try again in about ${wait}s.`, 'ah-msg-err');
+    return false;
+  }
   input.value = '';
   if (suggestBox) suggestBox.innerHTML = ''; // suggestions only shown up-front
   abbieAppendMsg('you', q);
