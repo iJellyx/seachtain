@@ -10811,27 +10811,42 @@ const AuthModule = (() => {
       showLocalBanner();
       return;
     }
-    // Initial session check.
+    // Surface magic-link errors that Supabase reports back in the URL
+    // (e.g. expired link, redirect-uri mismatch) so the teacher isn't
+    // left staring at a page that silently refused to sign them in.
+    const errHash = new URLSearchParams((window.location.hash || '').replace(/^#/, ''));
+    const errQuery = new URLSearchParams(window.location.search || '');
+    const authErr = errHash.get('error_description') || errQuery.get('error_description');
+    if (authErr) {
+      console.warn('[Seachtain] Supabase auth error in URL:', authErr);
+      toast('Sign-in link problem: ' + authErr);
+    }
+
+    // Initial session check. With `detectSessionInUrl: true`, creating the
+    // client above already consumed a pending ?code=... and exchanged it
+    // for a session, so getSession() returns the fresh one here.
     const { data: { session: s } } = await client.auth.getSession();
     session = s;
     if (session) {
       await hydrateFromServer();
-      updateAccountUI();
+      promoteFromLanding();
     } else {
       showLocalBanner();
-      updateAccountUI();
     }
-    // React to sign-in / sign-out in-flight.
+    updateAccountUI();
+
+    // React to sign-in / sign-out in-flight. Both SIGNED_IN (explicit) and
+    // INITIAL_SESSION (page load after token refresh) may deliver a fresh
+    // session on a magic-link callback, depending on SDK version — treat
+    // either as "signed in now".
     client.auth.onAuthStateChange(async (event, newSession) => {
       session = newSession;
-      if (event === 'SIGNED_IN') {
+      if ((event === 'SIGNED_IN' || event === 'INITIAL_SESSION') && newSession) {
         closeAuthOverlay();
         hideLocalBanner();
-        toast('Signed in — welcome back.');
+        if (event === 'SIGNED_IN') toast('Signed in — welcome.');
         await hydrateFromServer();
-        // If the user was on the landing page (or a restricted view),
-        // promote them to the dashboard.
-        if (State.view === 'landing') goto('dashboard');
+        promoteFromLanding();
       }
       if (event === 'SIGNED_OUT') {
         toast('Signed out. Your local copy stays on this device.');
@@ -10839,6 +10854,18 @@ const AuthModule = (() => {
       }
       updateAccountUI();
     });
+  }
+
+  // Once we're authed, move anyone still sitting on /welcome to the
+  // dashboard. This is the critical bit that makes the magic-link flow
+  // feel right — the callback page briefly shows as landing, then as
+  // soon as the SDK has a session we promote.
+  function promoteFromLanding() {
+    if (State.view === 'landing') {
+      // Leave the query/hash cleanup to the SDK — it fires history.replaceState
+      // itself after consuming the code.
+      goto('dashboard');
+    }
   }
 
   function isAuthed() { return !!session?.user; }
@@ -11130,25 +11157,38 @@ function startLandingDemo() {
 // `/plan`, `/welcome`, etc. If the URL is `/` (or unknown), fall back to
 // the smart default: landing for brand-new unauthed visitors, dashboard
 // for anyone else.
+//
+// IMPORTANT: if the URL carries Supabase auth params (`?code=…` from a
+// magic-link PKCE exchange, or `#access_token=…` from the implicit flow),
+// we MUST NOT touch the URL until the Supabase SDK has had a chance to
+// read and consume them. Otherwise history.replaceState wipes the token
+// before the SDK can exchange it → user lands back on /welcome unsigned.
+function hasPendingAuthParams() {
+  const s = window.location.search || '';
+  const h = window.location.hash || '';
+  return /[?&]code=/.test(s) || /[?&](access_token|refresh_token|error_code|error_description)=/.test(s + h) || h.startsWith('#access_token=');
+}
+
 function bootRoute() {
   const pathname = window.location.pathname || '/';
   const explicit = viewFromPath(pathname);
+  // When we're mid auth-callback, pick the right view but DON'T rewrite
+  // the URL — the Supabase SDK will clean it up once the exchange is done.
+  const skipHistory = hasPendingAuthParams();
+  const opts = skipHistory ? { skipHistory: true } : { replace: true };
+
   if (pathname === '/') {
     const goTo = (hasAcceptedDemo() || State.plans.length > 0) ? 'dashboard' : 'landing';
-    goto(goTo, { replace: true });
+    goto(goTo, opts);
     return;
   }
   if (explicit) {
-    // Specific view requested via URL. Honour it — the per-view logic
-    // will redirect to dashboard if the view needs a plan/lesson that
-    // isn't loaded.
-    if (explicit === 'plan' && !State.currentPlanId) { goto('dashboard', { replace: true }); return; }
-    if (explicit === 'lesson' && !State.currentLessonId) { goto('dashboard', { replace: true }); return; }
-    goto(explicit, { replace: true });
+    if (explicit === 'plan' && !State.currentPlanId) { goto('dashboard', opts); return; }
+    if (explicit === 'lesson' && !State.currentLessonId) { goto('dashboard', opts); return; }
+    goto(explicit, opts);
     return;
   }
-  // Unknown path — default.
-  goto((hasAcceptedDemo() || State.plans.length > 0) ? 'dashboard' : 'landing', { replace: true });
+  goto((hasAcceptedDemo() || State.plans.length > 0) ? 'dashboard' : 'landing', opts);
 }
 
 // Back / forward button support. Read the URL and route to the matching
