@@ -369,36 +369,47 @@
     box-shadow: 0 2px 6px rgba(196, 138, 26, 0.30), 0 1px 2px rgba(59, 42, 10, 0.10), inset 0 1px 0 rgba(255,255,255,0.35);
     font-weight: 700;
     position: relative;
-    overflow: hidden;
-    padding-right: 34px;  /* room for the honeycomb motif on the right edge */
-    transition: transform 0.12s, box-shadow 0.15s, filter 0.15s;
+    transition: transform 0.12s, box-shadow 0.15s, filter 0.15s, clip-path 0.15s;
   }
-  /* Honeycomb motif on the right edge of primary buttons — subtle nod to
-     Planner Bee's identity. Intentionally low-contrast so it reads as
-     texture, not decoration. */
-  .btn-ai::after,
-  .btn-primary::after {
-    content: '';
-    position: absolute;
-    right: 8px; top: 50%; transform: translateY(-50%);
-    width: 18px; height: 32px;
-    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 18 32'><path d='M9 1 L16 5 L16 13 L9 17 L2 13 L2 5 Z' fill='none' stroke='currentColor' stroke-width='1.2'/><path d='M9 15 L16 19 L16 27 L9 31 L2 27 L2 19 Z' fill='none' stroke='currentColor' stroke-width='1.2'/></svg>");
-    background-repeat: no-repeat;
-    background-position: center;
-    opacity: 0.22;
-    pointer-events: none;
+
+  /* =========================================================================
+     HONEYCOMB BUTTON SHAPE — primary buttons (btn-primary and btn-ai) get
+     a jagged hex-cell right edge, with the left corners cut to match. The
+     button reads as a single honeycomb cell, not a rectangle with decoration.
+     Applied via clip-path so it's pure CSS — no SVG assets, no extra DOM.
+     ========================================================================= */
+  .btn-primary, .btn-ai {
+    /* Hex-cell silhouette: left corners nicked, right edge cuts into
+       two peaks/valleys to form two adjacent honeycomb cells. The peaks
+       bite outward past the text area, the valleys pull back inward. */
+    clip-path: polygon(
+      6px 0,
+      calc(100% - 10px) 0,
+      100% 25%,
+      calc(100% - 10px) 50%,
+      100% 75%,
+      calc(100% - 10px) 100%,
+      6px 100%,
+      0 calc(100% - 6px),
+      0 6px
+    );
+    border-radius: 0;
+    padding-right: 28px;   /* keep label clear of the hex peaks */
+    padding-left: 20px;    /* match the left corner cuts for balance */
   }
-  /* Primary gets a slightly tighter right-padding — needs less room than btn-ai */
-  .btn-primary {
-    position: relative;
-    overflow: hidden;
-    padding-right: 28px;
+  .btn-ai { padding-right: 32px; }
+
+  /* Opt-out utility + small buttons don't get the hex shape */
+  .btn-primary.no-honey, .btn-ai.no-honey {
+    clip-path: none;
+    border-radius: 8px;
+    padding-left: 16px; padding-right: 16px;
   }
-  /* Small variants don't get the honeycomb — keeps the motif for the hero CTAs only */
-  .btn-sm::after { display: none !important; }
-  .btn-primary.no-honey::after, .btn-ai.no-honey::after { display: none; }
-  .btn-primary.no-honey { padding-right: 16px; }
-  .btn-ai.no-honey { padding-right: 16px; }
+  .btn-sm.btn-primary, .btn-sm.btn-ai {
+    clip-path: none;
+    border-radius: 8px;
+    padding-left: 12px; padding-right: 12px;
+  }
   .btn-ai:hover {
     filter: brightness(1.06);
     transform: translateY(-1px);
@@ -483,6 +494,165 @@
   .ld-status.saved { color: var(--primary); }
   .ld-count { font-variant-numeric: tabular-nums; }
   .ld-count.near-limit { color: var(--accent); font-weight: 600; }
+
+  /* "Copy to other days of this subject" — inline expansion below the
+     direction card rather than a separate modal. */
+  .ld-copy-btn {
+    background: transparent; border: none; color: var(--primary);
+    font-size: 12px; font-weight: 600; cursor: pointer; padding: 0;
+    font-family: inherit;
+  }
+  .ld-copy-btn:hover { text-decoration: underline; }
+  .ld-copy-menu {
+    margin-top: 14px; padding: 14px 16px;
+    background: var(--surface); border: 1px solid var(--line);
+    border-radius: 10px;
+  }
+  .ld-copy-head {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 4px;
+  }
+  .ld-copy-head strong { font-family: 'Fraunces', serif; font-size: 14px; }
+  .ld-copy-close {
+    background: transparent; border: none; font-size: 18px; color: var(--ink-faint);
+    cursor: pointer; line-height: 1; padding: 2px 6px;
+  }
+  .ld-copy-close:hover { color: var(--ink); }
+  .ld-copy-hint { font-size: 12px; color: var(--ink-soft); margin: 0 0 10px; }
+  .ld-copy-list { display: flex; flex-direction: column; gap: 6px; margin-bottom: 12px; }
+  .ld-copy-item {
+    display: flex; gap: 10px; align-items: flex-start;
+    padding: 8px 10px; border: 1px solid var(--line); border-radius: 8px;
+    font-size: 13px; cursor: pointer;
+  }
+  .ld-copy-item:hover { background: var(--surface-alt); }
+  .ld-copy-item input { margin-top: 3px; flex-shrink: 0; }
+  .ld-copy-item-sub { color: var(--ink-soft); font-size: 12px; margin-top: 2px; }
+  .ld-copy-item-warn { color: var(--accent); font-size: 11px; margin-top: 4px; }
+  .ld-copy-actions { display: flex; justify-content: flex-end; gap: 8px; }
+
+  /* Homework tab */
+  .homework-empty {
+    display: flex; gap: 20px; align-items: flex-start;
+    background: var(--surface); border: 1px dashed var(--line-strong);
+    border-radius: 14px; padding: 24px;
+  }
+  .homework-empty .abbie { flex-shrink: 0; }
+  .homework-card {
+    background: var(--surface); border: 1px solid var(--line);
+    border-radius: 14px; padding: 22px 26px; box-shadow: var(--shadow-sm);
+  }
+  .homework-card .hw-head {
+    display: flex; justify-content: space-between; align-items: flex-start;
+    gap: 12px; margin-bottom: 4px;
+  }
+  .homework-card h3 {
+    font-family: 'Fraunces', serif; font-size: 20px; margin: 0;
+  }
+  .homework-card .hw-meta {
+    color: var(--ink-soft); font-size: 13px; margin-bottom: 14px;
+  }
+  .homework-card .hw-actions {
+    display: flex; gap: 8px; flex-wrap: wrap;
+    margin-top: 18px; padding-top: 14px;
+    border-top: 1px solid var(--line);
+  }
+  @media (max-width: 560px) {
+    .homework-empty { flex-direction: column; }
+  }
+
+  /* Saved-versions bar (lesson variants) */
+  .variants-bar {
+    display: flex; flex-wrap: wrap; gap: 6px; align-items: center;
+    padding: 10px 12px; margin-bottom: 14px;
+    background: var(--surface-alt); border: 1px solid var(--line);
+    border-radius: 10px; font-size: 12px;
+  }
+  .variants-bar .vb-label {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.04em;
+    text-transform: uppercase; color: var(--ink-soft); margin-right: 4px;
+  }
+  .variants-bar .vb-chip {
+    display: inline-flex; align-items: center; gap: 2px;
+    background: var(--surface); border: 1px solid var(--line);
+    border-radius: 999px; overflow: hidden;
+    font-size: 12px;
+  }
+  .variants-bar .vb-chip > button {
+    background: transparent; border: none; color: var(--ink-soft);
+    padding: 4px 10px; font-size: 12px; cursor: pointer; font-family: inherit;
+  }
+  .variants-bar .vb-chip > button:hover { color: var(--ink); }
+  .variants-bar .vb-chip.active {
+    background: var(--primary-soft); border-color: var(--primary);
+  }
+  .variants-bar .vb-chip.active > button { color: var(--primary); font-weight: 600; }
+  .variants-bar .vb-del {
+    background: transparent; border: none;
+    color: var(--ink-faint); padding: 4px 8px 4px 4px;
+    font-size: 14px; line-height: 1; cursor: pointer;
+  }
+  .variants-bar .vb-del:hover { color: #b2382a; }
+  .variants-bar .vb-working, .variants-bar .vb-save {
+    background: transparent; border: 1px dashed var(--line-strong);
+    color: var(--ink-soft); padding: 4px 10px; cursor: pointer; font-family: inherit;
+  }
+  .variants-bar .vb-working:hover, .variants-bar .vb-save:hover {
+    border-color: var(--primary); color: var(--primary);
+  }
+
+  /* Day chips for Sub Pack day selection */
+  .sub-day-chip {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 6px 12px; border: 1px solid var(--line); border-radius: 999px;
+    background: var(--surface); cursor: pointer; font-size: 12px;
+    color: var(--ink-soft); font-weight: 500;
+    transition: all 0.15s;
+  }
+  .sub-day-chip input { margin: 0; }
+  .sub-day-chip:hover { border-color: var(--line-strong); color: var(--ink); }
+  .sub-day-chip:has(input:checked) {
+    background: var(--primary-soft);
+    border-color: var(--primary);
+    color: var(--primary); font-weight: 600;
+  }
+
+  /* Lesson hover preview — floating card summarising a lesson without
+     having to click in. Triggered by 500ms hover on any timetable tile. */
+  .lesson-preview-pop {
+    position: fixed; z-index: 950; pointer-events: none;
+    background: var(--surface); border: 1px solid var(--line);
+    border-radius: 12px; box-shadow: 0 14px 32px rgba(43, 36, 32, 0.18), 0 2px 6px rgba(43, 36, 32, 0.08);
+    padding: 14px 16px; max-width: 320px; min-width: 220px;
+    font-size: 13px; line-height: 1.5; color: var(--ink);
+    opacity: 0; transform: translateY(4px);
+    transition: opacity 0.15s, transform 0.15s;
+  }
+  .lesson-preview-pop.show { opacity: 1; transform: translateY(0); }
+  .lesson-preview-pop .lpp-subject {
+    font-size: 10px; font-weight: 700; letter-spacing: 0.08em;
+    text-transform: uppercase; color: var(--ink-faint); margin-bottom: 2px;
+  }
+  .lesson-preview-pop .lpp-title {
+    font-family: 'Fraunces', serif; font-size: 15px; font-weight: 600;
+    margin-bottom: 6px; line-height: 1.25;
+  }
+  .lesson-preview-pop .lpp-focus {
+    color: var(--ink-soft); font-size: 12px; margin-bottom: 8px;
+  }
+  .lesson-preview-pop .lpp-outcomes {
+    margin: 0; padding-left: 16px; font-size: 12px; color: var(--ink-soft);
+  }
+  .lesson-preview-pop .lpp-outcomes li { margin-bottom: 2px; }
+  .lesson-preview-pop .lpp-direction {
+    margin-top: 8px; padding: 6px 10px;
+    background: var(--gold-soft); color: #5c4a12;
+    border-radius: 6px; font-size: 11px; line-height: 1.4;
+  }
+  .lesson-preview-pop .lpp-hint {
+    margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--line);
+    font-size: 11px; color: var(--ink-faint); text-align: right;
+  }
 
   /* =========================================================================
      ABBIE — class-assistant mascot.
@@ -3202,14 +3372,19 @@
         <textarea id="lesson-direction-text" class="ld-textarea" placeholder="e.g. Focus on long division using column method. / We're on page 84 of Charlotte's Web — this chapter. / Pupils struggled with place value last week, reinforce that." maxlength="600" oninput="onLessonDirectionInput()" onblur="saveLessonDirection()"></textarea>
         <div class="ld-meta">
           <span id="lesson-direction-status" class="ld-status">Saved automatically</span>
-          <span class="ld-count" id="lesson-direction-count">0 / 600</span>
+          <span style="display:flex; gap:14px; align-items:center;">
+            <button type="button" id="ld-copy-btn" class="ld-copy-btn no-print" onclick="openCopyDirectionMenu(event)" style="display:none;">Copy to other days of this subject →</button>
+            <span class="ld-count" id="lesson-direction-count">0 / 600</span>
+          </span>
         </div>
+        <div id="ld-copy-menu" class="ld-copy-menu" style="display:none;"></div>
       </div>
 
       <div class="tabs">
         <button class="tab active" data-ltab="plan" onclick="lessonTab('plan')">Lesson plan</button>
         <button class="tab" data-ltab="guide" onclick="lessonTab('guide')">Teacher notes</button>
         <button class="tab" data-ltab="worksheet" onclick="lessonTab('worksheet')"><span id="worksheet-tab-label">Pupil sheet</span></button>
+        <button class="tab" data-ltab="homework" onclick="lessonTab('homework')">Homework</button>
         <button class="tab" data-ltab="resources" onclick="lessonTab('resources')">Resources</button>
       </div>
 
@@ -3249,6 +3424,13 @@
           </div>
         </div>
         <div id="worksheet-wrap"></div>
+      </div>
+
+      <div class="tab-content" data-ltab-content="homework">
+        <div class="content-grid">
+          <div class="content-main" id="homework-main"></div>
+          <div class="content-side" id="homework-side"></div>
+        </div>
       </div>
 
       <div class="tab-content" data-ltab-content="resources">
@@ -8795,15 +8977,30 @@ function openSubPackNoteModal(plan) {
   const existing = plan.subNote || '';
   const m = document.getElementById('modal');
   document.getElementById('modal-title').textContent = 'A note for the substitute';
+  const days = ['Monday','Tuesday','Wednesday','Thursday','Friday'];
+  const lastDays = Array.isArray(plan.subPackDays) && plan.subPackDays.length ? plan.subPackDays : days;
   document.getElementById('modal-body').innerHTML =
     `<p style="margin: 0 0 10px; font-size: 13px; color: var(--ink-soft);">Anything the cover teacher should know — allergies, seating, pupils who need a gentle day, fire drill quirks. Kept with this plan.</p>
-     <textarea id="sub-pack-note-field" style="width:100%; min-height: 110px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 8px; font-family: inherit; font-size: 13px; resize: vertical;" placeholder="e.g. Niamh has a nut allergy. Oisín is fragile this week — pair him with Aoife. Fire drill: out the back door, line up on the yard.">${escape(existing)}</textarea>`;
+     <textarea id="sub-pack-note-field" style="width:100%; min-height: 90px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 8px; font-family: inherit; font-size: 13px; resize: vertical; margin-bottom: 16px;" placeholder="e.g. Niamh has a nut allergy. Oisín is fragile this week — pair him with Aoife. Fire drill: out the back door, line up on the yard.">${escape(existing)}</textarea>
+     <div style="font-size: 12px; color: var(--ink-soft); margin-bottom: 6px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase;">Which days should the pack cover?</div>
+     <div style="font-size: 12px; color: var(--ink-soft); margin-bottom: 8px;">If you're only out some days, untick the rest — the pack will only include what the sub actually needs.</div>
+     <div id="sub-pack-days" style="display:flex; gap:6px; flex-wrap: wrap;">
+       ${days.map(d => `
+         <label class="sub-day-chip">
+           <input type="checkbox" value="${d}" ${lastDays.includes(d) ? 'checked' : ''}>
+           <span>${d}</span>
+         </label>
+       `).join('')}
+     </div>`;
   const ok = document.getElementById('modal-ok');
   ok.textContent = 'Open Sub Pack →';
   ok.className = 'btn btn-primary';
   ok.onclick = () => {
     const field = document.getElementById('sub-pack-note-field');
     plan.subNote = field ? field.value.trim() : '';
+    const dayBoxes = document.querySelectorAll('#sub-pack-days input:checked');
+    const selectedDays = Array.from(dayBoxes).map(el => el.value);
+    plan.subPackDays = selectedDays.length ? selectedDays : days;
     save();
     closeModal();
     ok.onclick = null;
@@ -8815,7 +9012,13 @@ function openSubPackNoteModal(plan) {
 function renderSubPackDoc(plan) {
   const P = State.profile || {};
   const slots = plan.timetable || TIMETABLE_SLOTS;
-  const days = ['Monday','Tuesday','Wednesday','Thursday','Friday'];
+  const allDays = ['Monday','Tuesday','Wednesday','Thursday','Friday'];
+  // Respect the teacher's per-plan day selection from the note modal.
+  // Fallback to the full week if they haven't picked.
+  const days = (Array.isArray(plan.subPackDays) && plan.subPackDays.length)
+    ? allDays.filter(d => plan.subPackDays.includes(d))
+    : allDays;
+  const isFullWeek = days.length === allDays.length;
   const emojiFor = (sid) => plan.subjectEmojis?.[sid] || P.subjectEmojis?.[sid] || (SUBJECTS.find(s => s.id === sid) || {}).emoji || '📘';
 
   const esc = (s) => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -8959,7 +9162,7 @@ function renderSubPackDoc(plan) {
   <div class="sp-hero">
     <div class="sp-kicker">Substitute Teacher Pack</div>
     <h1>${esc(plan.title)}</h1>
-    <div class="sp-sub">Week of ${esc(plan.weekDateReadable || '')} · ${esc(plan.gradeName || P.grade || '')}</div>
+    <div class="sp-sub">Week of ${esc(plan.weekDateReadable || '')} · ${esc(plan.gradeName || P.grade || '')}${isFullWeek ? '' : ' · ' + esc(days.join(' + ')) + ' only'}</div>
     <div class="sp-for">
       <strong>${esc(P.teacher || 'Class teacher')}</strong>
       ${esc(P.school || '')}${P.roll ? ' · Roll ' + esc(P.roll) : ''}
@@ -8990,7 +9193,7 @@ function renderSubPackDoc(plan) {
   </div>
 
   <div class="sp-section-card">
-    <h3>Week at a glance</h3>
+    <h3>${isFullWeek ? 'Week at a glance' : 'Your days at a glance'}</h3>
     <table class="sp-tt">
       <thead><tr><th>Day</th>${slotHeaders}</tr></thead>
       <tbody>${timetableRows}</tbody>
@@ -9706,6 +9909,7 @@ function renderTimetable(plan) {
           data-lesson-id="${lesson.id}" data-minutes="${lesson.minutes}" data-span="${span}" data-day="${d}" data-slot-idx="${idx}"
           tabindex="0" role="button" aria-label="Open ${escape(lesson.title)} (${escape(lesson.day)}, ${lesson.minutes} minutes)"
           onclick="openLesson('${lesson.id}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openLesson('${lesson.id}');}"
+          onmouseenter="lessonPreviewSchedule(event, '${lesson.id}')" onmouseleave="lessonPreviewHide()"
           ondragover="onTileDragOver(event)" ondragleave="onTileDragLeave(event)" ondrop="onTileDrop(event)">
           <input type="checkbox" class="tile-check no-print" data-bulk-id="${lesson.id}" ${State.bulkSelection.has(lesson.id) ? 'checked' : ''} onclick="event.stopPropagation(); toggleBulk('${lesson.id}');" aria-label="Select lesson">
           <div>
@@ -9855,6 +10059,71 @@ function endResize() {
 // also valid drop targets (moves the lesson rather than swapping).
 // ============================================================================
 const DragState = { srcId: null, srcMinutes: 0, srcSpan: 1 };
+
+/* =========================================================================
+   LESSON HOVER PREVIEW
+   Float a summary card next to any timetable tile after a 500ms hover,
+   so teachers can scan lessons without navigating into each one.
+   Hidden on drag/click/mouse-leave.
+   ========================================================================= */
+const LessonPreview = { timer: null, el: null, lessonId: null };
+
+function lessonPreviewEl() {
+  if (LessonPreview.el) return LessonPreview.el;
+  const el = document.createElement('div');
+  el.className = 'lesson-preview-pop';
+  document.body.appendChild(el);
+  LessonPreview.el = el;
+  return el;
+}
+
+function lessonPreviewSchedule(evt, lessonId) {
+  // Don't preview during drag or resize.
+  if (document.body.classList.contains('dragging-lesson') || document.body.classList.contains('resizing-lesson')) return;
+  if (LessonPreview.timer) clearTimeout(LessonPreview.timer);
+  const tileRect = evt.currentTarget.getBoundingClientRect();
+  LessonPreview.timer = setTimeout(() => lessonPreviewShow(lessonId, tileRect), 500);
+}
+
+function lessonPreviewShow(lessonId, tileRect) {
+  const plan = currentPlan();
+  if (!plan) return;
+  const l = (plan.lessons || []).find(x => x.id === lessonId);
+  if (!l) return;
+  const el = lessonPreviewEl();
+  const outcomes = Array.isArray(l.outcomes) && l.outcomes.length
+    ? `<ul class="lpp-outcomes">${l.outcomes.slice(0, 3).map(o => `<li>${escape(o)}</li>`).join('')}</ul>`
+    : '';
+  const direction = l.teacherDirection
+    ? `<div class="lpp-direction"><strong>Your direction:</strong> ${escape(l.teacherDirection)}</div>`
+    : '';
+  el.innerHTML = `
+    <div class="lpp-subject">${escape(subjectLabel(l.subject))} · ${l.minutes} min</div>
+    <div class="lpp-title">${escape(l.title || 'Untitled')}</div>
+    ${l.focus ? `<div class="lpp-focus">${escape(l.focus)}</div>` : ''}
+    ${outcomes}
+    ${direction}
+    <div class="lpp-hint">Click to open</div>
+  `;
+  // Position: prefer right of the tile; flip if near viewport edge.
+  const vw = window.innerWidth, vh = window.innerHeight;
+  const prefW = 320;
+  let left = tileRect.right + 10;
+  if (left + prefW > vw - 8) left = Math.max(8, tileRect.left - prefW - 10);
+  let top = tileRect.top;
+  const prefH = 180;
+  if (top + prefH > vh - 8) top = Math.max(8, vh - prefH - 8);
+  el.style.left = left + 'px';
+  el.style.top = top + 'px';
+  el.classList.add('show');
+  LessonPreview.lessonId = lessonId;
+}
+
+function lessonPreviewHide() {
+  if (LessonPreview.timer) { clearTimeout(LessonPreview.timer); LessonPreview.timer = null; }
+  if (LessonPreview.el) LessonPreview.el.classList.remove('show');
+  LessonPreview.lessonId = null;
+}
 
 function onTileDragStart(evt, lessonId) {
   const plan = currentPlan();
@@ -10238,6 +10507,9 @@ function renderLesson() {
   const dirText = document.getElementById('lesson-direction-text');
   const dirStatus = document.getElementById('lesson-direction-status');
   const dirCount = document.getElementById('lesson-direction-count');
+  const dirCopyBtn = document.getElementById('ld-copy-btn');
+  const dirCopyMenu = document.getElementById('ld-copy-menu');
+  if (dirCopyMenu) { dirCopyMenu.style.display = 'none'; dirCopyMenu.innerHTML = ''; }
   if (dirText) {
     dirText.value = l.teacherDirection || '';
     if (dirStatus) {
@@ -10250,12 +10522,225 @@ function renderLesson() {
       dirCount.classList.toggle('near-limit', len > 520);
     }
   }
+  // Only show "Copy to other days" if (a) there's a direction to copy, and
+  // (b) the plan actually has other lessons of the same subject.
+  if (dirCopyBtn) {
+    const plan = currentPlan();
+    const otherSameSubject = plan ? (plan.lessons || []).filter(x => x.id !== l.id && x.subject === l.subject) : [];
+    dirCopyBtn.style.display = (l.teacherDirection && otherSameSubject.length) ? '' : 'none';
+  }
 
   renderLessonPlan(l);
   renderLessonGuide(l);
   renderWorksheet(l);
+  renderLessonHomework(l);
   renderLessonResources(l);
   lessonTab(State.ltab);
+}
+
+/* =========================================================================
+   HOMEWORK
+   Per-lesson AI-generated homework. Stored on lesson.homework. Uses the
+   same teacher direction as Regenerate — teachers only have to say what
+   the lesson's about once, and both the lesson and homework respect it.
+   ========================================================================= */
+function renderLessonHomework(l) {
+  const main = document.getElementById('homework-main');
+  const side = document.getElementById('homework-side');
+  if (!main) return;
+  const hw = l.homework;
+  if (!hw) {
+    // Empty state with a clear AI CTA.
+    main.innerHTML = `
+      <div class="tab-subtitle"><strong>Homework · a short take-home that matches this lesson.</strong> Bee writes it using your direction + what the class did, pitched to the grade.</div>
+      <div class="homework-empty">
+        <div class="abbie abbie-sm" data-abbie-pose="clipboard" aria-hidden="true"></div>
+        <div>
+          <h3 style="margin: 0 0 6px; font-family: 'Fraunces', serif;">No homework yet for this lesson</h3>
+          <p style="margin: 0 0 14px; color: var(--ink-soft); font-size: 14px;">Tell Bee what should be on the take-home — or just hit Generate and we'll pick up what's already set for this lesson.</p>
+          <textarea id="hw-teacher-note" placeholder="Optional · e.g. Keep it to 15 minutes. / Focus only on the first two sums we did in class." style="width: 100%; max-width: 520px; min-height: 56px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 8px; font-family: inherit; font-size: 13px; resize: vertical; margin-bottom: 10px;"></textarea>
+          <div>
+            <button class="btn btn-ai" onclick="generateHomework()"><span class="ai-spark">✨</span> Generate homework</button>
+          </div>
+          <div id="hw-status" class="faint" style="margin-top: 12px; font-size: 12px;"></div>
+        </div>
+      </div>`;
+    try { mountAbbie(main); } catch(e){}
+    side.innerHTML = `
+      <div class="side-card">
+        <h4>What Bee uses</h4>
+        <ul>
+          <li>Your direction for this lesson</li>
+          <li>Grade + class profile</li>
+          <li>Gaeilge medium + your confidence</li>
+          <li>The lesson's learning outcomes</li>
+        </ul>
+      </div>`;
+    return;
+  }
+
+  // Generated homework — rendered plain and print-friendly.
+  main.innerHTML = `
+    <div class="tab-subtitle"><strong>Homework for this lesson.</strong> Edit anything, regenerate, or print with one click.</div>
+    <div class="homework-card">
+      <div class="hw-head">
+        <h3>${escape(hw.title || 'Homework')}</h3>
+        <span class="ai-badge">Bee-generated</span>
+      </div>
+      <div class="hw-meta">
+        <span>⏱ ${escape(String(hw.estimatedMinutes || ''))} min</span>
+        ${hw.materials && hw.materials.length ? `<span>· ${hw.materials.map(escape).join(', ')}</span>` : ''}
+      </div>
+      ${hw.instructions ? `<div class="lesson-section"><h3>What to do</h3><p>${escape(hw.instructions)}</p></div>` : ''}
+      ${Array.isArray(hw.tasks) && hw.tasks.length ? `
+        <div class="lesson-section">
+          <h3>Tasks</h3>
+          <ol>${hw.tasks.map(t => `<li>${escape(t)}</li>`).join('')}</ol>
+        </div>` : ''}
+      ${hw.differentiation ? `
+        <div class="lesson-section">
+          <h3>Differentiation</h3>
+          <ul>
+            <li><strong>Support:</strong> ${escape(hw.differentiation.support || '')}</li>
+            <li><strong>Extension:</strong> ${escape(hw.differentiation.extension || '')}</li>
+          </ul>
+        </div>` : ''}
+      ${hw.parentNote ? `
+        <div class="callout callout-primary"><h4>Note for parents</h4><p style="margin:0;">${escape(hw.parentNote)}</p></div>` : ''}
+      <div class="hw-actions no-print">
+        <button class="btn btn-ai btn-sm" onclick="generateHomework(true)" title="Generate a different version"><span class="ai-spark">✨</span> Regenerate</button>
+        <button class="btn btn-ghost btn-sm" onclick="printHomework()">🖨 Print</button>
+        <button class="btn btn-ghost btn-sm" onclick="copyHomework()">📋 Copy text</button>
+        <button class="btn btn-ghost btn-sm" onclick="clearHomework()" style="color: #b2382a;">Clear</button>
+      </div>
+      <div id="hw-status" class="faint no-print" style="margin-top: 12px; font-size: 12px;"></div>
+    </div>`;
+  side.innerHTML = `
+    <div class="side-card">
+      <h4>When to send this</h4>
+      <p style="font-size: 13px; margin: 0;">Sent home the same day the lesson runs. Parents see the <em>"Note for parents"</em> line — everything else goes to the pupil.</p>
+    </div>
+    <div class="side-card">
+      <h4>Not quite right?</h4>
+      <p style="font-size: 13px; margin: 0;">Update your <em>direction for this lesson</em> at the top of the Plan tab, then hit Regenerate here.</p>
+    </div>`;
+}
+
+async function generateHomework(replaceExisting) {
+  const l = currentLesson();
+  if (!l) return;
+  // Capture an optional one-off note from the empty-state textarea, if present.
+  const noteEl = document.getElementById('hw-teacher-note');
+  const teacherNote = noteEl ? (noteEl.value || '').trim() : '';
+  const plan = currentPlan();
+  if (!plan) return;
+  const profile = State.profile || {};
+  const statusEl = document.getElementById('hw-status');
+  if (statusEl) statusEl.innerHTML = '<span class="ai-spinner"></span> Bee is writing the homework…';
+
+  try {
+    const resp = await fetch('/api/generate-homework', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({
+        lesson: {
+          subject: l.subject, title: l.title, focus: l.focus, minutes: l.minutes,
+          plan: { main: l.plan?.main || '' }, outcomes: l.outcomes, vocab: l.vocab,
+          teacherDirection: l.teacherDirection || undefined,
+        },
+        plan: { gradeName: plan.gradeName, grade: plan.grade, gradeId: plan.gradeId, pupils: plan.pupils, medium: plan.medium },
+        profile: { grade: profile.grade, pupils: profile.pupils, medium: profile.medium },
+        teacherNote,
+      }),
+    });
+    if (!resp.ok) {
+      const err = await resp.json().catch(() => ({}));
+      throw new Error(err.error || `HTTP ${resp.status}`);
+    }
+    const data = await resp.json();
+    if (!data.homework) throw new Error('Empty response');
+    l.homework = { ...data.homework, generatedAt: new Date().toISOString() };
+    save();
+    try { logEvent('homework_generated', { planId: State.currentPlanId, lessonId: l.id, subject: l.subject }); } catch(e){}
+    renderLessonHomework(l);
+    toast('✨ Homework ready.');
+  } catch (e) {
+    console.warn('Homework generation failed', e);
+    if (statusEl) statusEl.innerHTML = `<span style="color: #b2382a;">${escape(e.message || 'Something went wrong.')}</span>`;
+  }
+}
+
+function clearHomework() {
+  const l = currentLesson();
+  if (!l) return;
+  confirmAction({
+    title: 'Clear this homework?',
+    body: `<p style="margin:0;">The generated homework will be removed. You can regenerate a new one any time.</p>`,
+    okLabel: 'Clear homework',
+    danger: true,
+    onConfirm: () => { delete l.homework; save(); renderLessonHomework(l); toast('Homework cleared.'); }
+  });
+}
+
+function printHomework() {
+  const l = currentLesson();
+  if (!l || !l.homework) return;
+  const hw = l.homework;
+  const P = State.profile || {};
+  const w = window.open('', '_blank', 'width=720,height=900');
+  if (!w) return;
+  const esc = (s) => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  const tasks = Array.isArray(hw.tasks) && hw.tasks.length ? `<ol>${hw.tasks.map(t => `<li>${esc(t)}</li>`).join('')}</ol>` : '';
+  const materials = Array.isArray(hw.materials) && hw.materials.length ? `<p><strong>You'll need:</strong> ${hw.materials.map(esc).join(', ')}</p>` : '';
+  w.document.write(`<!doctype html><html><head><meta charset="utf-8"><title>Homework — ${esc(l.title)}</title>
+    <style>
+      body { font-family: Georgia, 'Times New Roman', serif; max-width: 640px; margin: 30px auto; padding: 18px; color: #1d2a22; line-height: 1.55; }
+      h1 { font-size: 22px; margin-bottom: 2px; }
+      h2 { font-size: 14px; margin-top: 18px; color: #555; text-transform: uppercase; letter-spacing: 0.05em; }
+      .head { border-bottom: 2px solid #2D5F3F; padding-bottom: 8px; margin-bottom: 16px; }
+      .meta { color: #6b7a6f; font-size: 13px; }
+      ol, ul { padding-left: 20px; }
+      li { margin-bottom: 6px; }
+      .note { background: #F4EEE2; border-left: 3px solid #D4A72C; padding: 10px 14px; margin-top: 16px; font-size: 13px; }
+      @media print { body { margin: 0; } }
+    </style></head>
+    <body>
+      <div class="head">
+        <h1>${esc(hw.title || 'Homework')}</h1>
+        <div class="meta">${esc(l.subject)} · ${esc(l.title)} · ~${esc(String(hw.estimatedMinutes || ''))} min · ${esc(P.school || '')}</div>
+      </div>
+      ${hw.instructions ? `<h2>What to do</h2><p>${esc(hw.instructions)}</p>` : ''}
+      ${materials}
+      ${tasks ? `<h2>Tasks</h2>${tasks}` : ''}
+      ${hw.parentNote ? `<div class="note"><strong>Note for parents:</strong> ${esc(hw.parentNote)}</div>` : ''}
+    </body></html>`);
+  w.document.close();
+  setTimeout(() => w.print(), 300);
+}
+
+function copyHomework() {
+  const l = currentLesson();
+  if (!l || !l.homework) return;
+  const hw = l.homework;
+  const parts = [
+    hw.title || 'Homework',
+    '',
+    hw.instructions || '',
+    '',
+    ...(hw.tasks || []).map((t, i) => `${i + 1}. ${t}`),
+    '',
+    hw.materials && hw.materials.length ? `You'll need: ${hw.materials.join(', ')}` : '',
+    hw.parentNote ? `\nNote for parents: ${hw.parentNote}` : '',
+  ];
+  const text = parts.filter(Boolean).join('\n');
+  if (navigator.clipboard?.writeText) {
+    navigator.clipboard.writeText(text).then(() => toast('Copied to clipboard'));
+  } else {
+    const ta = document.createElement('textarea');
+    ta.value = text; document.body.appendChild(ta); ta.select();
+    try { document.execCommand('copy'); toast('Copied to clipboard'); } catch (e) {}
+    document.body.removeChild(ta);
+  }
 }
 
 // Debounced persistence for the lesson direction textarea. Saves locally
@@ -10279,6 +10764,7 @@ function saveLessonDirection() {
   const l = currentLesson();
   const dirText = document.getElementById('lesson-direction-text');
   const dirStatus = document.getElementById('lesson-direction-status');
+  const dirCopyBtn = document.getElementById('ld-copy-btn');
   if (!l || !dirText) return;
   const val = (dirText.value || '').trim();
   const changed = val !== (l.teacherDirection || '');
@@ -10288,6 +10774,74 @@ function saveLessonDirection() {
     dirStatus.textContent = val ? 'Saved · feeds Regenerate' : 'Saved automatically';
     dirStatus.className = 'ld-status saved';
   }
+  // Re-evaluate the copy-to-other-days button.
+  if (dirCopyBtn) {
+    const plan = currentPlan();
+    const otherSameSubject = plan ? (plan.lessons || []).filter(x => x.id !== l.id && x.subject === l.subject) : [];
+    dirCopyBtn.style.display = (val && otherSameSubject.length) ? '' : 'none';
+  }
+}
+
+function openCopyDirectionMenu(evt) {
+  if (evt) evt.stopPropagation();
+  const l = currentLesson();
+  const plan = currentPlan();
+  const menu = document.getElementById('ld-copy-menu');
+  if (!l || !plan || !menu) return;
+  const others = (plan.lessons || [])
+    .filter(x => x.id !== l.id && x.subject === l.subject)
+    .sort((a, b) => {
+      const daysOrder = ['Monday','Tuesday','Wednesday','Thursday','Friday'];
+      return daysOrder.indexOf(a.day) - daysOrder.indexOf(b.day);
+    });
+  if (!others.length) return;
+  menu.innerHTML = `
+    <div class="ld-copy-head">
+      <strong>Copy your direction to which lessons?</strong>
+      <button class="ld-copy-close" onclick="closeCopyDirectionMenu()" aria-label="Close">×</button>
+    </div>
+    <p class="ld-copy-hint">They'll overwrite any existing direction on the lessons you tick.</p>
+    <div class="ld-copy-list">
+      ${others.map(o => `
+        <label class="ld-copy-item">
+          <input type="checkbox" value="${o.id}" ${o.teacherDirection && o.teacherDirection !== l.teacherDirection ? '' : 'checked'}>
+          <div>
+            <strong>${escape(o.day)}</strong>
+            <div class="ld-copy-item-sub">${escape(o.title || '')}</div>
+            ${o.teacherDirection ? `<div class="ld-copy-item-warn">⚠ will replace: "${escape(o.teacherDirection).slice(0, 60)}${o.teacherDirection.length > 60 ? '…' : ''}"</div>` : ''}
+          </div>
+        </label>
+      `).join('')}
+    </div>
+    <div class="ld-copy-actions">
+      <button class="btn btn-ghost btn-sm no-honey" onclick="closeCopyDirectionMenu()">Cancel</button>
+      <button class="btn btn-primary btn-sm no-honey" onclick="applyCopyDirection()">Copy to selected →</button>
+    </div>
+  `;
+  menu.style.display = 'block';
+}
+
+function closeCopyDirectionMenu() {
+  const menu = document.getElementById('ld-copy-menu');
+  if (menu) { menu.style.display = 'none'; menu.innerHTML = ''; }
+}
+
+function applyCopyDirection() {
+  const l = currentLesson();
+  const plan = currentPlan();
+  const menu = document.getElementById('ld-copy-menu');
+  if (!l || !plan || !menu) return;
+  const picked = Array.from(menu.querySelectorAll('input:checked')).map(x => x.value);
+  if (!picked.length) { toast('Pick at least one lesson first.'); return; }
+  let count = 0;
+  picked.forEach(lid => {
+    const target = (plan.lessons || []).find(x => x.id === lid);
+    if (target) { target.teacherDirection = l.teacherDirection; count++; }
+  });
+  save();
+  try { logEvent('lesson_direction_copied', { planId: plan.id, fromLessonId: l.id, toCount: count, subject: l.subject }); } catch(e){}
+  closeCopyDirectionMenu();
+  toast(`Direction copied to ${count} ${count === 1 ? 'lesson' : 'lessons'}.`);
 }
 
 // Compute per-phase minute budget that sums close to l.minutes
@@ -10352,13 +10906,30 @@ function renderLessonPlan(l) {
   const aiBanner = l.aiGeneratedAt ? `
     <div class="ai-banner">
       <div class="ai-banner-icon">✨</div>
-      <div class="ai-banner-text"><strong>Regenerated by Bee</strong>${l.aiDirection ? ' · ' + escape(l.aiDirection) : ''}. ${l._preAI ? 'Not right? ' : ''}</div>
+      <div class="ai-banner-text"><strong>Regenerated by Bee</strong>${l.aiDirection ? ' · ' + escape(l.aiDirection) : ''}. ${l._preAI ? 'Happy with this? ' : ''}</div>
+      <button class="btn btn-ghost" onclick="saveLessonVariant()" title="Save this version so you can come back to it">💾 Save this version</button>
       ${l._preAI ? `<button class="btn btn-ghost" onclick="revertAIRegeneration()">↺ Revert</button>` : ''}
+    </div>` : '';
+  // Variants picker — only shown if there are saved versions.
+  const variants = Array.isArray(l.variants) ? l.variants : [];
+  const activeVariant = l.activeVariantId ? variants.find(v => v.id === l.activeVariantId) : null;
+  const variantsBlock = variants.length ? `
+    <div class="variants-bar no-print">
+      <span class="vb-label">📑 Saved versions</span>
+      ${variants.map(v => `
+        <span class="vb-chip ${v.id === l.activeVariantId ? 'active' : ''}">
+          <button onclick="switchLessonVariant('${v.id}')" title="Switch to this version">${escape(v.label)}</button>
+          <button class="vb-del" onclick="deleteLessonVariant('${v.id}')" title="Delete this version" aria-label="Delete">×</button>
+        </span>
+      `).join('')}
+      ${l._beforeVariantSwitch ? `<button class="vb-chip vb-working" onclick="clearActiveVariant()" title="Back to the unsaved working version">Back to working copy</button>` : ''}
+      ${!l.aiGeneratedAt && !activeVariant ? `<button class="vb-chip vb-save" onclick="saveLessonVariant()">+ Save current</button>` : ''}
     </div>` : '';
   const tabSubtitle = `<div class="tab-subtitle"><strong>Lesson plan · what you'll do, minute by minute.</strong> Swap to <em>Teacher notes</em> for watch-outs, differentiation, and the pupil-facing opening line.</div>`;
   main.innerHTML = `
     ${tabSubtitle}
     ${aiBanner}
+    ${variantsBlock}
     ${pinHtml}
     ${recapHtml}
     <div class="lesson-section">
@@ -11428,17 +11999,36 @@ async function runAIRegenerate(l) {
   }
 }
 
+// Capture a snapshot of a lesson's content fields (for variants + undo).
+function snapshotLessonContent(l) {
+  return {
+    title: l.title, focus: l.focus,
+    plan: JSON.parse(JSON.stringify(l.plan || {})),
+    outcomes: Array.isArray(l.outcomes) ? [...l.outcomes] : [],
+    vocab: Array.isArray(l.vocab) ? JSON.parse(JSON.stringify(l.vocab)) : [],
+    resources: Array.isArray(l.resources) ? [...l.resources] : [],
+    guide: JSON.parse(JSON.stringify(l.guide || {})),
+    diff: l.diff ? JSON.parse(JSON.stringify(l.diff)) : {},
+    strand: l.strand, strandUnit: l.strandUnit || null,
+  };
+}
+
+function restoreLessonContent(l, snap) {
+  if (!snap) return;
+  l.title = snap.title; l.focus = snap.focus;
+  l.plan = snap.plan; l.outcomes = snap.outcomes;
+  l.vocab = snap.vocab; l.resources = snap.resources;
+  l.guide = snap.guide; l.diff = snap.diff;
+  l.strand = snap.strand; l.strandUnit = snap.strandUnit;
+}
+
 // Merge the AI's JSON response into the existing lesson. We preserve
 // identifying fields (id, day, slotIdx, spanSlots, subject, fixed) and
 // overwrite content fields. Feedback history stays intact.
 function applyAIRegeneratedLesson(l, ai, direction) {
   // Keep a "before" snapshot once so the teacher can undo if needed.
   if (!l._preAI) {
-    l._preAI = {
-      title: l.title, focus: l.focus, plan: JSON.parse(JSON.stringify(l.plan || {})),
-      outcomes: l.outcomes, vocab: l.vocab, resources: l.resources,
-      guide: JSON.parse(JSON.stringify(l.guide || {})), diff: l.diff, strand: l.strand,
-    };
+    l._preAI = snapshotLessonContent(l);
   }
   if (ai.title) l.title = ai.title;
   if (ai.focus) l.focus = ai.focus;
@@ -11471,17 +12061,105 @@ function applyAIRegeneratedLesson(l, ai, direction) {
 function revertAIRegeneration() {
   const l = currentLesson();
   if (!l || !l._preAI) { toast('No AI regeneration to revert.'); return; }
-  const snap = l._preAI;
-  l.title = snap.title; l.focus = snap.focus;
-  l.plan = snap.plan; l.outcomes = snap.outcomes;
-  l.vocab = snap.vocab; l.resources = snap.resources;
-  l.guide = snap.guide; l.diff = snap.diff; l.strand = snap.strand;
+  restoreLessonContent(l, l._preAI);
   delete l._preAI;
   delete l.aiGeneratedAt;
   delete l.aiDirection;
   save();
   renderLesson();
   toast('Reverted to the previous version.');
+}
+
+/* =========================================================================
+   LESSON VARIANTS
+   A lesson can collect multiple saved versions. Any time a teacher likes
+   the current state (often right after a Regenerate), they hit
+   "Save this version" and it's tucked into lesson.variants[]. A picker
+   on the lesson-plan tab shows all saved versions + lets them switch.
+   Capped at 5 variants so storage stays small.
+   ========================================================================= */
+const MAX_LESSON_VARIANTS = 5;
+
+function saveLessonVariant() {
+  const l = currentLesson();
+  if (!l) return;
+  l.variants = Array.isArray(l.variants) ? l.variants : [];
+  if (l.variants.length >= MAX_LESSON_VARIANTS) {
+    toast(`You've saved ${MAX_LESSON_VARIANTS} versions already — delete one to save a new one.`);
+    return;
+  }
+  const label = prompt('Give this version a short name so you can find it later:', suggestVariantLabel(l));
+  if (label === null) return; // cancelled
+  const trimmed = (label || '').trim() || ('Version ' + (l.variants.length + 1));
+  l.variants.push({
+    id: 'v-' + Date.now() + '-' + Math.random().toString(36).slice(2, 7),
+    label: trimmed,
+    savedAt: new Date().toISOString(),
+    aiDirection: l.aiDirection || null,
+    snapshot: snapshotLessonContent(l),
+  });
+  save();
+  try { logEvent('lesson_variant_saved', { planId: State.currentPlanId, lessonId: l.id, subject: l.subject, count: l.variants.length }); } catch(e){}
+  renderLesson();
+  toast(`Saved as "${trimmed}".`);
+}
+
+function suggestVariantLabel(l) {
+  if (l.aiDirection) return l.aiDirection.slice(0, 40);
+  if (l.teacherOverride) return 'My version';
+  if (l.aiGeneratedAt) return 'Bee draft ' + new Date(l.aiGeneratedAt).toLocaleDateString('en-IE', { day: 'numeric', month: 'short' });
+  return 'Original draft';
+}
+
+function switchLessonVariant(variantId) {
+  const l = currentLesson();
+  if (!l || !Array.isArray(l.variants)) return;
+  const v = l.variants.find(x => x.id === variantId);
+  if (!v) return;
+  // Before switching away, offer to save the current state if it's different.
+  if (!l._beforeVariantSwitch) {
+    l._beforeVariantSwitch = snapshotLessonContent(l);
+    l._beforeVariantSwitchAi = l.aiDirection || null;
+  }
+  restoreLessonContent(l, v.snapshot);
+  l.activeVariantId = variantId;
+  l.aiDirection = v.aiDirection || null;
+  save();
+  renderLesson();
+  toast(`Switched to "${v.label}".`);
+}
+
+function clearActiveVariant() {
+  const l = currentLesson();
+  if (!l || !l._beforeVariantSwitch) return;
+  restoreLessonContent(l, l._beforeVariantSwitch);
+  l.aiDirection = l._beforeVariantSwitchAi || null;
+  delete l._beforeVariantSwitch;
+  delete l._beforeVariantSwitchAi;
+  delete l.activeVariantId;
+  save();
+  renderLesson();
+  toast('Back to the unsaved working version.');
+}
+
+function deleteLessonVariant(variantId) {
+  const l = currentLesson();
+  if (!l || !Array.isArray(l.variants)) return;
+  const v = l.variants.find(x => x.id === variantId);
+  if (!v) return;
+  confirmAction({
+    title: `Delete "${v.label}"?`,
+    body: `<p style="margin:0;">This saved version will be removed. Can't be undone.</p>`,
+    okLabel: 'Delete version',
+    danger: true,
+    onConfirm: () => {
+      l.variants = l.variants.filter(x => x.id !== variantId);
+      if (l.activeVariantId === variantId) delete l.activeVariantId;
+      save();
+      renderLesson();
+      toast('Version deleted.');
+    }
+  });
 }
 function regeneratePlan() {
   const plan = State.plans.find(p => p.id === State.currentPlanId);
