@@ -4600,7 +4600,50 @@ function renderSeasonalAccent() {
 /* =========================================================================
    NAVIGATION
    ========================================================================= */
-function goto(view) {
+// URL routing — each view gets its own path so teachers can bookmark,
+// share a link, or use the back/forward button. All app routes are
+// rewritten to /index.html by vercel.json, so direct navigation works.
+const VIEW_TO_PATH = {
+  landing:    '/welcome',
+  dashboard:  '/dashboard',
+  plan:       '/plan',
+  lesson:     '/lesson',
+  library:    '/my-plans',
+  themes:     '/themes',
+  class:      '/profile',
+  create:     '/new-plan',
+  // `generating` is a transient in-flight view — don't give it a URL.
+  generating: null,
+};
+const PATH_TO_VIEW = {
+  '/':          'dashboard',   // routed dynamically — landing for unauthed new users, dashboard otherwise
+  '/welcome':   'landing',
+  '/dashboard': 'dashboard',
+  '/plan':      'plan',
+  '/lesson':    'lesson',
+  '/my-plans':  'library',
+  '/themes':    'themes',
+  '/profile':   'class',
+  '/new-plan':  'create',
+};
+const VIEW_TITLES = {
+  landing:    'Seachtain — Weekly planning for Irish primary teachers',
+  dashboard:  'Dashboard · Seachtain',
+  plan:       'Week plan · Seachtain',
+  lesson:     'Lesson · Seachtain',
+  library:    'My plans · Seachtain',
+  themes:     'Themes · Seachtain',
+  class:      'My profile · Seachtain',
+  create:     'New plan · Seachtain',
+  generating: 'Generating… · Seachtain',
+};
+
+function viewFromPath(pathname) {
+  if (PATH_TO_VIEW[pathname]) return PATH_TO_VIEW[pathname];
+  return null; // unknown path
+}
+
+function goto(view, opts = {}) {
   State.view = view;
   document.querySelectorAll('.view').forEach(v => { v.classList.remove('active'); v.classList.remove('print-active'); });
   const el = document.getElementById('view-' + view);
@@ -4608,6 +4651,15 @@ function goto(view) {
   document.querySelectorAll('.nav-item').forEach(n => n.classList.toggle('active', n.dataset.nav === view));
   // Landing hides the sidebar + season strip. Every other view restores them.
   document.body.classList.toggle('landing-mode', view === 'landing');
+  // Push URL unless this is a back/forward pop (opts.replace) or the view has no path.
+  const path = VIEW_TO_PATH[view];
+  if (path && !opts.skipHistory) {
+    try {
+      if (opts.replace) history.replaceState({ view }, '', path);
+      else if (window.location.pathname !== path) history.pushState({ view }, '', path);
+    } catch (e) { /* file:// or restricted — non-fatal */ }
+  }
+  document.title = VIEW_TITLES[view] || 'Seachtain';
   window.scrollTo({ top: 0, behavior: 'smooth' });
   renderSeasonalAccent();
   if (view === 'dashboard') renderDashboard();
@@ -10765,6 +10817,9 @@ const AuthModule = (() => {
         hideLocalBanner();
         toast('Signed in — welcome back.');
         await hydrateFromServer();
+        // If the user was on the landing page (or a restricted view),
+        // promote them to the dashboard.
+        if (State.view === 'landing') goto('dashboard');
       }
       if (event === 'SIGNED_OUT') {
         toast('Signed out. Your local copy stays on this device.');
@@ -11048,16 +11103,39 @@ function startLandingDemo() {
   goto('dashboard');
   toast('Welcome — have a poke around. Sign in any time to save your plans.');
 }
-// Decide where to route on boot. Returning users (have data or accepted the
-// demo) go straight to the dashboard; brand-new unauthed visitors see landing.
+// Decide where to route on boot. Honour the URL first — `/dashboard`,
+// `/plan`, `/welcome`, etc. If the URL is `/` (or unknown), fall back to
+// the smart default: landing for brand-new unauthed visitors, dashboard
+// for anyone else.
 function bootRoute() {
-  // Signed-in users are routed separately after auth resolves.
-  if (hasAcceptedDemo() || State.plans.length > 0) {
-    goto('dashboard');
-  } else {
-    goto('landing');
+  const pathname = window.location.pathname || '/';
+  const explicit = viewFromPath(pathname);
+  if (pathname === '/') {
+    const goTo = (hasAcceptedDemo() || State.plans.length > 0) ? 'dashboard' : 'landing';
+    goto(goTo, { replace: true });
+    return;
   }
+  if (explicit) {
+    // Specific view requested via URL. Honour it — the per-view logic
+    // will redirect to dashboard if the view needs a plan/lesson that
+    // isn't loaded.
+    if (explicit === 'plan' && !State.currentPlanId) { goto('dashboard', { replace: true }); return; }
+    if (explicit === 'lesson' && !State.currentLessonId) { goto('dashboard', { replace: true }); return; }
+    goto(explicit, { replace: true });
+    return;
+  }
+  // Unknown path — default.
+  goto((hasAcceptedDemo() || State.plans.length > 0) ? 'dashboard' : 'landing', { replace: true });
 }
+
+// Back / forward button support. Read the URL and route to the matching
+// view without pushing a new entry.
+window.addEventListener('popstate', (evt) => {
+  const view = (evt.state && evt.state.view) || viewFromPath(window.location.pathname || '/') || 'dashboard';
+  if (view === 'plan' && !State.currentPlanId) { goto('dashboard', { skipHistory: true }); return; }
+  if (view === 'lesson' && !State.currentLessonId) { goto('dashboard', { skipHistory: true }); return; }
+  goto(view, { skipHistory: true });
+});
 
 /* =========================================================================
    BOOT
