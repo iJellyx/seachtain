@@ -619,6 +619,27 @@
   .abbie-helper-card .ah-chat-send:disabled {
     background: var(--line-strong); cursor: not-allowed;
   }
+  .abbie-helper-card .ah-chat-meta {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-top: 6px; font-size: 10px; color: var(--ink-faint);
+  }
+  .abbie-helper-card .ah-chat-clear {
+    background: none; border: none; color: var(--ink-faint);
+    cursor: pointer; font-size: 10px; font-family: inherit; padding: 2px 4px;
+  }
+  .abbie-helper-card .ah-chat-clear:hover { color: var(--ink-soft); text-decoration: underline; }
+  .abbie-helper-card .ah-chat-count { font-variant-numeric: tabular-nums; }
+  .abbie-helper-card .ah-chat-count.near-limit { color: var(--accent); }
+  .abbie-helper-card .ah-chat-offline {
+    padding: 12px 14px; background: #F5E9D6; color: #6B5F54;
+    border-radius: 10px; font-size: 12px; line-height: 1.5;
+    margin-bottom: 6px;
+  }
+  .abbie-helper-card .ah-msg.ah-msg-err {
+    background: #F5D9CB; color: #7a2d1a;
+    border-top-left-radius: 4px; align-self: flex-start;
+    border-left: 3px solid #C85A3E;
+  }
   /* Chat widens the card a little for readability */
   .abbie-helper.chat-open .abbie-helper-card { max-width: 360px; min-width: 320px; }
   .abbie-helper.hidden { display: none; }
@@ -3414,12 +3435,16 @@
         <div class="ah-label">Ask Abbie</div>
         <button class="ah-chat-close" onclick="abbieCloseChat()" aria-label="Close">×</button>
       </div>
-      <div class="ah-chat-log" id="abbie-chat-log"></div>
+      <div class="ah-chat-log" id="abbie-chat-log" aria-live="polite" aria-atomic="false"></div>
       <div class="ah-chat-suggest" id="abbie-chat-suggest"></div>
       <form class="ah-chat-form" onsubmit="return abbieSubmitQuestion(event)">
-        <input type="text" class="ah-chat-input" id="abbie-chat-input" placeholder="Ask me anything about your week…" autocomplete="off" maxlength="800">
+        <input type="text" class="ah-chat-input" id="abbie-chat-input" placeholder="Ask me anything about your week…" autocomplete="off" maxlength="800" oninput="abbieUpdateCounter()">
         <button type="submit" class="ah-chat-send" aria-label="Send">↑</button>
       </form>
+      <div class="ah-chat-meta">
+        <button type="button" class="ah-chat-clear" onclick="abbieClearChat()">Clear conversation</button>
+        <span class="ah-chat-count" id="abbie-chat-count"></span>
+      </div>
     </div>
   </div>
   <button class="abbie-helper-toggle" id="abbie-helper-toggle" onclick="abbieToggleBubble()" aria-label="Ask Abbie">
@@ -11104,7 +11129,7 @@ function openAIRegenerateModal() {
     return;
   }
   const m = document.getElementById('modal');
-  document.getElementById('modal-title').textContent = 'Fresh draft of this lesson';
+  document.getElementById('modal-title').innerHTML = 'Fresh draft of this lesson <span class="ai-badge" style="vertical-align: middle; margin-left: 8px;">Bee-powered</span>';
   const feedbackHint = l.feedback?.rating
     ? `<div class="callout callout-primary" style="margin-bottom: 14px;"><h4>Your feedback is on file</h4><p style="margin:0; font-size:13px;">${l.feedback.rating === 'up' ? '👍' : l.feedback.rating === 'mid' ? '🤔' : '👎'} ${escape((l.feedback.tags || []).join(', ') || '(no tags)')}${l.feedback.comment ? ` — "${escape(l.feedback.comment)}"` : ''}. The model will see this.</p></div>`
     : '';
@@ -11197,7 +11222,9 @@ async function runAIRegenerate(l) {
     }
     ok.disabled = false;
     ok.className = 'btn btn-offline';
-    ok.textContent = '↻ Use offline variants instead';
+    // Replace innerHTML (not just textContent) so any stray sparkle icon
+    // left over from the AI-primary render is fully cleared.
+    ok.innerHTML = '↻ Use offline variants instead';
     ok.onclick = () => { closeModal(); doRegenerateLesson(l); };
   }
 }
@@ -12079,10 +12106,23 @@ function abbieSetEnabled(on) {
    rolling history in memory (not persisted), pulls view/class context
    so answers are grounded in what the teacher's actually looking at.
    ========================================================================= */
+const LS_ABBIE_CHAT = 'seachtain.abbie.chat';
 const AbbieChat = {
-  history: [],  // [{role:'user'|'assistant', content:string}]
+  history: (() => {
+    try {
+      const raw = sessionStorage.getItem(LS_ABBIE_CHAT);
+      const arr = raw ? JSON.parse(raw) : [];
+      return Array.isArray(arr) ? arr.slice(-24) : [];
+    } catch (e) { return []; }
+  })(),
   busy: false,
 };
+
+function abbiePersistChat() {
+  try {
+    sessionStorage.setItem(LS_ABBIE_CHAT, JSON.stringify(AbbieChat.history.slice(-24)));
+  } catch (e) {}
+}
 
 const ABBIE_SUGGESTIONS = {
   dashboard:  ["How do I start a week?", "What is Monday Morning Mode?", "How do I see past plans?"],
@@ -12104,12 +12144,53 @@ function abbieOpenChat() {
   helper.classList.add('chat-open');
   helper.classList.add('open');
   AbbieState.open = true;
-  // Seed with a warm first-time message if the log's empty.
   const log = document.getElementById('abbie-chat-log');
-  if (log && !log.children.length) {
-    abbieAppendMsg('bee', "Hi! I'm Abbie. Ask me anything about how Planner Bee works, the NCCA curriculum, or teaching this week. I'll keep it short.");
+  if (log) {
+    if (!log.children.length) {
+      if (AbbieChat.history.length > 0) {
+        // Replay persisted session history so the teacher sees continuity.
+        AbbieChat.history.forEach(m => {
+          abbieAppendMsg(m.role === 'user' ? 'you' : 'bee', m.content);
+        });
+      } else {
+        abbieAppendMsg('bee', "Hi! I'm Abbie. Ask me anything about how Planner Bee works, the NCCA curriculum, or teaching this week. I'll keep it short.");
+      }
+    }
   }
-  // Refresh suggestion chips for the current view.
+  // Refresh suggestion chips for the current view — only shown if this is
+  // a fresh conversation.
+  const suggestBox = document.getElementById('abbie-chat-suggest');
+  if (suggestBox) {
+    if (AbbieChat.history.length === 0) {
+      const list = ABBIE_SUGGESTIONS[State.view] || ABBIE_SUGGESTIONS.default;
+      suggestBox.innerHTML = list.map(s =>
+        `<button type="button" class="ah-suggest-chip" onclick="abbieAskSuggestion('${s.replace(/'/g, "\\'")}')">${escape(s)}</button>`
+      ).join('');
+    } else {
+      suggestBox.innerHTML = '';
+    }
+  }
+  abbieUpdateCounter();
+  setTimeout(() => document.getElementById('abbie-chat-input')?.focus(), 100);
+}
+
+function abbieUpdateCounter() {
+  const input = document.getElementById('abbie-chat-input');
+  const counter = document.getElementById('abbie-chat-count');
+  if (!input || !counter) return;
+  const len = (input.value || '').length;
+  if (len === 0) { counter.textContent = ''; counter.classList.remove('near-limit'); return; }
+  counter.textContent = len + ' / 800';
+  counter.classList.toggle('near-limit', len > 700);
+}
+
+function abbieClearChat() {
+  AbbieChat.history = [];
+  abbiePersistChat();
+  const log = document.getElementById('abbie-chat-log');
+  if (log) log.innerHTML = '';
+  abbieAppendMsg('bee', "Cleared. Ask me anything else whenever you're ready.");
+  // Re-seed suggestion chips for fresh conversation.
   const suggestBox = document.getElementById('abbie-chat-suggest');
   if (suggestBox) {
     const list = ABBIE_SUGGESTIONS[State.view] || ABBIE_SUGGESTIONS.default;
@@ -12117,7 +12198,6 @@ function abbieOpenChat() {
       `<button type="button" class="ah-suggest-chip" onclick="abbieAskSuggestion('${s.replace(/'/g, "\\'")}')">${escape(s)}</button>`
     ).join('');
   }
-  setTimeout(() => document.getElementById('abbie-chat-input')?.focus(), 100);
 }
 
 function abbieCloseChat() {
@@ -12194,14 +12274,28 @@ async function abbieSubmitQuestion(evt) {
     const answer = data.answer || "I'm not sure — try rephrasing?";
     abbieAppendMsg('bee', answer);
     AbbieChat.history.push({ role: 'assistant', content: answer });
+    abbiePersistChat();
     try { logEvent('abbie_question', { view: State.view, length: q.length }); } catch(e) {}
   } catch (e) {
     if (thinking) thinking.remove();
-    abbieAppendMsg('bee', (e.message || "I couldn't reach myself there. Try again in a moment?"), 'ah-msg-err');
+    // Map common error shapes to Abbie's voice — never expose raw stack/SDK noise.
+    let msg;
+    const raw = (e && e.message) || '';
+    if (/503/.test(raw) || /not configured|offline on this deployment/i.test(raw)) {
+      msg = "I'm offline on this deployment just now. You can still use every part of Planner Bee — I'll be back when the setup's finished.";
+    } else if (/429|rate/i.test(raw)) {
+      msg = "Lot of questions coming in at once — give me a minute and try again?";
+    } else if (/timed?|network/i.test(raw)) {
+      msg = "I couldn't reach myself there. Check your connection and try again?";
+    } else {
+      msg = "Something tripped me up. Try rephrasing, or ask me something else?";
+    }
+    abbieAppendMsg('bee', msg, 'ah-msg-err');
   } finally {
     AbbieChat.busy = false;
     if (sendBtn) sendBtn.disabled = false;
     input.focus();
+    abbieUpdateCounter();
   }
   return false;
 }
