@@ -355,6 +355,151 @@
   .ai-banner .ai-banner-text { color: #1d4a30; flex: 1; }
   .ai-banner .ai-banner-text strong { font-family: 'Fraunces', serif; }
   .ai-banner .btn { padding: 5px 10px; font-size: 12px; }
+
+  /* Voice notes — quick thoughts attached to a lesson. No audio stored,
+     just transcribed text via the Web Speech API. */
+  .voice-notes-card .voice-rec-btn .vrec-dot {
+    display: inline-block; width: 8px; height: 8px; border-radius: 50%;
+    background: transparent; margin-right: 4px; vertical-align: middle;
+  }
+  .voice-notes-card .voice-rec-btn.recording {
+    background: #F5D9CB; color: #7a2d1a;
+  }
+  .voice-notes-card .voice-rec-btn.recording .vrec-dot {
+    background: #C85A3E;
+    animation: vn-pulse 1s infinite;
+  }
+  @keyframes vn-pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+  .voice-transcript {
+    padding: 8px 10px; background: var(--primary-soft); border-radius: 8px;
+    font-size: 12px; color: var(--primary); font-style: italic;
+    margin-bottom: 8px; min-height: 32px;
+  }
+  .voice-note-list { display: flex; flex-direction: column; gap: 6px; }
+  .voice-note-item {
+    padding: 8px 10px; background: var(--surface-alt); border-radius: 8px;
+    border-left: 3px solid var(--primary); font-size: 12px;
+  }
+  .voice-note-item .vn-text { color: var(--ink); line-height: 1.45; }
+  .voice-note-item .vn-meta {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-top: 4px; font-size: 10px; color: var(--ink-faint);
+  }
+  .voice-note-item .vn-delete {
+    background: none; border: none; color: var(--ink-faint); cursor: pointer;
+    font-size: 14px; padding: 0 4px; line-height: 1;
+  }
+  .voice-note-item .vn-delete:hover { color: #b2382a; }
+
+  /* =========================================================================
+     MOBILE POLISH — teachers check plans on their phone at home. Keep
+     content generous, actions reachable with a thumb, and collapse the
+     sidebar to a top bar below 760px.
+     ========================================================================= */
+  .mobile-nav-toggle { display: none; }
+  @media (max-width: 760px) {
+    .app { grid-template-columns: 1fr; }
+    .sidebar {
+      position: sticky; top: 0; height: auto; width: 100%;
+      padding: 10px 14px; flex-direction: row; flex-wrap: wrap;
+      gap: 8px; align-items: center; border-right: none;
+      border-bottom: 1px solid var(--line); z-index: 20;
+    }
+    .sidebar .brand { padding: 0; flex: 1 1 auto; }
+    .sidebar .brand-mark { width: 32px; height: 32px; border-radius: 9px; }
+    .sidebar .brand-name { font-size: 17px; }
+    .sidebar .brand-sub { display: none; }
+    .sidebar .nav-section-label { display: none; }
+    .sidebar-footer { display: none; }
+    .sidebar-new-plan { order: 10; flex: 1 1 100%; margin: 2px 0 0; }
+    .sidebar .nav-item {
+      flex: 0 0 auto; padding: 8px 10px; font-size: 13px;
+    }
+    .sidebar .nav-item svg { display: none; }
+
+    .main > .view { padding: 18px 16px 0 !important; }
+    .season-strip { padding: 6px 16px; font-size: 11px; }
+
+    /* Page header: keep title + primary action stacked but tight */
+    .page-head { gap: 12px; margin-bottom: 18px; flex-direction: column; align-items: stretch; }
+    .page-head h1 { font-size: 24px; }
+    .page-head .title-block .sub { font-size: 13px; }
+    .page-head > div[style*="flex"] { width: 100%; }
+    .page-head .btn { flex: 1 1 auto; justify-content: center; }
+
+    /* Right-now hero — stack, shrink emoji */
+    .now-hero { grid-template-columns: 1fr; padding: 18px; gap: 12px; }
+    .now-hero h2.nh-title { font-size: 22px; }
+    .now-hero .nh-emoji { font-size: 56px; justify-self: start; }
+    .now-hero .nh-actions .btn { flex: 1 1 auto; justify-content: center; }
+
+    /* Stat grid: 2-up on mobile rather than 4 */
+    .stat-grid { grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+    .stat-value { font-size: 20px; }
+    .stat-label { font-size: 10px; }
+
+    /* Dashboard split stacks naturally under 1100px already — tighten gap */
+    .dashboard-split { gap: 18px; }
+    .dashboard-col-side { position: relative; top: 0; }
+    .today-card { padding: 14px 16px; }
+
+    /* Prep progress strip */
+    .prep-progress { padding: 14px 16px; }
+    .prep-progress .pp-head { flex-direction: column; align-items: flex-start; gap: 6px; }
+
+    /* Timetable: let it scroll horizontally rather than crush columns */
+    .timetable {
+      grid-template-columns: 60px repeat(5, minmax(120px, 1fr));
+      overflow-x: auto; min-width: 100%;
+    }
+    .lesson-tile .t-title { font-size: 12px; }
+    .lesson-tile .t-subject, .lesson-tile .t-meta { font-size: 9px; }
+    .tile-emoji { font-size: 18px !important; }
+
+    /* Plan header actions wrap + size up for thumb */
+    .plan-head { flex-direction: column; align-items: stretch; gap: 12px; }
+    .plan-head .btn { flex: 1 1 auto; justify-content: center; padding: 10px 12px; }
+
+    /* Lesson head, tabs — horizontal scroll */
+    .lesson-head { flex-direction: column; gap: 12px; align-items: stretch; }
+    .lesson-head .btn { flex: 1 1 auto; justify-content: center; }
+    .tabs { overflow-x: auto; flex-wrap: nowrap; white-space: nowrap; }
+    .tab { flex: 0 0 auto; padding: 10px 14px; }
+
+    /* Content grid (plan-main + plan-side) stacks */
+    .content-grid { grid-template-columns: 1fr !important; gap: 18px; }
+
+    /* Wizard: full-width cards, smaller stepper */
+    .wizard { max-width: none; }
+    .card-lg { padding: 20px 18px; }
+    .stepper { gap: 6px; flex-wrap: wrap; margin-bottom: 20px; }
+    .step { font-size: 12px; }
+    .step-dot { width: 24px; height: 24px; font-size: 11px; }
+    .step-divider { display: none; }
+    .field-row { grid-template-columns: 1fr; }
+    .wizard-footer { position: sticky; bottom: 0; background: var(--bg); padding: 10px 0; border-top: 1px solid var(--line); gap: 6px; display: flex; }
+    .wizard-footer .btn { flex: 1 1 auto; justify-content: center; }
+
+    /* Week strip & plan grid tighter */
+    .week-strip { grid-auto-columns: minmax(130px, 1fr); }
+    .plan-grid { grid-template-columns: 1fr; }
+
+    /* Modal occupies more of the viewport */
+    .modal { width: calc(100vw - 32px); max-width: none; padding: 20px; }
+
+    /* Hide the sidebar brand-sub, keep nav visible */
+    .page-head .btn-primary svg { width: 14px; height: 14px; }
+  }
+
+  @media (max-width: 480px) {
+    .now-hero h2.nh-title { font-size: 20px; }
+    .stat-grid { grid-template-columns: 1fr; }
+    .sidebar .nav-item { padding: 6px 8px; font-size: 12px; }
+    .sidebar-new-plan { font-size: 12px; padding: 8px 10px; }
+  }
   .user-name { font-size: 13px; font-weight: 600; }
   .user-sub { font-size: 11px; color: var(--ink-faint); }
   .main { padding: 0 0 80px; max-width: 1200px; }
@@ -1436,10 +1581,15 @@
           <h1>Dia duit, Ciara</h1>
           <div class="sub">It's Sunday 19 April — ready to plan week beginning <strong>Mon 20 April</strong>?</div>
         </div>
-        <button class="btn btn-primary" onclick="startNewPlan()">
-          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
-          New weekly plan
-        </button>
+        <div style="display:flex; gap:8px; flex-wrap: wrap;">
+          <button class="btn btn-ghost" onclick="startMondayMorningMode()" title="Pre-fill from last week + seasonal theme, AI-generate the whole week. One tap.">
+            <span style="font-size:15px;">✨</span> Monday Morning Mode
+          </button>
+          <button class="btn btn-primary" onclick="startNewPlan()">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+            New weekly plan
+          </button>
+        </div>
       </div>
 
       <div id="now-hero-mount" class="no-print"></div>
@@ -1620,6 +1770,7 @@
 
         <div class="wizard-footer">
           <button class="btn btn-ghost" id="wizard-back" onclick="wizardStep(-1)">← Back</button>
+          <button class="btn btn-ghost" id="wizard-next-ai" onclick="wizardAIGenerate()" style="display:none;">✨ AI generate</button>
           <button class="btn btn-primary" id="wizard-next" onclick="wizardStep(1)">Next →</button>
         </div>
       </div>
@@ -1735,7 +1886,8 @@
             <div id="parent-note-output" class="parent-note-card" contenteditable="true"></div>
             <div style="margin-top: 12px; display:flex; gap:8px; flex-wrap: wrap;">
               <button class="btn btn-ghost btn-sm" onclick="copyParentNote()">📋 Copy text</button>
-              <button class="btn btn-ghost btn-sm" onclick="renderParentNote(currentPlan(), true)">↻ Rewrite</button>
+              <button class="btn btn-ghost btn-sm" onclick="aiRewriteParentNote()" title="Rewrite with Claude — reads this week's lessons & your tone">✨ AI rewrite</button>
+              <button class="btn btn-ghost btn-sm" onclick="renderParentNote(currentPlan(), true)">↻ Offline rewrite</button>
               <button class="btn btn-ghost btn-sm" onclick="printParentNote()">🖨 Print / PDF</button>
               <span class="muted" style="font-size: 12px; margin-left: auto; align-self:center;" id="pn-word-count"></span>
             </div>
@@ -4709,7 +4861,9 @@ function renderWizardStep() {
     s.classList.toggle('done', n < State.wizardStep);
   });
   document.getElementById('wizard-back').style.visibility = State.wizardStep === 1 ? 'hidden' : 'visible';
-  document.getElementById('wizard-next').textContent = State.wizardStep === 4 ? 'Generate plan →' : 'Next →';
+  document.getElementById('wizard-next').textContent = State.wizardStep === 4 ? 'Offline generate →' : 'Next →';
+  const aiBtn = document.getElementById('wizard-next-ai');
+  if (aiBtn) aiBtn.style.display = State.wizardStep === 4 ? '' : 'none';
 
   if (State.wizardStep === 1) { renderGradeOptions(); renderCopyLastWeekCard(); }
   if (State.wizardStep === 2) renderThemeOptions();
@@ -5341,6 +5495,152 @@ function generatePlan() {
       }, 600);
     }
   }, 900);
+}
+
+/* =========================================================================
+   AI WHOLE-WEEK GENERATION  (Monday Morning Mode)
+   Hands the fully-balanced skeleton to /api/generate-week, receives one
+   lesson JSON per (day, slotIdx), merges onto the plan. Falls back to the
+   offline subject agents if the proxy isn't available.
+   ========================================================================= */
+function generatePlanAI() {
+  goto('generating');
+  const stageEl = document.getElementById('gen-stage');
+  const barEl = document.getElementById('gen-bar-fill');
+  barEl.style.width = '8%';
+  stageEl.textContent = 'Balancing your week against DES minimums…';
+
+  // Step 1: build offline plan first — gives us a usable skeleton + fallback.
+  const offlinePlan = buildPlanFromDraft();
+  barEl.style.width = '22%';
+  stageEl.textContent = 'Packaging class profile & NCCA context for Claude…';
+
+  // Step 2: build the skeleton for the AI endpoint.
+  const skeleton = (offlinePlan.lessons || [])
+    .filter(l => !l.coachBrief) // PE keeps its offline coach-brief for now (the SVG pitch)
+    .map(l => ({
+      day: l.day, slotIdx: l.slotIdx, subject: l.subject,
+      minutes: l.minutes, fixed: !!l.fixed,
+      time: ((offlinePlan.timetable || TIMETABLE_SLOTS)[l.slotIdx] || {}).time || '',
+    }));
+  // If there's nothing to regenerate with AI (every lesson is PE), just ship the offline plan.
+  if (!skeleton.length) {
+    State.plans.push(offlinePlan);
+    State.currentPlanId = offlinePlan.id;
+    save();
+    logEvent('plan_generated', { planId: offlinePlan.id, grade: offlinePlan.grade, theme: offlinePlan.theme, weekDate: offlinePlan.weekDate, ai: false });
+    goto('plan');
+    return;
+  }
+
+  // Build a single curriculum reference block covering every subject in the skeleton.
+  const subjectsInUse = Array.from(new Set(skeleton.map(s => s.subject)));
+  const curriculum = subjectsInUse.map(sid =>
+    `=== ${subjectLabel(sid).toUpperCase()} ===\n` + nccaContextFor(sid, offlinePlan.grade || offlinePlan.gradeId || State.profile.grade)
+  ).join('\n\n');
+
+  barEl.style.width = '40%';
+  stageEl.textContent = 'Claude is drafting the week — this takes ~20 seconds…';
+
+  fetch('/api/generate-week', {
+    method: 'POST',
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify({
+      plan: {
+        gradeName: offlinePlan.gradeName, grade: offlinePlan.grade, gradeId: offlinePlan.gradeId,
+        pupils: offlinePlan.pupils, sen: offlinePlan.sen, medium: offlinePlan.medium,
+        weekDate: offlinePlan.weekDate, weekDateReadable: offlinePlan.weekDateReadable,
+        title: offlinePlan.title, themeName: offlinePlan.themeName, themeDesc: offlinePlan.themeDesc,
+      },
+      profile: {
+        teacher: State.profile.teacher, school: State.profile.school, grade: State.profile.grade,
+        pupils: State.profile.pupils, sen: State.profile.sen, medium: State.profile.medium,
+        gaeilgeLevel: State.profile.gaeilgeLevel,
+      },
+      skeleton, curriculum,
+    }),
+  })
+    .then(async r => {
+      if (!r.ok) {
+        const err = await r.json().catch(() => ({}));
+        throw new Error(err.error || `HTTP ${r.status}`);
+      }
+      return r.json();
+    })
+    .then(data => {
+      barEl.style.width = '85%';
+      stageEl.textContent = 'Merging AI lessons into your timetable…';
+      const aiByKey = {};
+      (data.lessons || []).forEach(l => { if (l.slotKey) aiByKey[l.slotKey] = l; });
+      offlinePlan.lessons = offlinePlan.lessons.map(l => {
+        const ai = aiByKey[`${l.day}|${l.slotIdx}`];
+        if (!ai) return l; // PE / anything not in skeleton keeps offline content
+        return mergeAIIntoLesson(l, ai);
+      });
+      offlinePlan.aiGenerated = true;
+      offlinePlan.aiGeneratedAt = new Date().toISOString();
+      offlinePlan.aiModel = data.model || 'claude-sonnet-4-6';
+      barEl.style.width = '100%';
+      stageEl.textContent = 'Ready.';
+      setTimeout(() => {
+        State.plans.push(offlinePlan);
+        State.currentPlanId = offlinePlan.id;
+        save();
+        logEvent('plan_generated', { planId: offlinePlan.id, grade: offlinePlan.grade, theme: offlinePlan.theme, weekDate: offlinePlan.weekDate, ai: true });
+        goto('plan');
+        toast('✨ Week generated by Claude — review and tweak anything.');
+      }, 400);
+    })
+    .catch(err => {
+      console.warn('AI week generation failed', err);
+      stageEl.textContent = 'AI unavailable — falling back to offline variants…';
+      setTimeout(() => {
+        State.plans.push(offlinePlan);
+        State.currentPlanId = offlinePlan.id;
+        save();
+        logEvent('plan_generated', { planId: offlinePlan.id, grade: offlinePlan.grade, theme: offlinePlan.theme, weekDate: offlinePlan.weekDate, ai: false, aiError: err.message || 'unknown' });
+        goto('plan');
+        toast(`Offline generation used — ${err.message || 'AI proxy unavailable'}.`);
+      }, 900);
+    });
+}
+
+function mergeAIIntoLesson(base, ai) {
+  const out = { ...base };
+  if (ai.title) out.title = ai.title;
+  if (ai.focus) out.focus = ai.focus;
+  if (ai.strand) out.strand = ai.strand;
+  if (ai.strandUnit) out.strandUnit = ai.strandUnit;
+  if (Array.isArray(ai.outcomes) && ai.outcomes.length) out.outcomes = ai.outcomes;
+  if (Array.isArray(ai.vocab) && ai.vocab.length) out.vocab = ai.vocab;
+  if (Array.isArray(ai.resources) && ai.resources.length) out.resources = ai.resources;
+  if (ai.plan && typeof ai.plan === 'object') out.plan = { ...(out.plan || {}), ...ai.plan };
+  if (ai.guide && typeof ai.guide === 'object') out.guide = { ...(out.guide || {}), ...ai.guide };
+  if (ai.diff && typeof ai.diff === 'object') out.diff = { ...(out.diff || {}), ...ai.diff };
+  out.aiGeneratedAt = new Date().toISOString();
+  return out;
+}
+
+/* =========================================================================
+   MONDAY MORNING MODE
+   A dashboard-level shortcut: pre-fills next Monday's draft from the
+   teacher's profile (and last week's plan if one exists), auto-picks the
+   seasonal theme, and goes straight to AI generation. One tap, no wizard.
+   ========================================================================= */
+function startMondayMorningMode() {
+  initDraftFromProfile();
+  const prev = lastUsablePlan();
+  if (prev) {
+    if (prev.subjects) State.draft.subjects = { ...prev.subjects };
+    if (prev.medium) State.draft.medium = prev.medium;
+  }
+  // Seasonal theme auto-picked by initDraftFromProfile already.
+  generatePlanAI();
+}
+
+function wizardAIGenerate() {
+  readDraftFromInputs();
+  generatePlanAI();
 }
 
 function buildPlanFromDraft() {
@@ -7777,6 +8077,57 @@ function copyParentNote() {
   }
 }
 
+async function aiRewriteParentNote() {
+  const plan = currentPlan();
+  if (!plan) return;
+  const el = document.getElementById('parent-note-output');
+  if (!el) return;
+  const currentDraft = (el.innerText || '').trim();
+  const mode = parentNoteMode();
+  const toggles = parentNoteToggles();
+  // Summarise the week so the model sees actual lesson content, not just subject names.
+  const lessonsSummary = (plan.lessons || []).map(l =>
+    `- ${l.day} ${subjectLabel(l.subject)}: ${l.title}${l.focus ? ' — ' + l.focus : ''}`
+  ).join('\n');
+
+  el.setAttribute('data-pre-ai', currentDraft);
+  el.innerText = '✨ Claude is writing the note — usually 5–10 seconds…';
+
+  try {
+    const resp = await fetch('/api/rewrite-parent-note', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({
+        plan: {
+          gradeName: plan.gradeName, grade: plan.grade, gradeId: plan.gradeId,
+          pupils: plan.pupils, medium: plan.medium,
+          weekDate: plan.weekDate, weekDateReadable: plan.weekDateReadable,
+          title: plan.title, themeName: plan.themeName,
+        },
+        profile: {
+          teacher: State.profile.teacher, salutation: State.profile.salutation,
+          school: State.profile.school,
+        },
+        lessonsSummary, mode, toggles, currentDraft,
+      }),
+    });
+    if (!resp.ok) {
+      const err = await resp.json().catch(() => ({}));
+      throw new Error(err.error || `HTTP ${resp.status}`);
+    }
+    const data = await resp.json();
+    if (!data.note) throw new Error('Empty response');
+    el.innerText = data.note;
+    updateParentNoteWordCount();
+    toast('✨ Rewritten by Claude.');
+  } catch (e) {
+    console.warn('AI parent-note rewrite failed', e);
+    el.innerText = el.getAttribute('data-pre-ai') || currentDraft;
+    updateParentNoteWordCount();
+    toast('AI unavailable — kept your previous note.');
+  }
+}
+
 function renderSubjectBreakdown(plan) {
   const el = document.getElementById('subject-breakdown');
   const mins = {};
@@ -8504,7 +8855,139 @@ function renderLessonPlan(l) {
       <h4>Theme thread</h4>
       <p style="font-size:13px; margin:0;">${escape(l.theme)}</p>
     </div>
+    ${renderVoiceNotesCard(l)}
     ${renderFeedbackCard(l)}`;
+}
+
+/* =========================================================================
+   VOICE NOTES
+   Quick pupil / behaviour / adjustment notes attached to the lesson.
+   Uses the Web Speech API for live transcription — no audio blob stored,
+   just the transcribed text, so notes stay searchable and storage-cheap.
+   Graceful fallback to a plain text field on browsers without Speech API.
+   ========================================================================= */
+function renderVoiceNotesCard(l) {
+  const notes = l.voiceNotes || [];
+  const canSpeak = typeof window !== 'undefined' && (window.SpeechRecognition || window.webkitSpeechRecognition);
+  return `<div class="side-card voice-notes-card">
+    <div style="display:flex; justify-content:space-between; align-items:center; gap:8px; margin-bottom: 4px;">
+      <h4 style="margin:0;">Voice notes</h4>
+      <button class="btn btn-ghost btn-sm voice-rec-btn" id="voice-rec-btn-${l.id}" onclick="toggleVoiceNote('${l.id}')" title="${canSpeak ? 'Record a quick note' : 'Type a quick note'}" style="padding: 4px 10px; font-size: 12px;">
+        <span class="vrec-dot"></span> <span class="vrec-label">${canSpeak ? '🎤 Record' : '📝 Add note'}</span>
+      </button>
+    </div>
+    <div class="fc-hint" style="font-size:11px; margin-bottom: 8px;">Quick 10-second thoughts — pupil behaviour, what worked, what to change.</div>
+    <div id="voice-transcript-${l.id}" class="voice-transcript" style="display:none;"></div>
+    <div class="voice-note-list">
+      ${notes.length === 0 ? '<div class="faint" style="font-size:12px; padding: 4px 0;">No notes yet.</div>' : ''}
+      ${notes.slice().reverse().map((n, i) => `
+        <div class="voice-note-item">
+          <div class="vn-text">${escape(n.text)}</div>
+          <div class="vn-meta">
+            <span>${escape(new Date(n.at).toLocaleString('en-IE', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }))}</span>
+            <button class="vn-delete" onclick="deleteVoiceNote('${l.id}', ${notes.length - 1 - i})" title="Delete">×</button>
+          </div>
+        </div>
+      `).join('')}
+    </div>
+  </div>`;
+}
+
+const VoiceState = { recognition: null, lessonId: null, transcript: '' };
+
+function toggleVoiceNote(lessonId) {
+  const hit = getLessonById(lessonId);
+  if (!hit) return;
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SR) {
+    // Fallback: prompt for text input.
+    const text = prompt('Add a note for this lesson:');
+    if (text && text.trim()) saveVoiceNote(lessonId, text.trim());
+    return;
+  }
+  if (VoiceState.lessonId === lessonId && VoiceState.recognition) {
+    // Already recording — stop + save.
+    VoiceState.recognition.stop();
+    return;
+  }
+  // Start recording.
+  const rec = new SR();
+  rec.lang = 'en-IE';
+  rec.continuous = true;
+  rec.interimResults = true;
+
+  const btn = document.getElementById('voice-rec-btn-' + lessonId);
+  const transcriptEl = document.getElementById('voice-transcript-' + lessonId);
+  if (btn) {
+    btn.classList.add('recording');
+    btn.querySelector('.vrec-label').textContent = '■ Stop';
+  }
+  if (transcriptEl) {
+    transcriptEl.style.display = '';
+    transcriptEl.textContent = 'Listening…';
+  }
+  VoiceState.transcript = '';
+  VoiceState.recognition = rec;
+  VoiceState.lessonId = lessonId;
+
+  rec.onresult = (evt) => {
+    let finalText = '';
+    let interimText = '';
+    for (let i = evt.resultIndex; i < evt.results.length; i++) {
+      const r = evt.results[i];
+      if (r.isFinal) finalText += r[0].transcript;
+      else interimText += r[0].transcript;
+    }
+    if (finalText) VoiceState.transcript += ' ' + finalText.trim();
+    if (transcriptEl) transcriptEl.textContent = (VoiceState.transcript + ' ' + interimText).trim() || 'Listening…';
+  };
+  rec.onerror = (e) => {
+    console.warn('Speech recognition error', e);
+    toast('Voice note error: ' + (e.error || 'unknown'));
+    stopVoiceNote(lessonId, false);
+  };
+  rec.onend = () => {
+    const text = VoiceState.transcript.trim();
+    if (text) saveVoiceNote(lessonId, text);
+    stopVoiceNote(lessonId, true);
+  };
+  try { rec.start(); }
+  catch (e) { toast('Could not start voice note.'); stopVoiceNote(lessonId, false); }
+}
+
+function stopVoiceNote(lessonId, alreadyEnded) {
+  const btn = document.getElementById('voice-rec-btn-' + lessonId);
+  const transcriptEl = document.getElementById('voice-transcript-' + lessonId);
+  if (btn) {
+    btn.classList.remove('recording');
+    btn.querySelector('.vrec-label').textContent = '🎤 Record';
+  }
+  if (transcriptEl) transcriptEl.style.display = 'none';
+  if (!alreadyEnded && VoiceState.recognition) {
+    try { VoiceState.recognition.stop(); } catch(e){}
+  }
+  VoiceState.recognition = null;
+  VoiceState.lessonId = null;
+  VoiceState.transcript = '';
+}
+
+function saveVoiceNote(lessonId, text) {
+  const hit = getLessonById(lessonId);
+  if (!hit) return;
+  hit.lesson.voiceNotes = hit.lesson.voiceNotes || [];
+  hit.lesson.voiceNotes.push({ text, at: new Date().toISOString() });
+  save();
+  logEvent('voice_note_added', { planId: hit.plan.id, lessonId, subject: hit.lesson.subject, length: text.length });
+  renderLessonPlan(hit.lesson);
+  toast('Note saved.');
+}
+
+function deleteVoiceNote(lessonId, idx) {
+  const hit = getLessonById(lessonId);
+  if (!hit || !hit.lesson.voiceNotes) return;
+  hit.lesson.voiceNotes.splice(idx, 1);
+  save();
+  renderLessonPlan(hit.lesson);
 }
 
 /* =========================================================================
