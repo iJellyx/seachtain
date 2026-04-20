@@ -78,10 +78,15 @@ view the first time you visit it, then waits to be clicked.
 - White gloves on hands
 
 **Poses** (PNG files in `/mascot/`):
-- `abbie-wave.png` — greeting; used in the bottom-right toggle + landing
-- `abbie-idle.png` — calm standing; available for reserved moments
+- `abbie-wave-standing.png` — primary greeting; floating helper, onboarding intro
+- `abbie-wave-side.png` — alternate wave, used for variety
+- `abbie-flying-wave.png` — energetic hero greeting; landing page only
+- `abbie-idle.png` — calm standing; neutral background presence
 - `abbie-apple.png` — celebration / success / onboarding complete
-- `abbie-tablet.png` — thinking / working / profile page
+- `abbie-clipboard.png` — writing / planning; profile page
+- `abbie-think.png` — loading / considering moments
+- `abbie-point.png` — teaching / coach marks / guidance moments
+- `abbie-back.png` — sign-out, weekend, end-of-day
 
 Files not yet uploaded? The renderer falls back to a simple inline SVG so
 the UI still reads during setup.

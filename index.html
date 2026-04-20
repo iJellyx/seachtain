@@ -2207,7 +2207,7 @@
       </div>
 
       <section class="landing-hero">
-        <div class="abbie abbie-lg landing-bee" data-abbie-pose="wave" data-abbie-hover="1" aria-hidden="true"></div>
+        <div class="abbie abbie-lg landing-bee" data-abbie-pose="flying" data-abbie-hover="1" aria-hidden="true"></div>
         <div class="landing-eyebrow">Built for Irish primary teachers · NCCA 2023</div>
         <h1 class="landing-headline">Reclaim your<br><em>Sunday evening.</em></h1>
         <p class="landing-sub">Planner Bee drafts your full week — lessons, worksheets, differentiation, Gaeilge threading, sub cover — in about a minute. Grounded in the 2023 NCCA Primary Framework. Pitched to your class. Ready before the kettle boils.</p>
@@ -3044,7 +3044,7 @@
     <!-- ============ PROFILE ============ -->
     <section id="view-class" class="view">
       <div class="profile-hero">
-        <div class="abbie abbie-md" data-abbie-pose="tablet" aria-hidden="true"></div>
+        <div class="abbie abbie-md" data-abbie-pose="clipboard" aria-hidden="true"></div>
         <div style="flex:1; min-width: 0;">
           <div class="ob-eyebrow" style="margin-bottom: 10px;">Your classroom</div>
           <h1 style="margin: 0 0 6px;">About you & your class</h1>
@@ -11694,17 +11694,28 @@ async function handleSignOut() {
    uploaded). Drop `<div class="abbie" data-abbie-pose="wave">` anywhere
    and call `mountAbbie()` to render.
    ========================================================================= */
+// Each key maps to a real file in /mascot/ — the character's canonical
+// pose library. Keys read like plain English so the markup is obvious:
+// <div class="abbie" data-abbie-pose="wave">. Add a new pose by dropping
+// a file and adding an entry here.
 const ABBIE_POSES = {
-  wave:    '/mascot/abbie-wave.png',     // greeting — default
-  idle:    '/mascot/abbie-idle.png',     // standing calmly
-  apple:   '/mascot/abbie-apple.png',    // success / celebration
-  tablet:  '/mascot/abbie-tablet.png',   // thinking / planning
+  wave:      '/mascot/abbie-wave-standing.png',   // primary greeting — floating helper, onboarding
+  waveSide:  '/mascot/abbie-wave-side.png',       // alternate wave for variety
+  flying:    '/mascot/abbie-flying-wave.png',     // energetic hero greeting — landing page only
+  idle:      '/mascot/abbie-idle.png',            // quiet background presence
+  apple:     '/mascot/abbie-apple.png',           // celebration / success
+  clipboard: '/mascot/abbie-clipboard.png',       // working / writing / planning
+  think:     '/mascot/abbie-think.png',           // loading / considering
+  point:     '/mascot/abbie-point.png',           // teaching / coach marks / guidance
+  back:      '/mascot/abbie-back.png',            // sign-out, weekend, end-of-day
 };
-// Back-compat: old pose names still work, they map to the closest new pose.
+// Back-compat + ergonomic aliases so old markup + natural synonyms still
+// resolve. Saves re-editing every existing placement when we rename.
 const ABBIE_POSE_ALIASES = {
-  think: 'tablet',
-  point: 'wave',
-  clipboard: 'tablet',
+  tablet:    'clipboard',   // old name used before file rename
+  teach:     'point',
+  hero:      'flying',
+  greet:     'wave',
   celebrate: 'apple',
 };
 
