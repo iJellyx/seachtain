@@ -767,6 +767,126 @@
   .landing-footer a { color: rgba(255,255,255,0.9); text-decoration: none; }
   .landing-footer a:hover { color: white; text-decoration: underline; }
 
+  /* =========================================================================
+     ONBOARDING — step-by-step profile setup for new teachers.
+     Big type, one idea per step, progress dots, sticky footer.
+     ========================================================================= */
+  body.onboarding-mode .sidebar { display: none; }
+  body.onboarding-mode .app { grid-template-columns: 1fr; }
+  body.onboarding-mode .main { padding: 0 !important; max-width: none; }
+  body.onboarding-mode .main > .view { padding: 0 !important; }
+
+  .onboarding-view { display: none; background: var(--bg); min-height: 100vh; }
+  .onboarding-view.active { display: block; }
+  .onboarding-shell {
+    max-width: 680px; margin: 0 auto;
+    padding: 48px 32px 120px;
+    min-height: 100vh; position: relative;
+  }
+  .ob-progress {
+    display: flex; gap: 8px; justify-content: center;
+    margin-bottom: 10px;
+  }
+  .ob-progress .ob-dot {
+    height: 4px; flex: 1; max-width: 56px;
+    background: var(--line); border-radius: 2px;
+    transition: background 0.25s;
+  }
+  .ob-progress .ob-dot.active { background: var(--primary); }
+  .ob-progress .ob-dot.done   { background: var(--primary); opacity: 0.55; }
+  .ob-step-count {
+    text-align: center; font-size: 11px; letter-spacing: 0.14em;
+    color: var(--ink-faint); text-transform: uppercase; font-weight: 600;
+    margin-bottom: 32px;
+  }
+  .ob-step { display: none; }
+  .ob-step.active { display: block; animation: ob-fade 0.35s ease; }
+  @keyframes ob-fade {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .ob-eyebrow {
+    display: inline-block; font-size: 11px; font-weight: 700;
+    letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--primary); padding: 4px 12px;
+    background: var(--primary-soft); border-radius: 999px;
+    margin-bottom: 14px;
+  }
+  .ob-title {
+    font-family: 'Fraunces', serif; font-weight: 600;
+    font-size: clamp(30px, 4.4vw, 42px); line-height: 1.12;
+    letter-spacing: -0.015em; margin: 0 0 12px; color: var(--ink);
+  }
+  .ob-lead {
+    font-size: 16px; line-height: 1.55; color: var(--ink-soft);
+    margin: 0 0 28px; max-width: 560px;
+  }
+  .ob-card {
+    background: var(--surface); border: 1px solid var(--line);
+    border-radius: 16px; padding: 28px;
+    box-shadow: var(--shadow-sm);
+  }
+  .ob-card .field { margin-bottom: 22px; }
+  .ob-card .field:last-child { margin-bottom: 0; }
+  .ob-card .field label { font-size: 14px; margin-bottom: 4px; }
+
+  /* Big segmented controls with title + subtitle */
+  .ob-segmented { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; padding: 0; background: transparent; }
+  .ob-segmented .seg {
+    display: flex; flex-direction: column; align-items: flex-start;
+    padding: 14px 16px; background: var(--surface); border: 2px solid var(--line);
+    border-radius: 12px; text-align: left; transition: all 0.15s;
+    box-shadow: none; color: var(--ink);
+  }
+  .ob-segmented .seg:hover { border-color: var(--line-strong); background: var(--surface-alt); }
+  .ob-segmented .seg.active {
+    border-color: var(--primary); background: var(--primary-soft);
+    box-shadow: 0 0 0 3px rgba(45, 95, 63, 0.12);
+  }
+  .ob-segmented .seg .seg-title { font-family: 'Fraunces', serif; font-size: 15px; font-weight: 600; }
+  .ob-segmented .seg .seg-sub { font-size: 12px; color: var(--ink-soft); margin-top: 2px; font-weight: 400; }
+
+  .ob-aside {
+    margin-top: 14px; padding: 12px 14px;
+    background: var(--primary-soft); color: var(--primary);
+    border-radius: 10px; font-size: 13px; line-height: 1.5;
+  }
+
+  .ob-summary {
+    background: var(--surface); border: 1px solid var(--line);
+    border-radius: 16px; padding: 24px 28px; margin-bottom: 24px;
+    box-shadow: var(--shadow-sm);
+  }
+  .ob-summary .ob-sum-row {
+    display: grid; grid-template-columns: 140px 1fr; gap: 10px 20px;
+    padding: 10px 0; border-bottom: 1px solid var(--line);
+    font-size: 14px;
+  }
+  .ob-summary .ob-sum-row:last-child { border-bottom: none; }
+  .ob-summary .ob-sum-label { color: var(--ink-faint); font-size: 12px; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 600; }
+  .ob-summary .ob-sum-val { color: var(--ink); font-weight: 500; }
+  .ob-summary .ob-sum-val strong { font-family: 'Fraunces', serif; font-weight: 600; }
+
+  .ob-finish-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 18px; }
+  .ob-fine { font-size: 12px; max-width: 560px; line-height: 1.5; }
+
+  .ob-footer {
+    position: sticky; bottom: 0; background: var(--bg);
+    border-top: 1px solid var(--line); padding: 16px 32px;
+    display: flex; justify-content: space-between; gap: 10px;
+    margin: 40px -32px 0; z-index: 5;
+  }
+  .ob-footer.hidden { display: none; }
+
+  @media (max-width: 640px) {
+    .onboarding-shell { padding: 32px 20px 140px; }
+    .ob-card { padding: 20px; }
+    .ob-segmented { grid-template-columns: 1fr; }
+    .ob-summary .ob-sum-row { grid-template-columns: 1fr; gap: 2px; padding: 10px 0; }
+    .ob-footer { margin: 40px -20px 0; padding: 14px 20px; }
+    .ob-finish-actions .btn { flex: 1 1 auto; justify-content: center; }
+  }
+
   @media (max-width: 720px) {
     .landing-top-bar { padding: 14px 20px; }
     .landing-top-bar .landing-top-actions .btn { padding: 8px 14px; font-size: 13px; }
@@ -2109,6 +2229,182 @@
       </footer>
     </section>
     <!-- ============ END LANDING ============ -->
+
+    <!-- ============ ONBOARDING (5-step profile setup for new teachers) ============ -->
+    <section id="view-onboarding" class="view onboarding-view">
+      <div class="onboarding-shell">
+        <div class="ob-progress" id="ob-progress" aria-label="Setup progress"></div>
+        <div class="ob-step-count" id="ob-step-count">Step 1 of 5</div>
+
+        <!-- Step 1: About you -->
+        <div class="ob-step active" data-ob-step="1">
+          <div class="ob-eyebrow">First things first</div>
+          <h1 class="ob-title">Let's set up your classroom.</h1>
+          <p class="ob-lead">We'll tune every lesson to your class, your school day, and your Gaeilge comfort. Takes about 90 seconds.</p>
+          <div class="ob-card">
+            <div class="field">
+              <label for="ob-teacher">Your name</label>
+              <div class="hint">What you'd like to sign your parent notes as.</div>
+              <input type="text" class="input" id="ob-teacher" placeholder="e.g. Ciara Ní Cheallaigh" autocomplete="name">
+            </div>
+            <div class="field">
+              <label>How the class addresses you</label>
+              <div class="hint">Shown on printed pupil sheets and the Sub Pack.</div>
+              <div class="segmented" role="radiogroup" id="ob-salutation">
+                <button type="button" class="seg" data-ob-sal="Múinteoir">Múinteoir</button>
+                <button type="button" class="seg" data-ob-sal="Ms.">Ms.</button>
+                <button type="button" class="seg" data-ob-sal="Miss">Miss</button>
+                <button type="button" class="seg" data-ob-sal="Mrs.">Mrs.</button>
+                <button type="button" class="seg" data-ob-sal="Mr.">Mr.</button>
+              </div>
+            </div>
+            <div class="field-row">
+              <div class="field">
+                <label for="ob-school">Your school</label>
+                <input type="text" class="input" id="ob-school" placeholder="e.g. St. Brigid's NS" autocomplete="organization">
+              </div>
+              <div class="field">
+                <label for="ob-roll">Roll number <span class="faint">(optional)</span></label>
+                <input type="text" class="input" id="ob-roll" placeholder="e.g. 20123A" autocomplete="off">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 2: Your class -->
+        <div class="ob-step" data-ob-step="2">
+          <div class="ob-eyebrow">Now your class</div>
+          <h1 class="ob-title">Who are you teaching this year?</h1>
+          <p class="ob-lead">This decides everything from pitch and pacing to the DES minute floor we enforce.</p>
+          <div class="ob-card">
+            <div class="field">
+              <label>Class group</label>
+              <div class="hint">Multi-grade classes are fully supported — pick the one that leads most of your planning.</div>
+              <div class="option-grid" id="ob-grade-options"></div>
+            </div>
+            <div class="field-row">
+              <div class="field">
+                <label for="ob-pupils">Number of pupils</label>
+                <input type="number" class="input" id="ob-pupils" min="1" max="40" value="24">
+              </div>
+              <div class="field">
+                <label for="ob-sen">SEN / support roll</label>
+                <div class="hint">Pupils on your support / SET roll. Used for differentiation prompts.</div>
+                <input type="number" class="input" id="ob-sen" min="0" max="20" value="3">
+              </div>
+            </div>
+            <div class="field">
+              <label for="ob-eal">EAL pupils <span class="faint">(optional)</span></label>
+              <div class="hint">Pupils learning English as an additional language.</div>
+              <input type="number" class="input" id="ob-eal" min="0" max="20" value="0" style="max-width: 160px;">
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 3: Language & Gaeilge comfort -->
+        <div class="ob-step" data-ob-step="3">
+          <div class="ob-eyebrow">Gaeilge</div>
+          <h1 class="ob-title">What's your Gaeilge setup?</h1>
+          <p class="ob-lead">Gaelscoil, Gaeltacht, or English-medium — set it once. Seachtain dials the Irish up or down to match.</p>
+          <div class="ob-card">
+            <div class="field">
+              <label>School medium</label>
+              <div class="segmented ob-segmented" role="radiogroup" id="ob-medium">
+                <button type="button" class="seg" data-ob-medium="english">
+                  <span class="seg-title">English-medium</span>
+                  <span class="seg-sub">Irish taught as a subject</span>
+                </button>
+                <button type="button" class="seg" data-ob-medium="gaeltacht">
+                  <span class="seg-title">Gaeltacht</span>
+                  <span class="seg-sub">Irish-speaking community</span>
+                </button>
+                <button type="button" class="seg" data-ob-medium="gaelscoil">
+                  <span class="seg-title">Gaelscoil</span>
+                  <span class="seg-sub">Irish-medium school</span>
+                </button>
+              </div>
+            </div>
+            <div class="field">
+              <label>Your own Gaeilge confidence</label>
+              <div class="hint">Honest is best. We'll pitch vocab and classroom language to your level — you can always push further.</div>
+              <div class="segmented ob-segmented" role="radiogroup" id="ob-gaeilge-level">
+                <button type="button" class="seg" data-ob-glevel="low">
+                  <span class="seg-title">Still building</span>
+                  <span class="seg-sub">Phrases I use, not more</span>
+                </button>
+                <button type="button" class="seg" data-ob-glevel="med">
+                  <span class="seg-title">Solid</span>
+                  <span class="seg-sub">I can teach it, I second-guess</span>
+                </button>
+                <button type="button" class="seg" data-ob-glevel="high">
+                  <span class="seg-title">Fluent</span>
+                  <span class="seg-sub">No problem at any level</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 4: School day -->
+        <div class="ob-step" data-ob-step="4">
+          <div class="ob-eyebrow">Your school day</div>
+          <h1 class="ob-title">When do lessons run?</h1>
+          <p class="ob-lead">We've pre-filled the standard Irish primary day for your grade — tweak if your school's different.</p>
+          <div class="ob-card">
+            <div class="field-row">
+              <div class="field">
+                <label for="ob-school-start">Morning start</label>
+                <input type="time" class="input" id="ob-school-start" value="09:00">
+              </div>
+              <div class="field">
+                <label for="ob-school-end">Home time</label>
+                <input type="time" class="input" id="ob-school-end" value="14:40">
+              </div>
+            </div>
+            <div class="field-row">
+              <div class="field">
+                <label for="ob-sb-start">Sos (small break) from</label>
+                <input type="time" class="input" id="ob-sb-start" value="11:00">
+              </div>
+              <div class="field">
+                <label for="ob-sb-end">until</label>
+                <input type="time" class="input" id="ob-sb-end" value="11:15">
+              </div>
+            </div>
+            <div class="field-row">
+              <div class="field">
+                <label for="ob-lunch-start">Lón (big break) from</label>
+                <input type="time" class="input" id="ob-lunch-start" value="12:30">
+              </div>
+              <div class="field">
+                <label for="ob-lunch-end">until</label>
+                <input type="time" class="input" id="ob-lunch-end" value="13:00">
+              </div>
+            </div>
+          </div>
+          <div class="ob-aside" id="ob-day-summary"></div>
+        </div>
+
+        <!-- Step 5: All set -->
+        <div class="ob-step" data-ob-step="5">
+          <div class="ob-eyebrow">Ready when you are</div>
+          <h1 class="ob-title">Your classroom is set up.</h1>
+          <p class="ob-lead">Everything you just told us is saved to your account. Plans, lessons, feedback — all pitched to this from now on.</p>
+          <div class="ob-summary" id="ob-summary"></div>
+          <div class="ob-finish-actions">
+            <button class="btn btn-primary btn-lg" onclick="finishOnboardingWithPlan()">✨ Build my first week →</button>
+            <button class="btn btn-ghost btn-lg" onclick="finishOnboarding()">Explore the dashboard first</button>
+          </div>
+          <p class="faint ob-fine">You can always edit any of this from <em>My profile</em> in the sidebar. Fixed slots and subject minute targets live there too.</p>
+        </div>
+
+        <div class="ob-footer" id="ob-footer">
+          <button type="button" class="btn btn-ghost" id="ob-back" onclick="onboardingStep(-1)">← Back</button>
+          <button type="button" class="btn btn-primary" id="ob-next" onclick="onboardingStep(1)">Next →</button>
+        </div>
+      </div>
+    </section>
+    <!-- ============ END ONBOARDING ============ -->
     <!-- ============ DASHBOARD ============ -->
     <section id="view-dashboard" class="view">
       <div class="page-head">
@@ -2543,7 +2839,10 @@
           <h1>My class profile</h1>
           <div class="sub">Set this once. Every new plan uses these details as defaults — no re-typing.</div>
         </div>
-        <span class="chip chip-primary" id="profile-saved-badge" style="display:none;">✓ Profile saved</span>
+        <div style="display:flex; gap:8px; align-items:center; flex-wrap: wrap;">
+          <span class="chip chip-primary" id="profile-saved-badge" style="display:none;">✓ Profile saved</span>
+          <button class="btn btn-ghost" onclick="startOnboarding()" title="Walk through the guided setup again">✨ Run setup walkthrough</button>
+        </div>
       </div>
 
       <div class="card card-lg" style="max-width: 760px;">
@@ -4605,6 +4904,7 @@ function renderSeasonalAccent() {
 // rewritten to /index.html by vercel.json, so direct navigation works.
 const VIEW_TO_PATH = {
   landing:    '/welcome',
+  onboarding: '/onboarding',
   dashboard:  '/dashboard',
   plan:       '/plan',
   lesson:     '/lesson',
@@ -4616,18 +4916,20 @@ const VIEW_TO_PATH = {
   generating: null,
 };
 const PATH_TO_VIEW = {
-  '/':          'dashboard',   // routed dynamically — landing for unauthed new users, dashboard otherwise
-  '/welcome':   'landing',
-  '/dashboard': 'dashboard',
-  '/plan':      'plan',
-  '/lesson':    'lesson',
-  '/my-plans':  'library',
-  '/themes':    'themes',
-  '/profile':   'class',
-  '/new-plan':  'create',
+  '/':           'dashboard',   // routed dynamically — landing for unauthed new users, dashboard otherwise
+  '/welcome':    'landing',
+  '/onboarding': 'onboarding',
+  '/dashboard':  'dashboard',
+  '/plan':       'plan',
+  '/lesson':     'lesson',
+  '/my-plans':   'library',
+  '/themes':     'themes',
+  '/profile':    'class',
+  '/new-plan':   'create',
 };
 const VIEW_TITLES = {
   landing:    'Seachtain — Weekly planning for Irish primary teachers',
+  onboarding: 'Welcome · Seachtain',
   dashboard:  'Dashboard · Seachtain',
   plan:       'Week plan · Seachtain',
   lesson:     'Lesson · Seachtain',
@@ -4649,8 +4951,11 @@ function goto(view, opts = {}) {
   const el = document.getElementById('view-' + view);
   if (el) { el.classList.add('active'); el.classList.add('print-active'); }
   document.querySelectorAll('.nav-item').forEach(n => n.classList.toggle('active', n.dataset.nav === view));
-  // Landing hides the sidebar + season strip. Every other view restores them.
+  // Landing + onboarding hide the sidebar + season strip. Every other view restores them.
   document.body.classList.toggle('landing-mode', view === 'landing');
+  document.body.classList.toggle('onboarding-mode', view === 'onboarding');
+  // When entering onboarding, make sure the current step is drawn.
+  if (view === 'onboarding') renderOnboardingStep();
   // Push URL unless this is a back/forward pop (opts.replace) or the view has no path.
   const path = VIEW_TO_PATH[view];
   if (path && !opts.skipHistory) {
@@ -10856,15 +11161,16 @@ const AuthModule = (() => {
     });
   }
 
-  // Once we're authed, move anyone still sitting on /welcome to the
-  // dashboard. This is the critical bit that makes the magic-link flow
-  // feel right — the callback page briefly shows as landing, then as
-  // soon as the SDK has a session we promote.
+  // Once we're authed, promote the teacher off /welcome. Fresh accounts
+  // (no profile saved yet) get the onboarding walkthrough; returning
+  // users go straight to the dashboard.
   function promoteFromLanding() {
-    if (State.view === 'landing') {
-      // Leave the query/hash cleanup to the SDK — it fires history.replaceState
-      // itself after consuming the code.
-      goto('dashboard');
+    if (State.view === 'landing' || State.view === 'onboarding') {
+      if (isProfileUnconfigured()) {
+        startOnboarding();
+      } else {
+        goto('dashboard');
+      }
     }
   }
 
@@ -11138,6 +11444,255 @@ async function handleSignOut() {
    sign in or explicitly click "See a demo week", they skip straight to the
    dashboard on subsequent visits. Signed-in users never see the landing.
    ========================================================================= */
+/* =========================================================================
+   ONBOARDING — 5-step profile setup for new teachers.
+   Triggered after the first successful magic-link sign-in (or manually
+   from the profile page). Writes directly into State.profile and saves
+   on every step, so an interruption never costs progress.
+   ========================================================================= */
+const OB_TOTAL_STEPS = 5;
+function isProfileUnconfigured() {
+  const P = State.profile || {};
+  return !P.hasBeenSaved && !P.onboardingCompleted;
+}
+
+function startOnboarding() {
+  State.onboardingStep = 1;
+  goto('onboarding');
+  renderOnboardingStep();
+}
+
+function renderOnboardingStep() {
+  const step = State.onboardingStep || 1;
+  // Progress dots
+  const progress = document.getElementById('ob-progress');
+  if (progress) {
+    progress.innerHTML = '';
+    for (let i = 1; i <= OB_TOTAL_STEPS; i++) {
+      const dot = document.createElement('div');
+      dot.className = 'ob-dot' + (i === step ? ' active' : (i < step ? ' done' : ''));
+      progress.appendChild(dot);
+    }
+  }
+  const stepCount = document.getElementById('ob-step-count');
+  if (stepCount) stepCount.textContent = step === OB_TOTAL_STEPS ? 'All set' : `Step ${step} of ${OB_TOTAL_STEPS - 1}`;
+
+  // Show the active step
+  document.querySelectorAll('.ob-step').forEach(el => {
+    el.classList.toggle('active', +el.dataset.obStep === step);
+  });
+
+  // Footer visibility — hidden on the final celebratory step
+  const footer = document.getElementById('ob-footer');
+  if (footer) footer.classList.toggle('hidden', step === OB_TOTAL_STEPS);
+
+  const back = document.getElementById('ob-back');
+  if (back) back.style.visibility = step === 1 ? 'hidden' : 'visible';
+  const next = document.getElementById('ob-next');
+  if (next) next.textContent = (step === OB_TOTAL_STEPS - 1) ? 'Finish →' : 'Next →';
+
+  // Per-step setup
+  if (step === 1) obPrefillStep1();
+  if (step === 2) obPrefillStep2();
+  if (step === 3) obPrefillStep3();
+  if (step === 4) obPrefillStep4();
+  if (step === 5) renderOnboardingSummary();
+
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function obPrefillStep1() {
+  const P = State.profile || {};
+  const t = document.getElementById('ob-teacher');
+  const s = document.getElementById('ob-school');
+  const r = document.getElementById('ob-roll');
+  if (t) t.value = P.teacher && P.teacher !== DEFAULT_PROFILE.teacher ? P.teacher : '';
+  if (s) s.value = P.school && P.school !== DEFAULT_PROFILE.school ? P.school : '';
+  if (r) r.value = P.roll || '';
+  // Salutation segmented
+  const currentSal = P.salutation && /^(Múinteoir|Ms\.|Miss|Mrs\.|Mr\.)$/.test(P.salutation) ? P.salutation : 'Múinteoir';
+  document.querySelectorAll('#ob-salutation .seg').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.obSal === currentSal);
+    btn.onclick = () => {
+      document.querySelectorAll('#ob-salutation .seg').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+    };
+  });
+  setTimeout(() => t?.focus(), 100);
+}
+
+function obPrefillStep2() {
+  const P = State.profile || {};
+  // Grade options grid — reuse GRADES
+  const grid = document.getElementById('ob-grade-options');
+  if (grid) {
+    const currentGrade = P.grade || '2nd';
+    grid.innerHTML = GRADES.map(g => `
+      <button type="button" class="option-card ${g.id === currentGrade ? 'selected' : ''}" data-ob-grade="${g.id}">
+        <div style="font-family: 'Fraunces', serif; font-size: 16px; font-weight: 600;">${escape(g.name)}</div>
+        ${g.desc ? `<div style="font-size: 12px; color: var(--ink-soft); margin-top: 4px;">${escape(g.desc)}</div>` : ''}
+      </button>
+    `).join('');
+    grid.querySelectorAll('.option-card').forEach(btn => {
+      btn.onclick = () => {
+        grid.querySelectorAll('.option-card').forEach(b => b.classList.remove('selected'));
+        btn.classList.add('selected');
+        // Prefill school-day times for this grade band so step 4 already matches.
+        const t = defaultSchoolTimesForGrade(btn.dataset.obGrade);
+        document.getElementById('ob-school-end').value = t.schoolEnd;
+      };
+    });
+  }
+  document.getElementById('ob-pupils').value = P.pupils || 24;
+  document.getElementById('ob-sen').value = P.sen ?? 3;
+  document.getElementById('ob-eal').value = P.eal ?? 0;
+}
+
+function obPrefillStep3() {
+  const P = State.profile || {};
+  const medium = P.medium || 'english';
+  document.querySelectorAll('#ob-medium .seg').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.obMedium === medium);
+    btn.onclick = () => {
+      document.querySelectorAll('#ob-medium .seg').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+    };
+  });
+  const glevel = P.gaeilgeLevel || 'med';
+  document.querySelectorAll('#ob-gaeilge-level .seg').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.obGlevel === glevel);
+    btn.onclick = () => {
+      document.querySelectorAll('#ob-gaeilge-level .seg').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+    };
+  });
+}
+
+function obPrefillStep4() {
+  const P = State.profile || {};
+  const grade = (document.querySelector('#ob-grade-options .option-card.selected')?.dataset.obGrade) || P.grade || '2nd';
+  const defaults = defaultSchoolTimesForGrade(grade);
+  const fields = [
+    ['ob-school-start', 'schoolStart'],
+    ['ob-school-end',   'schoolEnd'],
+    ['ob-sb-start',     'smallBreakStart'],
+    ['ob-sb-end',       'smallBreakEnd'],
+    ['ob-lunch-start',  'lunchStart'],
+    ['ob-lunch-end',    'lunchEnd'],
+  ];
+  fields.forEach(([id, key]) => {
+    const el = document.getElementById(id);
+    if (el && !el.value) el.value = (P[key] && P[key] !== DEFAULT_PROFILE[key]) ? P[key] : defaults[key];
+  });
+  const isInfants = grade === 'junior' || grade === 'senior';
+  const bandLabel = isInfants ? 'Infants (shorter day, ~1,100 min/week)' : '1st–6th (standard day, 1,400 min/week)';
+  const aside = document.getElementById('ob-day-summary');
+  if (aside) aside.innerHTML = `DES instructional minutes for <strong>${bandLabel}</strong>. We'll enforce this floor when balancing your week.`;
+}
+
+function renderOnboardingSummary() {
+  const P = State.profile;
+  const grade = GRADES.find(g => g.id === P.grade)?.name || P.grade;
+  const mediumLabel = { english: 'English-medium', gaeltacht: 'Gaeltacht', gaelscoil: 'Gaelscoil' }[P.medium] || P.medium;
+  const glevelLabel = { low: 'Still building', med: 'Solid', high: 'Fluent' }[P.gaeilgeLevel] || P.gaeilgeLevel;
+  const summary = document.getElementById('ob-summary');
+  if (!summary) return;
+  summary.innerHTML = `
+    <div class="ob-sum-row">
+      <span class="ob-sum-label">Teacher</span>
+      <span class="ob-sum-val"><strong>${escape((P.salutation || '') + ' ' + (P.teacher || ''))}</strong>${P.school ? ' · ' + escape(P.school) : ''}${P.roll ? ' · Roll ' + escape(P.roll) : ''}</span>
+    </div>
+    <div class="ob-sum-row">
+      <span class="ob-sum-label">Class</span>
+      <span class="ob-sum-val"><strong>${escape(grade)}</strong> · ${P.pupils} pupils · ${P.sen} SEN${P.eal ? ' · ' + P.eal + ' EAL' : ''}</span>
+    </div>
+    <div class="ob-sum-row">
+      <span class="ob-sum-label">Gaeilge</span>
+      <span class="ob-sum-val">${escape(mediumLabel)} · Your confidence: <strong>${escape(glevelLabel)}</strong></span>
+    </div>
+    <div class="ob-sum-row">
+      <span class="ob-sum-label">School day</span>
+      <span class="ob-sum-val">${escape(P.schoolStart)}–${escape(P.schoolEnd)} · Sos ${escape(P.smallBreakStart)} · Lón ${escape(P.lunchStart)}</span>
+    </div>
+  `;
+}
+
+// Commit the current step's inputs into State.profile. Called on every step
+// advance so the teacher never loses progress if they hit refresh.
+function commitOnboardingStep(step) {
+  const P = State.profile;
+  if (step === 1) {
+    P.teacher = (document.getElementById('ob-teacher')?.value || '').trim() || P.teacher || DEFAULT_PROFILE.teacher;
+    P.school = (document.getElementById('ob-school')?.value || '').trim() || P.school || DEFAULT_PROFILE.school;
+    P.roll = (document.getElementById('ob-roll')?.value || '').trim();
+    const sel = document.querySelector('#ob-salutation .seg.active');
+    P.salutation = sel ? sel.dataset.obSal : (P.salutation || 'Múinteoir');
+  }
+  if (step === 2) {
+    const gradeSel = document.querySelector('#ob-grade-options .option-card.selected');
+    if (gradeSel) P.grade = gradeSel.dataset.obGrade;
+    P.pupils = Math.max(1, Math.min(40, +document.getElementById('ob-pupils').value || 24));
+    P.sen = Math.max(0, Math.min(20, +document.getElementById('ob-sen').value || 0));
+    P.eal = Math.max(0, Math.min(20, +document.getElementById('ob-eal').value || 0));
+  }
+  if (step === 3) {
+    const mSel = document.querySelector('#ob-medium .seg.active');
+    if (mSel) P.medium = mSel.dataset.obMedium;
+    const lSel = document.querySelector('#ob-gaeilge-level .seg.active');
+    if (lSel) P.gaeilgeLevel = lSel.dataset.obGlevel;
+  }
+  if (step === 4) {
+    P.schoolStart      = document.getElementById('ob-school-start').value || P.schoolStart;
+    P.schoolEnd        = document.getElementById('ob-school-end').value   || P.schoolEnd;
+    P.smallBreakStart  = document.getElementById('ob-sb-start').value     || P.smallBreakStart;
+    P.smallBreakEnd    = document.getElementById('ob-sb-end').value       || P.smallBreakEnd;
+    P.lunchStart       = document.getElementById('ob-lunch-start').value  || P.lunchStart;
+    P.lunchEnd         = document.getElementById('ob-lunch-end').value    || P.lunchEnd;
+  }
+  saveProfileStore();
+}
+
+function onboardingStep(delta) {
+  const current = State.onboardingStep || 1;
+  // Commit current step's inputs before moving.
+  if (delta > 0) {
+    commitOnboardingStep(current);
+    // Light validation — only gate step 1 (name + school) since everything
+    // else has sensible defaults.
+    if (current === 1) {
+      const t = (document.getElementById('ob-teacher')?.value || '').trim();
+      const s = (document.getElementById('ob-school')?.value || '').trim();
+      if (!t || !s) { toast('Give us your name and school first.'); return; }
+    }
+  }
+  const next = Math.max(1, Math.min(OB_TOTAL_STEPS, current + delta));
+  State.onboardingStep = next;
+  renderOnboardingStep();
+}
+
+function finishOnboarding() {
+  State.profile.hasBeenSaved = true;
+  State.profile.onboardingCompleted = true;
+  State.profile.onboardingCompletedAt = new Date().toISOString();
+  saveProfileStore();
+  updateSidebarFromProfile();
+  try { logEvent('onboarding_completed', { grade: State.profile.grade, medium: State.profile.medium }); } catch(e){}
+  toast('Profile saved. Welcome to Seachtain.');
+  goto('dashboard');
+}
+
+function finishOnboardingWithPlan() {
+  State.profile.hasBeenSaved = true;
+  State.profile.onboardingCompleted = true;
+  State.profile.onboardingCompletedAt = new Date().toISOString();
+  saveProfileStore();
+  updateSidebarFromProfile();
+  try { logEvent('onboarding_completed', { grade: State.profile.grade, medium: State.profile.medium, generated: true }); } catch(e){}
+  // Route straight into the AI Monday Morning Mode — it uses the fresh profile defaults.
+  initDraftFromProfile();
+  generatePlanAI();
+}
+
 const LS_DEMO_ACCEPTED = 'seachtain.demo.accepted';
 function hasAcceptedDemo() {
   try { return localStorage.getItem(LS_DEMO_ACCEPTED) === '1'; } catch(e) { return false; }
@@ -11213,7 +11768,10 @@ bootRoute();
 // overwrites local state moments later and we promote off landing.
 AuthModule.init()
   .then(() => {
-    if (AuthModule.isAuthed() && State.view === 'landing') goto('dashboard');
+    if (!AuthModule.isAuthed()) return;
+    // Signed-in brand-new account → guide through onboarding.
+    if (isProfileUnconfigured()) { startOnboarding(); return; }
+    if (State.view === 'landing') goto('dashboard');
   })
   .catch(e => console.warn('Auth init failed', e));
 
