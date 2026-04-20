@@ -7,6 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 <style>
   :root {
     --bg: #FBF7F0;
@@ -500,6 +501,73 @@
     .sidebar .nav-item { padding: 6px 8px; font-size: 12px; }
     .sidebar-new-plan { font-size: 12px; padding: 8px 10px; }
   }
+
+  /* =========================================================================
+     AUTH — sign-in overlay, local-only banner, sidebar account chip, popover.
+     ========================================================================= */
+  .auth-overlay {
+    position: fixed; inset: 0; z-index: 1000;
+    background: rgba(27, 24, 21, 0.55); backdrop-filter: blur(3px);
+    display: none; align-items: center; justify-content: center; padding: 20px;
+  }
+  .auth-overlay.show { display: flex; }
+  .auth-card {
+    position: relative;
+    background: var(--surface); border: 1px solid var(--line); border-radius: 18px;
+    box-shadow: var(--shadow-lg); padding: 32px 30px;
+    width: 100%; max-width: 440px;
+  }
+  .auth-close {
+    position: absolute; top: 12px; right: 12px;
+    width: 32px; height: 32px; border-radius: 8px; border: none; background: transparent;
+    font-size: 22px; color: var(--ink-faint); cursor: pointer; line-height: 1;
+  }
+  .auth-close:hover { background: var(--surface-alt); color: var(--ink); }
+  .auth-brand { display: flex; align-items: center; gap: 14px; margin-bottom: 16px; }
+  .auth-lead { font-size: 14px; color: var(--ink-soft); margin: 0 0 18px; line-height: 1.5; }
+  .auth-label { display: block; font-size: 12px; color: var(--ink-soft); font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; margin-bottom: 6px; }
+  .auth-status { margin-top: 12px; font-size: 13px; min-height: 20px; }
+  .auth-status.ok { color: #1d4a30; padding: 10px 12px; background: #D7E8DB; border-radius: 8px; }
+  .auth-status.err { color: #7a2d1a; padding: 10px 12px; background: #F5D9CB; border-radius: 8px; }
+  .auth-status .ai-spinner { margin-right: 8px; }
+  .auth-fine { margin-top: 16px; font-size: 11px; color: var(--ink-faint); line-height: 1.5; }
+
+  .local-banner {
+    position: sticky; top: 0; z-index: 15;
+    background: linear-gradient(90deg, var(--gold-soft), var(--accent-soft));
+    border-bottom: 1px solid var(--line-strong);
+    padding: 10px 40px;
+    display: flex; justify-content: space-between; align-items: center; gap: 14px;
+    font-size: 13px; color: #5c4a12;
+  }
+  @media (max-width: 720px) { .local-banner { padding: 10px 16px; flex-direction: column; align-items: stretch; } }
+
+  .sb-account-btn {
+    background: transparent; border: none; cursor: pointer; color: var(--ink-faint);
+    padding: 6px; border-radius: 6px; display: grid; place-items: center;
+  }
+  .sb-account-btn:hover { background: var(--surface-alt); color: var(--ink); }
+
+  .account-popover {
+    position: fixed; z-index: 500;
+    background: var(--surface); border: 1px solid var(--line); border-radius: 12px;
+    box-shadow: var(--shadow-lg); padding: 10px;
+    min-width: 240px;
+  }
+  .account-popover .ap-email {
+    font-size: 12px; color: var(--ink-soft); padding: 6px 10px 10px;
+    border-bottom: 1px solid var(--line); margin-bottom: 6px;
+    word-break: break-all;
+  }
+  .account-popover .ap-email strong { display: block; color: var(--ink); font-size: 13px; margin-bottom: 2px; }
+  .account-popover button {
+    display: block; width: 100%; text-align: left;
+    padding: 8px 10px; border-radius: 6px; font-size: 13px;
+    color: var(--ink); background: transparent; border: none; cursor: pointer;
+  }
+  .account-popover button:hover { background: var(--surface-alt); }
+  .account-popover button.ap-danger { color: #b2382a; }
+  .account-popover button.ap-danger:hover { background: #fbe9e5; }
   .user-name { font-size: 13px; font-weight: 600; }
   .user-sub { font-size: 11px; color: var(--ink-faint); }
   .main { padding: 0 0 80px; max-width: 1200px; }
@@ -1557,12 +1625,15 @@
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
       My profile
     </button>
-    <div class="sidebar-footer">
+    <div class="sidebar-footer" id="sidebar-footer">
       <div class="avatar" id="sb-avatar">JC</div>
-      <div>
+      <div style="flex:1; min-width: 0;">
         <div class="user-name" id="sb-name">Ms. Ciara</div>
         <div class="user-sub" id="sb-sub">St. Brigid's NS · 2nd</div>
       </div>
+      <button id="sb-account-btn" class="sb-account-btn" onclick="openAccountMenu(event)" aria-label="Account" title="Account">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
     </div>
   </aside>
 
@@ -2159,6 +2230,56 @@
 </div>
 
 <div class="toast" id="toast"></div>
+
+<!-- Auth overlay — magic-link sign-in / sign-up. Shown when the teacher
+     clicks "Sign in" in the sidebar; not modal on first load (the localStorage
+     path still works for anyone just poking around). -->
+<div class="auth-overlay" id="auth-overlay" role="dialog" aria-labelledby="auth-title">
+  <div class="auth-card">
+    <button class="auth-close" onclick="closeAuthOverlay()" aria-label="Close">×</button>
+    <div class="auth-brand">
+      <div class="brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 38 38" xmlns="http://www.w3.org/2000/svg">
+          <g>
+            <circle cx="7"  cy="24" r="1.7" fill="#C7E3CE" opacity="0.55"/>
+            <circle cx="11.5" cy="19.5" r="1.7" fill="#C7E3CE" opacity="0.75"/>
+            <circle cx="15.5" cy="16" r="1.7" fill="#C7E3CE" opacity="0.9"/>
+            <circle cx="19" cy="14.5" r="2.6" fill="#D4A72C"/>
+            <circle cx="22.5" cy="16" r="1.7" fill="#C7E3CE" opacity="0.9"/>
+            <circle cx="26.5" cy="19.5" r="1.7" fill="#C7E3CE" opacity="0.75"/>
+            <circle cx="31" cy="24" r="1.7" fill="#C7E3CE" opacity="0.55"/>
+          </g>
+        </svg>
+      </div>
+      <div>
+        <h2 id="auth-title" style="margin:0; font-size: 22px;">Welcome to Seachtain</h2>
+        <div style="font-size: 12px; color: var(--ink-faint); letter-spacing: 0.08em; text-transform: uppercase; font-weight: 600; margin-top: 2px;">Pleanáil Sheachtainiúil</div>
+      </div>
+    </div>
+    <p class="auth-lead">Sign in so your plans, profile and history are saved across devices. We'll email you a magic link — no password to remember.</p>
+    <form id="auth-form" onsubmit="return submitSignIn(event)">
+      <label class="auth-label" for="auth-email">Your school email</label>
+      <input type="email" class="input" id="auth-email" placeholder="ciara@stbrigids.ie" required autocomplete="email">
+      <button type="submit" class="btn btn-primary" id="auth-submit" style="width:100%; margin-top: 12px; justify-content: center;">Send me a magic link →</button>
+    </form>
+    <div class="auth-status" id="auth-status"></div>
+    <div class="auth-fine">Your data stays in an EU region. We'll never share it. You can export or delete it any time.</div>
+  </div>
+</div>
+
+<!-- Local-only banner: shown at the top of the dashboard when the teacher
+     isn't signed in, so they notice the upgrade path without being gated. -->
+<div id="local-banner" class="local-banner no-print" style="display:none;">
+  <span>📍 You're in local-only mode — your plans live on this device.</span>
+  <div style="display:flex; gap:8px; flex-wrap: wrap;">
+    <button class="btn btn-primary btn-sm" onclick="openAuthOverlay()">Sign in to save everywhere</button>
+    <button class="btn btn-ghost btn-sm" onclick="dismissLocalBanner()">Not now</button>
+  </div>
+</div>
+
+<!-- Account popover — appears under the sidebar chip when signed in. -->
+<div id="account-popover" class="account-popover" style="display:none;"></div>
+
 <div class="modal-backdrop" id="modal">
   <div class="modal">
     <h3 id="modal-title">Confirm</h3>
@@ -3690,9 +3811,12 @@ function initDraftFromProfile() {
 
 function save() {
   try { localStorage.setItem(LS_KEY, JSON.stringify({ plans: State.plans })); } catch(e){}
+  // Fire-and-forget cloud sync when signed in. Debounced inside AuthModule.
+  if (typeof AuthModule !== 'undefined') AuthModule.scheduleSync();
 }
 function saveProfileStore() {
   try { localStorage.setItem(LS_PROFILE, JSON.stringify(State.profile)); } catch(e){}
+  if (typeof AuthModule !== 'undefined') AuthModule.scheduleSync();
 }
 function load() {
   try {
@@ -4364,12 +4488,16 @@ function saveLearning(arr) {
 function logEvent(type, meta) {
   try {
     const log = loadLearning();
-    log.push({
+    const ev = {
       id: 'e-' + Date.now() + '-' + Math.random().toString(36).slice(2,7),
       at: new Date().toISOString(),
       type, meta: meta || {},
-    });
+    };
+    log.push(ev);
     saveLearning(log);
+    // Fire-and-forget server insert when signed in. Unique (user_id, event_id)
+    // guards against duplicates on retry.
+    if (typeof AuthModule !== 'undefined') AuthModule.syncEvent(ev);
     // Light-touch refresh of the insights panel if it's on screen.
     const host = document.getElementById('insights-panel');
     if (host && host.offsetParent !== null) renderInsightsPanel();
@@ -10121,6 +10249,319 @@ function deleteCurrentPlan() {
 }
 
 /* =========================================================================
+   AUTH + CLOUD SYNC (Supabase)
+   Magic-link auth, per-user data in Postgres, Row Level Security enforced
+   server-side. localStorage stays as a local cache / offline-only fallback.
+   If SUPABASE_URL / SUPABASE_ANON_KEY aren't set, we stay in localStorage-
+   only mode and the auth UI is suppressed — the app keeps working.
+   ========================================================================= */
+const AuthModule = (() => {
+  let client = null;
+  let session = null;
+  let configLoaded = false;
+  let migrationOffered = false;
+  // Naive debounce — collapse rapid save() bursts into one network roundtrip.
+  let syncTimer = null;
+
+  async function init() {
+    // Fetch runtime config (public Supabase URL + anon key). If the endpoint
+    // 404s or the keys are empty, we stay in local-only mode.
+    let cfg = {};
+    try {
+      const r = await fetch('/api/config');
+      if (r.ok) cfg = await r.json();
+    } catch (e) { /* ignore — offline dev */ }
+    configLoaded = true;
+    if (!cfg.supabaseUrl || !cfg.supabaseAnonKey || typeof window.supabase?.createClient !== 'function') {
+      // No cloud backend available — make sure the local-only banner shows
+      // only if the user hasn't dismissed it before.
+      showLocalBanner();
+      return;
+    }
+    client = window.supabase.createClient(cfg.supabaseUrl, cfg.supabaseAnonKey, {
+      auth: { detectSessionInUrl: true, persistSession: true, autoRefreshToken: true },
+    });
+    // Initial session check.
+    const { data: { session: s } } = await client.auth.getSession();
+    session = s;
+    if (session) {
+      await hydrateFromServer();
+      updateAccountUI();
+    } else {
+      showLocalBanner();
+      updateAccountUI();
+    }
+    // React to sign-in / sign-out in-flight.
+    client.auth.onAuthStateChange(async (event, newSession) => {
+      session = newSession;
+      if (event === 'SIGNED_IN') {
+        closeAuthOverlay();
+        hideLocalBanner();
+        toast('Signed in — welcome back.');
+        await hydrateFromServer();
+      }
+      if (event === 'SIGNED_OUT') {
+        toast('Signed out. Your local copy stays on this device.');
+        showLocalBanner();
+      }
+      updateAccountUI();
+    });
+  }
+
+  function isAuthed() { return !!session?.user; }
+  function user() { return session?.user || null; }
+
+  async function signIn(email) {
+    if (!client) throw new Error('Cloud sync not configured yet');
+    const { error } = await client.auth.signInWithOtp({
+      email,
+      options: { emailRedirectTo: window.location.origin + window.location.pathname }
+    });
+    if (error) throw error;
+  }
+
+  async function signOut() {
+    if (!client) return;
+    await client.auth.signOut();
+  }
+
+  // Pull the user's server state and replace local State in-place. Falls
+  // back to keeping local State if the server is empty (first-ever sign-in)
+  // and offers migration.
+  async function hydrateFromServer() {
+    if (!client || !isAuthed()) return;
+    try {
+      const uid = session.user.id;
+      const [{ data: profileRow }, { data: planRows }, { data: eventRows }] = await Promise.all([
+        client.from('profiles').select('data, updated_at').eq('user_id', uid).maybeSingle(),
+        client.from('plans').select('data, archived, updated_at').eq('user_id', uid).order('updated_at', { ascending: false }),
+        client.from('learning_events').select('event_id, type, at, meta').eq('user_id', uid).order('at', { ascending: false }).limit(LEARNING_CAP),
+      ]);
+
+      const localPlans = State.plans || [];
+      const serverIsEmpty = (!profileRow && (!planRows || !planRows.length) && (!eventRows || !eventRows.length));
+
+      if (serverIsEmpty && (localPlans.length || localStorage.getItem(LS_PROFILE))) {
+        offerMigration();
+        return;
+      }
+
+      if (profileRow && profileRow.data) {
+        State.profile = { ...DEFAULT_PROFILE, ...profileRow.data };
+        migrateProfile();
+        try { localStorage.setItem(LS_PROFILE, JSON.stringify(State.profile)); } catch(e){}
+      }
+      if (Array.isArray(planRows)) {
+        State.plans = planRows.map(r => r.data).filter(Boolean);
+        try { localStorage.setItem(LS_KEY, JSON.stringify({ plans: State.plans })); } catch(e){}
+      }
+      if (Array.isArray(eventRows)) {
+        const events = eventRows.map(r => ({
+          id: r.event_id, type: r.type, at: r.at, meta: r.meta || {},
+        })).reverse();
+        try { localStorage.setItem(LS_LEARNING, JSON.stringify(events.slice(-LEARNING_CAP))); } catch(e){}
+      }
+      updateSidebarFromProfile();
+      if (State.view === 'dashboard') renderDashboard();
+      if (State.view === 'library') renderLibrary();
+    } catch (e) {
+      console.warn('hydrateFromServer failed', e);
+    }
+  }
+
+  function offerMigration() {
+    if (migrationOffered) return;
+    migrationOffered = true;
+    confirmAction({
+      title: 'Upload your local plans?',
+      body: `<p style="margin:0 0 8px;">You've got <strong>${(State.plans || []).length}</strong> plan(s) saved on this device. Copy them to your new account so they're available on every device?</p><p style="margin:0; font-size:13px; color: var(--ink-soft);">This only runs the first time you sign in. You can keep using the app locally either way.</p>`,
+      okLabel: 'Copy local plans up',
+      onConfirm: async () => {
+        await syncProfile({ immediate: true });
+        await syncPlans({ immediate: true });
+        await syncRecentEvents();
+        toast('Uploaded — your data is saved to your account.');
+      },
+    });
+  }
+
+  function scheduleSync() {
+    if (syncTimer) clearTimeout(syncTimer);
+    syncTimer = setTimeout(() => {
+      syncTimer = null;
+      syncProfile();
+      syncPlans();
+    }, 600);
+  }
+
+  async function syncProfile({ immediate = false } = {}) {
+    if (!client || !isAuthed()) return;
+    if (!immediate && !State.profile) return;
+    try {
+      await client.from('profiles').upsert({
+        user_id: session.user.id,
+        data: State.profile,
+        updated_at: new Date().toISOString(),
+      }, { onConflict: 'user_id' });
+    } catch (e) { console.warn('syncProfile failed', e); }
+  }
+
+  async function syncPlans({ immediate = false } = {}) {
+    if (!client || !isAuthed()) return;
+    const plans = State.plans || [];
+    if (!plans.length && !immediate) return;
+    try {
+      // Bulk-upsert. Each plan is stored whole as JSONB. RLS enforces user ownership.
+      const rows = plans.map(p => ({
+        id: p.id,
+        user_id: session.user.id,
+        data: p,
+        archived: !!p.archived,
+        week_date: p.weekDate || null,
+        updated_at: new Date().toISOString(),
+      }));
+      if (rows.length) {
+        await client.from('plans').upsert(rows, { onConflict: 'id' });
+      }
+      // Also prune server rows that no longer exist locally (i.e. deletes).
+      const localIds = new Set(plans.map(p => p.id));
+      const { data: existing } = await client.from('plans').select('id').eq('user_id', session.user.id);
+      if (Array.isArray(existing)) {
+        const toDelete = existing.map(r => r.id).filter(id => !localIds.has(id));
+        if (toDelete.length) {
+          await client.from('plans').delete().eq('user_id', session.user.id).in('id', toDelete);
+        }
+      }
+    } catch (e) { console.warn('syncPlans failed', e); }
+  }
+
+  async function syncEvent(ev) {
+    if (!client || !isAuthed() || !ev) return;
+    try {
+      await client.from('learning_events').insert({
+        user_id: session.user.id,
+        event_id: ev.id || null,
+        type: ev.type,
+        at: ev.at || new Date().toISOString(),
+        meta: ev.meta || {},
+      });
+    } catch (e) {
+      // Duplicate event_id (re-sync) is fine — ignore.
+      if (!String(e.message || '').match(/duplicate key/i)) console.warn('syncEvent failed', e);
+    }
+  }
+
+  async function syncRecentEvents() {
+    if (!client || !isAuthed()) return;
+    const events = (function(){ try { return JSON.parse(localStorage.getItem(LS_LEARNING) || '[]'); } catch(e){ return []; } })();
+    for (const ev of events.slice(-200)) { await syncEvent(ev); }
+  }
+
+  return { init, isAuthed, user, signIn, signOut, scheduleSync, syncProfile, syncPlans, syncEvent };
+})();
+
+// === Auth UI wiring ===
+function openAuthOverlay() { document.getElementById('auth-overlay').classList.add('show'); setTimeout(() => document.getElementById('auth-email')?.focus(), 50); }
+function closeAuthOverlay() { document.getElementById('auth-overlay').classList.remove('show'); }
+function submitSignIn(evt) {
+  evt.preventDefault();
+  const emailEl = document.getElementById('auth-email');
+  const submitBtn = document.getElementById('auth-submit');
+  const status = document.getElementById('auth-status');
+  const email = (emailEl.value || '').trim();
+  if (!email) { status.className = 'auth-status err'; status.textContent = 'Email please.'; return false; }
+  submitBtn.disabled = true; submitBtn.textContent = 'Sending…';
+  status.className = 'auth-status'; status.innerHTML = '<span class="ai-spinner"></span> Sending you a magic link…';
+  AuthModule.signIn(email)
+    .then(() => {
+      status.className = 'auth-status ok';
+      status.innerHTML = `Check <strong>${escape(email)}</strong> — the link signs you in instantly. You can close this and come back.`;
+      submitBtn.textContent = 'Send another link';
+      submitBtn.disabled = false;
+    })
+    .catch((e) => {
+      status.className = 'auth-status err';
+      status.textContent = e.message || 'Something went wrong. Try again.';
+      submitBtn.textContent = 'Send me a magic link →';
+      submitBtn.disabled = false;
+    });
+  return false;
+}
+
+function showLocalBanner() {
+  const dismissed = (function(){ try { return localStorage.getItem('seachtain.local-banner.dismissed') === '1'; } catch(e){ return false; } })();
+  const el = document.getElementById('local-banner');
+  if (!el) return;
+  el.style.display = (AuthModule.isAuthed() || dismissed) ? 'none' : 'flex';
+}
+function hideLocalBanner() {
+  const el = document.getElementById('local-banner');
+  if (el) el.style.display = 'none';
+}
+function dismissLocalBanner() {
+  try { localStorage.setItem('seachtain.local-banner.dismissed', '1'); } catch(e){}
+  hideLocalBanner();
+}
+
+function updateAccountUI() {
+  const footer = document.getElementById('sidebar-footer');
+  if (!footer) return;
+  if (AuthModule.isAuthed()) {
+    const u = AuthModule.user();
+    const name = State.profile?.salutation ? `${State.profile.salutation} ${(State.profile.teacher || '').split(' ')[0] || ''}`.trim() : (u.email || 'Signed in');
+    const email = u.email || '';
+    document.getElementById('sb-name').textContent = name;
+    document.getElementById('sb-sub').textContent = email;
+    footer.onclick = openAccountMenu;
+    footer.style.cursor = 'pointer';
+  } else {
+    // Not signed in → footer becomes a sign-in CTA.
+    const name = document.getElementById('sb-name');
+    const sub = document.getElementById('sb-sub');
+    if (name) name.textContent = 'Not signed in';
+    if (sub) sub.innerHTML = '<a style="color: var(--primary); cursor: pointer;" onclick="openAuthOverlay(); event.stopPropagation();">Sign in</a>';
+    footer.onclick = openAuthOverlay;
+    footer.style.cursor = 'pointer';
+  }
+}
+
+function openAccountMenu(evt) {
+  if (evt) { evt.stopPropagation(); evt.preventDefault(); }
+  const pop = document.getElementById('account-popover');
+  if (!pop) return;
+  if (!AuthModule.isAuthed()) { openAuthOverlay(); return; }
+  const footer = document.getElementById('sidebar-footer');
+  const rect = footer.getBoundingClientRect();
+  const u = AuthModule.user();
+  pop.innerHTML = `
+    <div class="ap-email"><strong>${escape(State.profile?.teacher || 'Teacher')}</strong>${escape(u.email || '')}</div>
+    <button onclick="goto('class'); closeAccountMenu();">My profile</button>
+    <button onclick="exportLearning(); closeAccountMenu();">Export learning log</button>
+    <button class="ap-danger" onclick="handleSignOut();">Sign out</button>
+  `;
+  pop.style.display = 'block';
+  // Position above/below the footer depending on room.
+  const spaceBelow = window.innerHeight - rect.bottom;
+  if (spaceBelow > 200) {
+    pop.style.top = (rect.bottom + 6) + 'px';
+    pop.style.left = rect.left + 'px';
+  } else {
+    pop.style.bottom = (window.innerHeight - rect.top + 6) + 'px';
+    pop.style.left = rect.left + 'px';
+    pop.style.top = 'auto';
+  }
+  setTimeout(() => document.addEventListener('click', closeAccountMenu, { once: true }), 0);
+}
+function closeAccountMenu() {
+  const pop = document.getElementById('account-popover');
+  if (pop) pop.style.display = 'none';
+}
+async function handleSignOut() {
+  closeAccountMenu();
+  await AuthModule.signOut();
+}
+
+/* =========================================================================
    BOOT
    ========================================================================= */
 load();
@@ -10128,6 +10569,10 @@ updateSidebarFromProfile();
 initDraftFromProfile();
 renderWizardStep();
 goto('dashboard');
+
+// Kick off cloud sync in parallel. If the user is signed in, server data
+// overwrites local state moments later.
+AuthModule.init().catch(e => console.warn('Auth init failed', e));
 
 // If no plans exist, seed one Ireland Week demo so the UI has something to show
 if (!State.plans.length) {
