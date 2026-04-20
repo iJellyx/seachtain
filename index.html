@@ -568,6 +568,219 @@
   .account-popover button:hover { background: var(--surface-alt); }
   .account-popover button.ap-danger { color: #b2382a; }
   .account-popover button.ap-danger:hover { background: #fbe9e5; }
+
+  /* =========================================================================
+     LANDING PAGE — editorial marketing page for unauthed first-time visitors.
+     Uses the same palette but bigger type, more whitespace, and a marketing
+     rhythm (hero → pain → solution → how → benefits → objections → CTA).
+     ========================================================================= */
+  body.landing-mode .sidebar { display: none; }
+  body.landing-mode .app { grid-template-columns: 1fr; }
+  body.landing-mode .main { padding: 0 !important; max-width: none; }
+  body.landing-mode .main > .view { padding: 0 !important; }
+  body.landing-mode .season-bar { display: block; }
+
+  .landing-view { display: none; background: var(--bg); }
+  .landing-view.active { display: block; }
+
+  .btn-lg { padding: 14px 24px; font-size: 16px; border-radius: 10px; }
+
+  .landing-top-bar {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 20px 48px;
+    position: sticky; top: 0; z-index: 10;
+    background: rgba(251, 247, 240, 0.92); backdrop-filter: blur(8px);
+    border-bottom: 1px solid rgba(232, 224, 212, 0.6);
+  }
+  .landing-brand { display: flex; align-items: center; gap: 14px; }
+  .landing-top-actions { display: flex; gap: 10px; }
+
+  .landing-hero {
+    max-width: 1080px; margin: 0 auto; padding: 72px 48px 40px;
+    text-align: center;
+  }
+  .landing-eyebrow {
+    display: inline-block; font-size: 12px; font-weight: 700;
+    letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--primary); padding: 6px 14px;
+    background: var(--primary-soft); border-radius: 999px;
+    margin-bottom: 22px;
+  }
+  .landing-headline {
+    font-family: 'Fraunces', Georgia, serif;
+    font-size: clamp(44px, 6vw, 76px); line-height: 1.02;
+    font-weight: 600; letter-spacing: -0.02em;
+    margin: 0 0 24px; color: var(--ink);
+  }
+  .landing-headline em {
+    font-style: italic; color: var(--accent);
+    font-weight: 500;
+  }
+  .landing-sub {
+    font-size: clamp(16px, 1.6vw, 20px); line-height: 1.55;
+    max-width: 680px; margin: 0 auto 32px;
+    color: var(--ink-soft);
+  }
+  .landing-cta-row {
+    display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;
+    margin-bottom: 28px;
+  }
+  .landing-trust {
+    display: flex; gap: 14px; justify-content: center; flex-wrap: wrap;
+    font-size: 13px; color: var(--ink-soft);
+    margin-bottom: 56px;
+  }
+
+  /* Visual preview — stylised week-at-a-glance so the hero has an anchor */
+  .landing-preview {
+    background: var(--surface); border: 1px solid var(--line); border-radius: 18px;
+    box-shadow: 0 30px 80px rgba(43, 36, 32, 0.12), 0 8px 24px rgba(43, 36, 32, 0.06);
+    max-width: 980px; margin: 0 auto; overflow: hidden;
+    transform: perspective(1800px) rotateX(2deg);
+  }
+  .lp-header {
+    display: flex; align-items: center; gap: 8px;
+    padding: 12px 18px; background: var(--surface-alt);
+    border-bottom: 1px solid var(--line);
+  }
+  .lp-header .lp-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--line-strong); }
+  .lp-header .lp-title { margin-left: 10px; font-size: 13px; color: var(--ink-soft); font-weight: 500; }
+  .lp-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; padding: 18px; }
+  .lp-col { display: flex; flex-direction: column; gap: 8px; }
+  .lp-day { font-size: 11px; color: var(--ink-faint); letter-spacing: 0.06em; text-transform: uppercase; font-weight: 600; padding-bottom: 4px; }
+  .lp-tile {
+    padding: 10px 12px; border-radius: 8px; font-size: 12px; font-weight: 500;
+    border-left: 3px solid transparent; text-align: left; line-height: 1.3;
+  }
+  .lp-tile.lp-english  { background: #DDE9F4; color: #1e3a5c; border-left-color: #3B6EA8; }
+  .lp-tile.lp-gaeilge  { background: #D7E8DB; color: #1d4a30; border-left-color: #2D5F3F; }
+  .lp-tile.lp-maths    { background: #F6E4B8; color: #6b4e0a; border-left-color: #C48A1A; }
+  .lp-tile.lp-sese     { background: #F5D9CB; color: #7a2d1a; border-left-color: #C85A3E; }
+  .lp-tile.lp-pe       { background: #E3D6EF; color: #4a2c63; border-left-color: #8A5CA0; }
+  .lp-tile.lp-arts     { background: #F9D7DC; color: #7a2a3b; border-left-color: #C0566A; }
+  .lp-tile.lp-sphe     { background: #CFE8E3; color: #16433e; border-left-color: #3E8F83; }
+  .lp-tile.lp-religion { background: #E8DFEB; color: #523a5f; border-left-color: #7A5E8C; }
+
+  /* Section shell */
+  .landing-section { padding: 80px 48px; }
+  .landing-section-inner { max-width: 1080px; margin: 0 auto; }
+  .landing-section h2 {
+    font-family: 'Fraunces', serif; font-size: clamp(30px, 3.5vw, 44px);
+    line-height: 1.15; letter-spacing: -0.015em; margin: 0 0 24px;
+    color: var(--ink); max-width: 720px;
+  }
+  .landing-lead {
+    font-size: clamp(16px, 1.4vw, 19px); line-height: 1.55;
+    color: var(--ink-soft); max-width: 720px;
+  }
+
+  /* Agitate section — warm terracotta tones, a little alarming */
+  .landing-agitate { background: #FBF0E7; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+  .landing-agitate h2 { text-align: center; margin: 0 auto 48px; }
+  .landing-agitate-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 22px;
+  }
+  .la-item {
+    background: var(--surface); border: 1px solid var(--line); border-radius: 14px;
+    padding: 22px 24px; display: flex; gap: 14px; align-items: flex-start;
+    box-shadow: var(--shadow-sm);
+  }
+  .la-item .la-icon { font-size: 28px; flex-shrink: 0; line-height: 1; }
+  .la-item p { margin: 0; font-size: 15px; line-height: 1.5; color: var(--ink); }
+
+  /* Solution — single big statement */
+  .landing-solution { text-align: center; background: var(--surface); padding: 100px 48px; }
+  .landing-solution h2 { margin: 0 auto 24px; }
+  .landing-solution .landing-lead { margin: 0 auto; }
+
+  /* How it works — 3-step */
+  .landing-how { background: var(--bg); }
+  .landing-how h2 { margin-bottom: 40px; }
+  .landing-how-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 24px;
+  }
+  .lh-step {
+    background: var(--surface); border: 1px solid var(--line); border-radius: 14px;
+    padding: 28px; box-shadow: var(--shadow-sm);
+  }
+  .lh-step .lh-num {
+    width: 40px; height: 40px; border-radius: 50%;
+    background: var(--primary); color: white;
+    display: grid; place-items: center;
+    font-family: 'Fraunces', serif; font-size: 18px; font-weight: 600;
+    margin-bottom: 14px;
+  }
+  .lh-step h3 { font-family: 'Fraunces', serif; font-size: 20px; margin: 0 0 8px; }
+  .lh-step p { font-size: 14px; line-height: 1.55; color: var(--ink-soft); margin: 0; }
+
+  /* Benefits grid — 4-across on desktop, 2 on tablet, 1 on phone */
+  .landing-benefits { background: var(--surface); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+  .landing-benefits h2 { margin-bottom: 40px; }
+  .landing-benefits-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 24px;
+  }
+  .lb-item { padding: 22px; border-radius: 14px; background: var(--bg); border: 1px solid var(--line); }
+  .lb-item .lb-icon {
+    width: 44px; height: 44px; border-radius: 12px;
+    display: grid; place-items: center; font-size: 22px;
+    margin-bottom: 14px;
+  }
+  .lb-item h3 { font-family: 'Fraunces', serif; font-size: 17px; margin: 0 0 6px; }
+  .lb-item p { font-size: 13px; line-height: 1.55; color: var(--ink-soft); margin: 0; }
+
+  /* Objection / FAQ */
+  .landing-objection { background: var(--bg); }
+  .landing-objection h2 { text-align: center; margin: 0 auto 40px; }
+  .landing-faq {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 24px 40px;
+  }
+  .lf-item h4 { font-family: 'Fraunces', serif; font-size: 17px; margin: 0 0 8px; color: var(--ink); }
+  .lf-item p { font-size: 14px; line-height: 1.55; color: var(--ink-soft); margin: 0; }
+
+  /* Final CTA — big closing */
+  .landing-final-cta {
+    background: linear-gradient(135deg, var(--primary) 0%, #3a7450 55%, #4a8a5f 100%);
+    color: white; text-align: center;
+    padding: 100px 48px;
+  }
+  .landing-final-cta h2 { color: white; margin: 0 auto 16px; }
+  .landing-final-cta .landing-lead { color: rgba(255,255,255,0.9); margin: 0 auto 32px; }
+  .landing-final-cta .btn-primary {
+    background: white; color: var(--primary);
+  }
+  .landing-final-cta .btn-primary:hover { background: #F4EEE2; box-shadow: 0 6px 20px rgba(0,0,0,0.2); }
+  .landing-final-cta .btn-ghost {
+    background: transparent; color: white; border-color: rgba(255,255,255,0.4);
+  }
+  .landing-final-cta .btn-ghost:hover { background: rgba(255,255,255,0.1); border-color: white; }
+
+  /* Footer */
+  .landing-footer {
+    background: var(--ink); color: rgba(255,255,255,0.7);
+    padding: 32px 48px; font-size: 13px;
+    display: flex; justify-content: space-between; flex-wrap: wrap; gap: 14px;
+  }
+  .landing-footer a { color: rgba(255,255,255,0.9); text-decoration: none; }
+  .landing-footer a:hover { color: white; text-decoration: underline; }
+
+  @media (max-width: 720px) {
+    .landing-top-bar { padding: 14px 20px; }
+    .landing-top-bar .landing-top-actions .btn { padding: 8px 14px; font-size: 13px; }
+    .landing-hero { padding: 48px 20px 24px; }
+    .landing-headline { font-size: clamp(36px, 9vw, 54px); }
+    .landing-section { padding: 56px 20px; }
+    .landing-solution { padding: 64px 20px; }
+    .landing-final-cta { padding: 64px 20px; }
+    .landing-footer { padding: 24px 20px; }
+    .lp-grid { grid-template-columns: repeat(5, 1fr); padding: 10px; gap: 6px; }
+    .lp-tile { padding: 6px 8px; font-size: 10px; }
+    .lp-day { font-size: 10px; }
+    .landing-preview { transform: none; border-radius: 12px; }
+  }
   .user-name { font-size: 13px; font-weight: 600; }
   .user-sub { font-size: 11px; color: var(--ink-faint); }
   .main { padding: 0 0 80px; max-width: 1200px; }
@@ -1645,6 +1858,257 @@
       <span class="se-label" id="season-label">—</span>
       <span class="se-hint" id="season-hint">—</span>
     </div>
+
+    <!-- ============ LANDING (shown to unauthed first-time visitors) ============ -->
+    <section id="view-landing" class="view landing-view">
+      <div class="landing-top-bar">
+        <div class="landing-brand">
+          <div class="brand-mark" aria-hidden="true">
+            <svg viewBox="0 0 38 38" xmlns="http://www.w3.org/2000/svg">
+              <g>
+                <circle cx="7"  cy="24" r="1.7" fill="#C7E3CE" opacity="0.55"/>
+                <circle cx="11.5" cy="19.5" r="1.7" fill="#C7E3CE" opacity="0.75"/>
+                <circle cx="15.5" cy="16" r="1.7" fill="#C7E3CE" opacity="0.9"/>
+                <circle cx="19" cy="14.5" r="2.6" fill="#D4A72C"/>
+                <circle cx="22.5" cy="16" r="1.7" fill="#C7E3CE" opacity="0.9"/>
+                <circle cx="26.5" cy="19.5" r="1.7" fill="#C7E3CE" opacity="0.75"/>
+                <circle cx="31" cy="24" r="1.7" fill="#C7E3CE" opacity="0.55"/>
+              </g>
+            </svg>
+          </div>
+          <div>
+            <div class="brand-name" style="font-size: 22px;">Seachtain</div>
+            <div class="brand-sub">Pleanáil Sheachtainiúil</div>
+          </div>
+        </div>
+        <div class="landing-top-actions">
+          <button class="btn btn-ghost" onclick="openAuthOverlay()">Sign in</button>
+          <button class="btn btn-primary" onclick="openAuthOverlay()">Get started free →</button>
+        </div>
+      </div>
+
+      <section class="landing-hero">
+        <div class="landing-eyebrow">Built for Irish primary teachers · NCCA 2023</div>
+        <h1 class="landing-headline">Reclaim your<br><em>Sunday evening.</em></h1>
+        <p class="landing-sub">Seachtain plans your full week — lessons, worksheets, differentiation, Gaeilge threading, sub cover — in about a minute. Grounded in the 2023 NCCA Primary Framework. Pitched to your class. Ready before the kettle boils.</p>
+        <div class="landing-cta-row">
+          <button class="btn btn-primary btn-lg" onclick="openAuthOverlay()">Get started free →</button>
+          <button class="btn btn-ghost btn-lg" onclick="startLandingDemo()">See a demo week</button>
+        </div>
+        <div class="landing-trust">
+          <span>🍀 Made in Ireland</span>
+          <span>·</span>
+          <span>🇪🇺 EU data hosting</span>
+          <span>·</span>
+          <span>🆓 Free while in beta</span>
+        </div>
+
+        <!-- Visual anchor — a stylised "week at a glance" preview so the hero
+             doesn't read as a wall of text. -->
+        <div class="landing-preview" aria-hidden="true">
+          <div class="lp-header">
+            <span class="lp-dot"></span><span class="lp-dot"></span><span class="lp-dot"></span>
+            <span class="lp-title">2nd Class · Week of Mon 20 April</span>
+          </div>
+          <div class="lp-grid">
+            <div class="lp-col">
+              <div class="lp-day">Mon</div>
+              <div class="lp-tile lp-english">📘 English · Descriptive writing</div>
+              <div class="lp-tile lp-maths">🔢 Maths · Place value</div>
+              <div class="lp-tile lp-gaeilge">🍀 Gaeilge · An teaghlach</div>
+            </div>
+            <div class="lp-col">
+              <div class="lp-day">Tue</div>
+              <div class="lp-tile lp-english">📘 English · Reading comp.</div>
+              <div class="lp-tile lp-pe">🏃 PE · Relay stations</div>
+              <div class="lp-tile lp-sese">🌍 SESE · Local heritage</div>
+            </div>
+            <div class="lp-col">
+              <div class="lp-day">Wed</div>
+              <div class="lp-tile lp-maths">🔢 Maths · Word problems</div>
+              <div class="lp-tile lp-arts">🎨 Arts · Seasonal print</div>
+              <div class="lp-tile lp-sphe">🌈 SPHE · Feelings circle</div>
+            </div>
+            <div class="lp-col">
+              <div class="lp-day">Thu</div>
+              <div class="lp-tile lp-english">📘 English · Poetry</div>
+              <div class="lp-tile lp-gaeilge">🍀 Gaeilge · Comhrá</div>
+              <div class="lp-tile lp-sese">🌍 SESE · Science</div>
+            </div>
+            <div class="lp-col">
+              <div class="lp-day">Fri</div>
+              <div class="lp-tile lp-maths">🔢 Maths · Data</div>
+              <div class="lp-tile lp-arts">🎨 Arts · Music</div>
+              <div class="lp-tile lp-religion">✝️ Religion · Story</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="landing-section landing-agitate">
+        <div class="landing-section-inner">
+          <h2>Sound familiar?</h2>
+          <div class="landing-agitate-grid">
+            <div class="la-item">
+              <div class="la-icon">🌙</div>
+              <p>It's 9pm Sunday and you've still got five subjects to plan for the week.</p>
+            </div>
+            <div class="la-item">
+              <div class="la-icon">📑</div>
+              <p>Last year's plan doesn't fit this year's class. You're rebuilding from scratch. Again.</p>
+            </div>
+            <div class="la-item">
+              <div class="la-icon">🔍</div>
+              <p>You've spent 40 minutes on Twinkl trying to find one worksheet that actually fits.</p>
+            </div>
+            <div class="la-item">
+              <div class="la-icon">🗂</div>
+              <p>The Cúntas Míosúil is due. You haven't started. You'll do it "properly" next month.</p>
+            </div>
+            <div class="la-item">
+              <div class="la-icon">😬</div>
+              <p>You're out Friday and the sub cover folder is… let's say <em>a work in progress</em>.</p>
+            </div>
+            <div class="la-item">
+              <div class="la-icon">🗣️</div>
+              <p>You want to do more Gaeilge across the week. You just don't always feel confident leading it.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="landing-section landing-solution">
+        <div class="landing-section-inner">
+          <h2>Seachtain plans your week while you have a cup of tea.</h2>
+          <p class="landing-lead">It knows which class you teach, how many pupils, your school-day times, your fixed slots, your Gaeilge comfort, and the 2023 NCCA Primary Framework back-to-front. You hit one button; it drafts the full week. You tweak what needs tweaking. You teach.</p>
+        </div>
+      </section>
+
+      <section class="landing-section landing-how">
+        <div class="landing-section-inner">
+          <div class="landing-eyebrow">How it works</div>
+          <h2>Three steps. About a minute.</h2>
+          <div class="landing-how-grid">
+            <div class="lh-step">
+              <div class="lh-num">1</div>
+              <h3>Tell us your class</h3>
+              <p>Grade, pupils, SEN roll, Gaeilge medium, school-day times. Takes 30 seconds. We remember it forever.</p>
+            </div>
+            <div class="lh-step">
+              <div class="lh-num">2</div>
+              <h3>We draft the week</h3>
+              <p>Claude writes every lesson — pitched to your grade band, grounded in real NCCA strands, with the weekly theme threaded through every subject.</p>
+            </div>
+            <div class="lh-step">
+              <div class="lh-num">3</div>
+              <h3>Review, tweak, teach</h3>
+              <p>Every lesson has outcomes, watch-outs, differentiation, vocab, and printable pupil sheets. Drag lessons, resize blocks, override what you don't like.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="landing-section landing-benefits">
+        <div class="landing-section-inner">
+          <div class="landing-eyebrow">What you actually get</div>
+          <h2>Everything a weekly planner should already do.</h2>
+          <div class="landing-benefits-grid">
+            <div class="lb-item">
+              <div class="lb-icon" style="background: #DDE9F4; color: #1e3a5c;">📘</div>
+              <h3>Age-pitched lessons</h3>
+              <p>Infants get play-based. 1st–2nd get concrete. 3rd–4th move to paragraph writing. 5th–6th get abstraction. Never generic.</p>
+            </div>
+            <div class="lb-item">
+              <div class="lb-icon" style="background: #D7E8DB; color: #1d4a30;">🍀</div>
+              <h3>Gaeilge that works for you</h3>
+              <p>Gaelscoil, Gaeltacht, or English-medium — set it once. Seachtain dials the Irish up or down to match your confidence.</p>
+            </div>
+            <div class="lb-item">
+              <div class="lb-icon" style="background: #F5D9CB; color: #7a2d1a;">🖨</div>
+              <h3>Sub Pack on demand</h3>
+              <p>One tap: a full printable pack with timetable, day-by-day lessons, SEN flags, fire-drill notes, and your personal note for the sub.</p>
+            </div>
+            <div class="lb-item">
+              <div class="lb-icon" style="background: #F6E4B8; color: #6b4e0a;">📊</div>
+              <h3>NCCA strand tracking</h3>
+              <p>See which strands you've covered this term at a glance. Cúntas Míosúil writes itself — we draft the paragraph per subject.</p>
+            </div>
+            <div class="lb-item">
+              <div class="lb-icon" style="background: #E3D6EF; color: #4a2c63;">⏱</div>
+              <h3>DES minutes, auto-balanced</h3>
+              <p>1,400 minutes a week (1,100 for Infants). Seachtain enforces the floor, flags when you're short, and distributes across days.</p>
+            </div>
+            <div class="lb-item">
+              <div class="lb-icon" style="background: #CFE8E3; color: #16433e;">💬</div>
+              <h3>Gets better every week</h3>
+              <p>Rate any lesson. Flag what was too long, too young, off the pitch. Next week's draft starts from what you told us.</p>
+            </div>
+            <div class="lb-item">
+              <div class="lb-icon" style="background: #F9D7DC; color: #7a2a3b;">🎤</div>
+              <h3>Voice notes</h3>
+              <p>Ten seconds into the mic: "Oisín struggled with fractions — pair him with Niamh." Saved to the lesson. Searchable.</p>
+            </div>
+            <div class="lb-item">
+              <div class="lb-icon" style="background: #E8DFEB; color: #523a5f;">📱</div>
+              <h3>Plan at school, open at home</h3>
+              <p>Your plans follow you. Phone on the sofa, laptop in the classroom, anything in between.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="landing-section landing-objection">
+        <div class="landing-section-inner">
+          <h2>Honest answers, while you're asking.</h2>
+          <div class="landing-faq">
+            <div class="lf-item">
+              <h4>Will AI really get my class right?</h4>
+              <p>The model sees your full class profile, prior feedback, and the actual NCCA strands and strand units for the grade band you teach. It names real strands, not invented ones. And you can rate every lesson — the next draft learns from it. When it misses, it's one click to regenerate with a different pitch.</p>
+            </div>
+            <div class="lf-item">
+              <h4>Is my data safe?</h4>
+              <p>EU-region hosting. Row-level security means nobody else sees your data, full stop. No pupil information is ever stored — Seachtain is teacher-facing only. You can export or delete everything any time.</p>
+            </div>
+            <div class="lf-item">
+              <h4>How much does it cost?</h4>
+              <p>Free while in beta. When paid plans land, we'll give beta teachers a fair deal and plenty of notice. We're not here to nickel-and-dime a profession that's already stretched.</p>
+            </div>
+            <div class="lf-item">
+              <h4>Do I have to use the AI?</h4>
+              <p>No. Seachtain also generates fully-formed lessons offline — no AI call needed. AI regenerate is there when you want to reshape a lesson, not when you don't.</p>
+            </div>
+            <div class="lf-item">
+              <h4>What if the 2023 curriculum changes?</h4>
+              <p>We update the reference. You don't do anything. Your plans keep working.</p>
+            </div>
+            <div class="lf-item">
+              <h4>I'm not great with tech.</h4>
+              <p>One button to generate. One button to print. That's most of it. Enter your email, we send you a link, you click it — no password to remember.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="landing-section landing-final-cta">
+        <div class="landing-section-inner">
+          <h2>Give yourself back an evening this week.</h2>
+          <p class="landing-lead">Free to start. Set up in about a minute. No credit card. No cliché.</p>
+          <div class="landing-cta-row">
+            <button class="btn btn-primary btn-lg" onclick="openAuthOverlay()">Get started free →</button>
+            <button class="btn btn-ghost btn-lg" onclick="startLandingDemo()">See a demo week first</button>
+          </div>
+        </div>
+      </section>
+
+      <footer class="landing-footer">
+        <div>© 2026 Seachtain · Made with care for Irish primary teachers · Dublin</div>
+        <div>
+          <a onclick="openAuthOverlay()" style="cursor: pointer;">Sign in</a>
+          · <a href="mailto:james@socialenviro.ie">Get in touch</a>
+        </div>
+      </footer>
+    </section>
+    <!-- ============ END LANDING ============ -->
     <!-- ============ DASHBOARD ============ -->
     <section id="view-dashboard" class="view">
       <div class="page-head">
@@ -4142,6 +4606,8 @@ function goto(view) {
   const el = document.getElementById('view-' + view);
   if (el) { el.classList.add('active'); el.classList.add('print-active'); }
   document.querySelectorAll('.nav-item').forEach(n => n.classList.toggle('active', n.dataset.nav === view));
+  // Landing hides the sidebar + season strip. Every other view restores them.
+  document.body.classList.toggle('landing-mode', view === 'landing');
   window.scrollTo({ top: 0, behavior: 'smooth' });
   renderSeasonalAccent();
   if (view === 'dashboard') renderDashboard();
@@ -10562,20 +11028,59 @@ async function handleSignOut() {
 }
 
 /* =========================================================================
+   LANDING / DEMO ROUTING
+   First-time unauthed visitors land on the marketing page. Once they either
+   sign in or explicitly click "See a demo week", they skip straight to the
+   dashboard on subsequent visits. Signed-in users never see the landing.
+   ========================================================================= */
+const LS_DEMO_ACCEPTED = 'seachtain.demo.accepted';
+function hasAcceptedDemo() {
+  try { return localStorage.getItem(LS_DEMO_ACCEPTED) === '1'; } catch(e) { return false; }
+}
+function acceptDemo() {
+  try { localStorage.setItem(LS_DEMO_ACCEPTED, '1'); } catch(e){}
+}
+function startLandingDemo() {
+  acceptDemo();
+  // Make sure there's at least the seed Ireland Week so the demo dashboard
+  // has something to show.
+  if (!State.plans.length) seedDemoPlan();
+  goto('dashboard');
+  toast('Welcome — have a poke around. Sign in any time to save your plans.');
+}
+// Decide where to route on boot. Returning users (have data or accepted the
+// demo) go straight to the dashboard; brand-new unauthed visitors see landing.
+function bootRoute() {
+  // Signed-in users are routed separately after auth resolves.
+  if (hasAcceptedDemo() || State.plans.length > 0) {
+    goto('dashboard');
+  } else {
+    goto('landing');
+  }
+}
+
+/* =========================================================================
    BOOT
    ========================================================================= */
 load();
 updateSidebarFromProfile();
 initDraftFromProfile();
 renderWizardStep();
-goto('dashboard');
+bootRoute();
 
 // Kick off cloud sync in parallel. If the user is signed in, server data
-// overwrites local state moments later.
-AuthModule.init().catch(e => console.warn('Auth init failed', e));
+// overwrites local state moments later and we promote off landing.
+AuthModule.init()
+  .then(() => {
+    if (AuthModule.isAuthed() && State.view === 'landing') goto('dashboard');
+  })
+  .catch(e => console.warn('Auth init failed', e));
 
-// If no plans exist, seed one Ireland Week demo so the UI has something to show
-if (!State.plans.length) {
+// Seed the demo Ireland Week plan — only fires when the teacher explicitly
+// opts into the demo from the landing page, or they're already past the
+// landing. Signed-in brand-new accounts stay empty until they generate.
+function seedDemoPlan() {
+  if (State.plans.length) return;
   const seed = {
     id: 'plan-seed',
     title: 'Ireland Week',
@@ -10597,6 +11102,12 @@ if (!State.plans.length) {
   };
   State.plans.push(seed);
   save();
+}
+
+// If we're already past the landing (returning demo user or existing local
+// data) but somehow have no plans, seed one so the dashboard has content.
+if (State.view === 'dashboard' && !State.plans.length) {
+  seedDemoPlan();
   renderDashboard();
 }
 </script>
