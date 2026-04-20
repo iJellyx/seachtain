@@ -32,32 +32,59 @@ authority. Warm but serious about the craft of teaching.
 
 ---
 
-## 3. The mascot
+## 3. The mascot — Abbie
 
-A friendly bee character, used as the brand's warm face. Not a logo —
-the mascot sits *beside* the wordmark, never replacing it.
+A friendly fuzzy bee in a teal backpack and orange boots. Her name is
+**Abbie**. She's the product's warm face — not a logo, not a gimmick.
+She sits beside the wordmark, never replacing it.
 
-**Personality**: Helpful colleague, not a butler. Encouraging, specific,
-occasionally witty. Never whimsical to the point of silliness. If a line
-sounds like it belongs on a children's-TV mascot, cut it.
+**Personality**: Warm, comforting, gently helpful — like a good classroom
+assistant. Patient. Never overbearing, never condescending, never
+silly. If a line sounds like it belongs on children's TV, cut it. If it
+sounds like corporate SaaS ("Let's get you onboarded!"), also cut it.
 
-**Where it appears**:
-- Landing page hero (waving / greeting pose)
-- Onboarding steps (guiding gesture)
-- Empty states (holding a clipboard, "nothing here yet")
-- First-run confirmations ("Welcome to your dashboard")
-- Never inside lesson content, worksheets, or the Sub Pack — those are
-  teacher-facing professional documents.
+**Voice** — a handful of examples to tune by:
 
-**Anatomy**:
-- Round amber body with three dark stripes
-- Two translucent wings
-- Simple dot eyes + a small smile (never a big cartoon grin)
-- One small antenna with a dot tip
-- Proportions kept consistent across poses so it reads as the same bee
+- ✅ *"Hi there! Want me to show you around?"*
+- ✅ *"No rush — tap me any time you want a hand."*
+- ✅ *"I'm here if you need me."*
+- ✅ *"Grand — I'll stay quiet. Click me back any time."*
+- ❌ *"Hey! Let's make some magic happen!"*
+- ❌ *"Uh-oh, looks like you're stuck!"*
+- ❌ *"Pro tip:"* — we don't do Pro tips.
 
-Multiple poses live in `index.html` as an inline SVG component
-(`<Bee pose="…" />` style — see the `renderMascot()` helper).
+**Ambient presence — the Clippy principle**
+
+Abbie is visible but *small*. Think paperclip-era Clippy sized down and
+matured: a 76px button in the bottom-right corner, there when you need
+her, never in the way. She pops a contextual speech bubble for each
+view the first time you visit it, then waits to be clicked.
+
+- Size across the app: `xs 40px`, `sm 56px`, `md 80px`, `lg 120px` (landing only)
+- Always dismissable from the bubble itself
+- Can be turned off entirely via *My profile → Abbie's here to help*
+- Hidden automatically on the landing + onboarding views (she's already
+  inline there)
+- Never appears inside lesson content, worksheets, or the Sub Pack —
+  those are professional documents a teacher hands to someone else
+
+**Anatomy** (so variations stay on-model):
+- Soft fuzzy amber body with three dark-brown stripes
+- Two translucent wings, always visible
+- Large round brown eyes with a single catchlight each + small eyelashes
+- Soft pink cheeks
+- Two short dark antennae tipped with cream pom-poms
+- Teal backpack, orange/tan boots
+- White gloves on hands
+
+**Poses** (PNG files in `/mascot/`):
+- `abbie-wave.png` — greeting; used in the bottom-right toggle + landing
+- `abbie-idle.png` — calm standing; available for reserved moments
+- `abbie-apple.png` — celebration / success / onboarding complete
+- `abbie-tablet.png` — thinking / working / profile page
+
+Files not yet uploaded? The renderer falls back to a simple inline SVG so
+the UI still reads during setup.
 
 ---
 

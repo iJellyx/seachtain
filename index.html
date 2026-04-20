@@ -358,42 +358,148 @@
   .ai-banner .btn { padding: 5px 10px; font-size: 12px; }
 
   /* =========================================================================
-     MASCOT — Planner Bee (the character, not the logo mark).
-     Appears in landing/onboarding/empty states. Not inside lesson content.
-     See BRAND.md for tone & usage.
+     ABBIE — class-assistant mascot.
+     Deliberately small and ambient across the app. See BRAND.md and the
+     Abbie helper section below for the Clippy-style contextual companion.
      ========================================================================= */
-  .bee { display: inline-block; line-height: 0; }
-  .bee svg { display: block; width: 100%; height: auto; }
-  .bee .bee-wing { transform-origin: 60px 48px; animation: bee-flap 0.28s ease-in-out infinite alternate; }
-  .bee .bee-wing.bee-wing-back { transform-origin: 52px 46px; animation-delay: 0.04s; }
-  @keyframes bee-flap {
-    from { transform: rotate(-6deg); }
-    to   { transform: rotate(6deg); }
+  .abbie { display: inline-block; line-height: 0; position: relative; }
+  .abbie img.abbie-img {
+    display: block; width: 100%; height: auto;
+    /* Character is offset toward the right-centre of each source image.
+       Contain keeps the whole figure visible at any container size. */
+    object-fit: contain; object-position: center;
   }
-  .bee.bee-hover { animation: bee-hover 3.2s ease-in-out infinite; }
-  @keyframes bee-hover {
+  .abbie svg { display: block; width: 100%; height: auto; }
+  .abbie.abbie-hover { animation: abbie-hover 3.4s ease-in-out infinite; }
+  @keyframes abbie-hover {
     0%, 100% { transform: translateY(0); }
-    50%      { transform: translateY(-6px); }
+    50%      { transform: translateY(-5px); }
   }
-  .bee-sm { width: 48px; }
-  .bee-md { width: 96px; }
-  .bee-lg { width: 160px; }
-  .bee-xl { width: 220px; }
-  /* Speech bubble that can be attached to the mascot for guidance tips. */
-  .bee-bubble {
+  /* Size tokens — intentionally modest across the board. Landing gets the
+     largest; everywhere else is 40–96px so she sits beside content, not on it. */
+  .abbie-xs { width: 40px; }
+  .abbie-sm { width: 56px; }
+  .abbie-md { width: 80px; }
+  .abbie-lg { width: 120px; }
+  .abbie-xl { width: 180px; }
+  /* Legacy .bee-* sizes still work */
+  .bee { display: inline-block; line-height: 0; position: relative; }
+  .bee-sm { width: 56px; }
+  .bee-md { width: 80px; }
+  .bee-lg { width: 120px; }
+  .bee-xl { width: 180px; }
+  /* Speech bubble (used by floating helper + legacy placements). */
+  .abbie-bubble, .bee-bubble {
     background: var(--surface); border: 1px solid var(--line); border-radius: 14px;
     padding: 12px 16px; font-size: 13px; line-height: 1.5; color: var(--ink);
     max-width: 280px; box-shadow: var(--shadow-sm);
     position: relative;
   }
-  .bee-bubble::before {
+  .abbie-bubble::before, .bee-bubble::before {
     content: ''; position: absolute; left: -7px; top: 18px;
     width: 12px; height: 12px; background: var(--surface);
     border-left: 1px solid var(--line); border-bottom: 1px solid var(--line);
     transform: rotate(45deg);
   }
-  .bee-bubble strong { font-family: 'Fraunces', serif; }
-  .bee-with-bubble { display: flex; align-items: flex-start; gap: 16px; }
+  .abbie-bubble strong, .bee-bubble strong { font-family: 'Fraunces', serif; }
+  .abbie-with-bubble, .bee-with-bubble { display: flex; align-items: flex-start; gap: 16px; }
+
+  /* =========================================================================
+     ABBIE HELPER — the floating bottom-right class assistant.
+     Small and out of the way. Click to open her speech bubble with a
+     contextual tip for the current view. Auto-appears with a subtle glow
+     the first time a teacher visits a given view (then waits to be clicked).
+     Disabled by setting profile.abbieEnabled = false.
+     ========================================================================= */
+  .abbie-helper {
+    position: fixed; right: 22px; bottom: 22px; z-index: 900;
+    display: flex; align-items: flex-end; gap: 12px;
+    pointer-events: none; /* children re-enable; overlay doesn't eat clicks */
+  }
+  .abbie-helper-toggle {
+    pointer-events: auto;
+    width: 76px; height: 76px; border-radius: 50%;
+    background: linear-gradient(145deg, #FFFDF5 0%, #FBF2E0 100%);
+    border: 2px solid rgba(45, 95, 63, 0.12);
+    box-shadow: 0 10px 24px rgba(43, 36, 32, 0.14), 0 2px 6px rgba(43, 36, 32, 0.08);
+    cursor: pointer; padding: 0; overflow: hidden;
+    transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
+    position: relative;
+  }
+  .abbie-helper-toggle:hover {
+    transform: translateY(-2px) scale(1.03);
+    box-shadow: 0 14px 30px rgba(43, 36, 32, 0.18), 0 3px 8px rgba(43, 36, 32, 0.1);
+    border-color: rgba(45, 95, 63, 0.22);
+  }
+  .abbie-helper-toggle:active { transform: translateY(0) scale(0.98); }
+  .abbie-helper-toggle img, .abbie-helper-toggle svg {
+    width: 110%; height: 110%;
+    object-fit: cover; object-position: 62% 40%;
+    position: absolute; inset: -5%;
+  }
+  .abbie-helper-toggle.has-tip::after {
+    content: ''; position: absolute; top: 6px; right: 6px;
+    width: 12px; height: 12px; border-radius: 50%;
+    background: #C85A3E; border: 2px solid white;
+    animation: abbie-badge-pulse 2.2s ease-in-out infinite;
+  }
+  @keyframes abbie-badge-pulse {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50%      { transform: scale(1.15); opacity: 0.85; }
+  }
+  .abbie-helper-card {
+    pointer-events: auto;
+    background: var(--surface);
+    border: 1px solid var(--line); border-radius: 16px;
+    box-shadow: 0 16px 40px rgba(43, 36, 32, 0.16), 0 2px 8px rgba(43, 36, 32, 0.06);
+    padding: 16px 18px 14px;
+    max-width: 300px; min-width: 240px;
+    font-size: 13px; line-height: 1.55; color: var(--ink);
+    display: none;
+    position: relative;
+  }
+  .abbie-helper.open .abbie-helper-card { display: block; animation: abbie-card-in 0.22s ease-out; }
+  @keyframes abbie-card-in {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .abbie-helper-card::after {
+    content: ''; position: absolute; right: -7px; bottom: 22px;
+    width: 14px; height: 14px; background: var(--surface);
+    border-right: 1px solid var(--line); border-bottom: 1px solid var(--line);
+    transform: rotate(-45deg);
+  }
+  .abbie-helper-card .ah-label {
+    font-family: 'Fraunces', serif; font-weight: 600; font-size: 14px;
+    margin: 0 0 6px;
+  }
+  .abbie-helper-card .ah-tip { margin: 0 0 12px; color: var(--ink-soft); }
+  .abbie-helper-card .ah-actions {
+    display: flex; gap: 6px; flex-wrap: wrap; align-items: center;
+  }
+  .abbie-helper-card .ah-actions button {
+    font-size: 12px; padding: 5px 10px; border-radius: 6px;
+    background: transparent; border: 1px solid var(--line); color: var(--ink-soft);
+    cursor: pointer; font-family: inherit;
+  }
+  .abbie-helper-card .ah-actions button.primary { background: var(--primary); color: white; border-color: var(--primary); }
+  .abbie-helper-card .ah-actions button:hover { background: var(--surface-alt); color: var(--ink); }
+  .abbie-helper-card .ah-actions button.primary:hover { background: #25513A; color: white; }
+  .abbie-helper-card .ah-actions button.ah-quiet {
+    margin-left: auto; border: none; color: var(--ink-faint); font-size: 11px;
+  }
+  .abbie-helper-card .ah-actions button.ah-quiet:hover { color: var(--ink-soft); background: transparent; text-decoration: underline; }
+  .abbie-helper.hidden { display: none; }
+  /* On very small screens, shrink the toggle and give the card more breathing room */
+  @media (max-width: 480px) {
+    .abbie-helper { right: 14px; bottom: 14px; flex-direction: column; align-items: flex-end; }
+    .abbie-helper-toggle { width: 64px; height: 64px; }
+    .abbie-helper-card { max-width: calc(100vw - 40px); }
+  }
+  /* Print / onboarding / landing — hide the floating helper */
+  body.onboarding-mode .abbie-helper,
+  body.landing-mode .abbie-helper { display: none !important; }
+  @media print { .abbie-helper { display: none !important; } }
 
   /* Profile hero — warmer replacement for the stock page-head block */
   .profile-hero {
@@ -406,6 +512,29 @@
   .profile-hero .bee { flex-shrink: 0; }
   .profile-hero h1 { font-family: 'Fraunces', serif; font-size: 28px; font-weight: 600; letter-spacing: -0.01em; }
   .profile-hero-actions { display: flex; flex-direction: column; gap: 8px; align-items: flex-end; flex-shrink: 0; }
+
+  /* Abbie on/off toggle — styled switch, readable label */
+  .abbie-toggle {
+    display: inline-flex; align-items: center; gap: 8px;
+    cursor: pointer; font-size: 12px; color: var(--ink-soft);
+    padding: 4px 2px; user-select: none;
+  }
+  .abbie-toggle input { position: absolute; opacity: 0; pointer-events: none; }
+  .abbie-toggle-ui {
+    position: relative; display: inline-block;
+    width: 36px; height: 20px; border-radius: 999px;
+    background: var(--line-strong); transition: background 0.18s;
+    flex-shrink: 0;
+  }
+  .abbie-toggle-pip {
+    position: absolute; top: 2px; left: 2px;
+    width: 16px; height: 16px; border-radius: 50%;
+    background: white; box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+    transition: transform 0.18s;
+  }
+  .abbie-toggle input:checked + .abbie-toggle-ui { background: var(--primary); }
+  .abbie-toggle input:checked + .abbie-toggle-ui .abbie-toggle-pip { transform: translateX(16px); }
+  .abbie-toggle-label { white-space: nowrap; }
   @media (max-width: 720px) {
     .profile-hero { flex-direction: column; padding: 20px; gap: 14px; }
     .profile-hero-actions { flex-direction: row; align-items: center; align-self: stretch; justify-content: flex-start; }
@@ -2078,7 +2207,7 @@
       </div>
 
       <section class="landing-hero">
-        <div class="bee bee-lg bee-hover landing-bee" data-bee-pose="wave" data-bee-hover="1" aria-hidden="true"></div>
+        <div class="abbie abbie-lg landing-bee" data-abbie-pose="wave" data-abbie-hover="1" aria-hidden="true"></div>
         <div class="landing-eyebrow">Built for Irish primary teachers · NCCA 2023</div>
         <h1 class="landing-headline">Reclaim your<br><em>Sunday evening.</em></h1>
         <p class="landing-sub">Planner Bee drafts your full week — lessons, worksheets, differentiation, Gaeilge threading, sub cover — in about a minute. Grounded in the 2023 NCCA Primary Framework. Pitched to your class. Ready before the kettle boils.</p>
@@ -2313,8 +2442,8 @@
           <h1 class="ob-title">Let's set up your classroom.</h1>
           <p class="ob-lead">We'll tune every lesson to your class, your school day, and your Gaeilge comfort. Takes about 90 seconds.</p>
           <div class="ob-step1-bee">
-            <div class="bee bee-sm" data-bee-pose="wave" aria-hidden="true"></div>
-            <div class="ob-step1-bee-msg"><strong>Hi, I'm Planner Bee.</strong> I'll keep you company while we get you set up. Anything you put in here you can change later from <em>My profile</em>.</div>
+            <div class="abbie abbie-sm" data-abbie-pose="wave" aria-hidden="true"></div>
+            <div class="ob-step1-bee-msg"><strong>Hi, I'm Abbie.</strong> I'll be around to lend a hand whenever you need. Anything you tell us here you can change later from <em>My profile</em>.</div>
           </div>
           <div class="ob-card">
             <div class="field">
@@ -2463,7 +2592,7 @@
         <!-- Step 5: All set -->
         <div class="ob-step" data-ob-step="5">
           <div class="ob-step5-head">
-            <div class="bee bee-md" data-bee-pose="celebrate" aria-hidden="true"></div>
+            <div class="abbie abbie-md" data-abbie-pose="apple" aria-hidden="true"></div>
             <div>
               <div class="ob-eyebrow">Ready when you are</div>
               <h1 class="ob-title" style="margin-bottom: 8px;">Your classroom is set up.</h1>
@@ -2915,7 +3044,7 @@
     <!-- ============ PROFILE ============ -->
     <section id="view-class" class="view">
       <div class="profile-hero">
-        <div class="bee bee-md" data-bee-pose="clipboard" aria-hidden="true"></div>
+        <div class="abbie abbie-md" data-abbie-pose="tablet" aria-hidden="true"></div>
         <div style="flex:1; min-width: 0;">
           <div class="ob-eyebrow" style="margin-bottom: 10px;">Your classroom</div>
           <h1 style="margin: 0 0 6px;">About you & your class</h1>
@@ -2924,6 +3053,13 @@
         <div class="profile-hero-actions">
           <span class="chip chip-primary" id="profile-saved-badge" style="display:none;">✓ Profile saved</span>
           <button class="btn btn-ghost" onclick="startOnboarding()" title="Walk through the guided setup again">✨ Run setup walkthrough</button>
+          <label class="abbie-toggle" title="Turn the floating Abbie helper on or off">
+            <input type="checkbox" id="p-abbie-enabled" onchange="abbieSetEnabled(this.checked)">
+            <span class="abbie-toggle-ui">
+              <span class="abbie-toggle-pip"></span>
+            </span>
+            <span class="abbie-toggle-label">Abbie's here to help</span>
+          </label>
         </div>
       </div>
 
@@ -3124,6 +3260,24 @@
 
 <!-- Account popover — appears under the sidebar chip when signed in. -->
 <div id="account-popover" class="account-popover" style="display:none;"></div>
+
+<!-- Abbie helper — the floating bottom-right class assistant. Hidden on
+     landing + onboarding (Abbie already lives in those views inline), and
+     hidden entirely when the teacher's turned her off in settings. -->
+<div class="abbie-helper hidden" id="abbie-helper" role="complementary" aria-label="Abbie — your classroom companion">
+  <div class="abbie-helper-card" id="abbie-helper-card">
+    <div class="ah-label" id="abbie-helper-label">Hi there!</div>
+    <p class="ah-tip" id="abbie-helper-tip">Tip content goes here.</p>
+    <div class="ah-actions">
+      <button class="primary" id="abbie-helper-next" onclick="abbieNextTip()">Got it</button>
+      <button onclick="abbieCloseBubble()">Close</button>
+      <button class="ah-quiet" onclick="abbieMuteToday()">Not now</button>
+    </div>
+  </div>
+  <button class="abbie-helper-toggle" id="abbie-helper-toggle" onclick="abbieToggleBubble()" aria-label="Ask Abbie">
+    <!-- Image mounted by mountAbbie or fallback SVG -->
+  </button>
+</div>
 
 <div class="modal-backdrop" id="modal">
   <div class="modal">
@@ -4604,6 +4758,7 @@ const DEFAULT_PROFILE = {
   tour: '',
   sports: '',
   hasBeenSaved: false,
+  abbieEnabled: true,  // floating class-assistant mascot, on by default
 };
 
 const State = {
@@ -5050,7 +5205,9 @@ function goto(view, opts = {}) {
   window.scrollTo({ top: 0, behavior: 'smooth' });
   renderSeasonalAccent();
   // Mount any mascots dropped into this view's markup.
-  try { mountBees(el); } catch(e) {}
+  try { mountAbbie(el); } catch(e) {}
+  // Refresh the floating Abbie helper for this view (hides on landing/onboarding via CSS).
+  try { abbieRefresh(); } catch(e) {}
   if (view === 'dashboard') renderDashboard();
   if (view === 'library') renderLibrary();
   if (view === 'themes') renderThemes();
@@ -6007,6 +6164,8 @@ function renderGradeOptions() {
 function renderProfile() {
   const P = State.profile;
   renderProfilePicPreview();
+  const abbieToggle = document.getElementById('p-abbie-enabled');
+  if (abbieToggle) abbieToggle.checked = P.abbieEnabled !== false;
   document.getElementById('p-teacher').value = P.teacher || '';
   document.getElementById('p-salutation').value = P.salutation || '';
   document.getElementById('p-school').value = P.school || '';
@@ -11529,116 +11688,229 @@ async function handleSignOut() {
    dashboard on subsequent visits. Signed-in users never see the landing.
    ========================================================================= */
 /* =========================================================================
-   PLANNER BEE MASCOT
-   Reusable SVG component. Drop `<div class="bee" data-bee-pose="wave">`
-   anywhere and call `mountBees()` to render. Consistent anatomy across
-   poses: amber body, three stripes, translucent wings, small smile.
+   ABBIE — our class-assistant mascot.
+   Rendered from image files in /mascot/. A tiny SVG fallback bee is drawn
+   when the image isn't available yet (offline dev or before the files are
+   uploaded). Drop `<div class="abbie" data-abbie-pose="wave">` anywhere
+   and call `mountAbbie()` to render.
    ========================================================================= */
-const BEE_POSES = {
-  // Base flying pose — greeting / landing hero
-  wave: () => beeSvg({
-    tiltDeg: -4,
-    rightArm: `<path class="bee-arm" d="M96 72 Q110 56 106 42" stroke="#4B2E2A" stroke-width="3" stroke-linecap="round" fill="none"/>
-               <circle cx="106" cy="42" r="4.5" fill="#4B2E2A"/>`,
-    leftArm: `<path d="M34 78 Q26 82 24 90" stroke="#4B2E2A" stroke-width="3" stroke-linecap="round" fill="none"/>`,
-    extras: '',
-  }),
-  // Thinking — finger to chin, one eye slightly closed
-  think: () => beeSvg({
-    tiltDeg: 2,
-    rightArm: `<path d="M86 72 Q80 66 74 64" stroke="#4B2E2A" stroke-width="3" stroke-linecap="round" fill="none"/>`,
-    leftArm: `<path d="M34 78 Q28 84 26 92" stroke="#4B2E2A" stroke-width="3" stroke-linecap="round" fill="none"/>`,
-    extras: `<circle cx="62" cy="64" r="2" fill="#2B2420"/>`,
-    eyes: { left: { cx: 50, cy: 60, r: 2.5 }, right: { cx: 62, cy: 60, r: 1.5, squint: true } },
-    mouth: 'thinking',
-  }),
-  // Pointing — gesture toward the right
-  point: () => beeSvg({
-    tiltDeg: -2,
-    rightArm: `<path d="M96 72 L118 66" stroke="#4B2E2A" stroke-width="3" stroke-linecap="round" fill="none"/>
-               <circle cx="118" cy="66" r="4" fill="#4B2E2A"/>`,
-    leftArm: `<path d="M34 78 Q30 84 30 92" stroke="#4B2E2A" stroke-width="3" stroke-linecap="round" fill="none"/>`,
-    extras: '',
-  }),
-  // Clipboard — for empty states, "nothing here yet"
-  clipboard: () => beeSvg({
-    tiltDeg: 0,
-    rightArm: `<path d="M92 74 L92 90" stroke="#4B2E2A" stroke-width="3" stroke-linecap="round" fill="none"/>`,
-    leftArm: `<path d="M38 74 L38 90" stroke="#4B2E2A" stroke-width="3" stroke-linecap="round" fill="none"/>`,
-    extras: `<rect x="42" y="86" width="46" height="30" rx="2" fill="#F4EEE2" stroke="#4B2E2A" stroke-width="2"/>
-             <rect x="55" y="82" width="20" height="6" rx="1.5" fill="#4B2E2A"/>
-             <line x1="48" y1="96" x2="80" y2="96" stroke="#A89B8E" stroke-width="1.5"/>
-             <line x1="48" y1="102" x2="76" y2="102" stroke="#A89B8E" stroke-width="1.5"/>
-             <line x1="48" y1="108" x2="72" y2="108" stroke="#A89B8E" stroke-width="1.5"/>`,
-  }),
-  // Celebrating — arms up, "all done!"
-  celebrate: () => beeSvg({
-    tiltDeg: 0,
-    rightArm: `<path d="M96 72 L108 50" stroke="#4B2E2A" stroke-width="3" stroke-linecap="round" fill="none"/>
-               <circle cx="108" cy="50" r="4" fill="#4B2E2A"/>`,
-    leftArm: `<path d="M34 72 L22 50" stroke="#4B2E2A" stroke-width="3" stroke-linecap="round" fill="none"/>
-              <circle cx="22" cy="50" r="4" fill="#4B2E2A"/>`,
-    extras: `<circle cx="18" cy="38" r="2" fill="#D4A72C"/>
-             <circle cx="112" cy="38" r="2" fill="#D4A72C"/>
-             <circle cx="28" cy="28" r="1.5" fill="#C85A3E"/>`,
-    mouth: 'wide',
-  }),
+const ABBIE_POSES = {
+  wave:    '/mascot/abbie-wave.png',     // greeting — default
+  idle:    '/mascot/abbie-idle.png',     // standing calmly
+  apple:   '/mascot/abbie-apple.png',    // success / celebration
+  tablet:  '/mascot/abbie-tablet.png',   // thinking / planning
+};
+// Back-compat: old pose names still work, they map to the closest new pose.
+const ABBIE_POSE_ALIASES = {
+  think: 'tablet',
+  point: 'wave',
+  clipboard: 'tablet',
+  celebrate: 'apple',
 };
 
-function beeSvg({ tiltDeg = 0, rightArm = '', leftArm = '', extras = '', eyes, mouth }) {
-  const e = eyes || { left: { cx: 50, cy: 60, r: 2.5 }, right: { cx: 62, cy: 60, r: 2.5 } };
-  const m = mouth === 'thinking'
-    ? `<path d="M52 70 Q56 72 60 70" stroke="#2B2420" stroke-width="2" fill="none" stroke-linecap="round"/>`
-    : mouth === 'wide'
-    ? `<path d="M48 66 Q56 76 64 66" stroke="#2B2420" stroke-width="2.2" fill="none" stroke-linecap="round"/>`
-    : `<path d="M50 68 Q56 72 62 68" stroke="#2B2420" stroke-width="2" fill="none" stroke-linecap="round"/>`;
-  const squintRight = e.right.squint ? `<line x1="${e.right.cx - 2.5}" y1="${e.right.cy}" x2="${e.right.cx + 2.5}" y2="${e.right.cy}" stroke="#2B2420" stroke-width="2" stroke-linecap="round"/>` : `<circle cx="${e.right.cx}" cy="${e.right.cy}" r="${e.right.r}" fill="#2B2420"/>`;
-  return `<svg viewBox="-5 0 135 140" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Planner Bee mascot">
-    <g transform="rotate(${tiltDeg} 60 70)">
-      <!-- Wings (back) -->
-      <g class="bee-wing bee-wing-back">
-        <ellipse cx="52" cy="42" rx="18" ry="26" fill="#E8F0E8" opacity="0.72" stroke="#2D5F3F" stroke-width="1.4" transform="rotate(-18 52 42)"/>
-      </g>
-      <!-- Wings (front) -->
-      <g class="bee-wing">
-        <ellipse cx="72" cy="44" rx="18" ry="26" fill="#F4EEE2" opacity="0.82" stroke="#2D5F3F" stroke-width="1.4" transform="rotate(20 72 44)"/>
-      </g>
-      <!-- Body -->
-      <ellipse cx="60" cy="78" rx="34" ry="32" fill="#D4A72C" stroke="#8F6A14" stroke-width="1.5"/>
-      <!-- Stripes -->
-      <path d="M30 68 Q60 80 90 68" stroke="#4B2E2A" stroke-width="6.5" fill="none" stroke-linecap="round"/>
-      <path d="M28 84 Q60 96 92 84" stroke="#4B2E2A" stroke-width="6.5" fill="none" stroke-linecap="round"/>
-      <path d="M32 99 Q60 108 88 99" stroke="#4B2E2A" stroke-width="6.5" fill="none" stroke-linecap="round"/>
-      <!-- Antenna -->
-      <path d="M56 46 Q52 34 50 26" stroke="#4B2E2A" stroke-width="2.2" fill="none" stroke-linecap="round"/>
-      <circle cx="50" cy="26" r="3.2" fill="#4B2E2A"/>
-      <!-- Face: cheeks -->
-      <ellipse cx="44" cy="68" rx="4" ry="2.8" fill="#E89F87" opacity="0.6"/>
-      <ellipse cx="68" cy="68" rx="4" ry="2.8" fill="#E89F87" opacity="0.6"/>
-      <!-- Eyes -->
-      <circle cx="${e.left.cx}" cy="${e.left.cy}" r="${e.left.r}" fill="#2B2420"/>
-      ${squintRight}
-      <!-- Mouth -->
-      ${m}
-      <!-- Arms -->
-      ${rightArm}
-      ${leftArm}
-      <!-- Extras per-pose (items being held etc.) -->
-      ${extras}
-    </g>
-  </svg>`;
+function resolveAbbiePose(name) {
+  return ABBIE_POSES[name] || ABBIE_POSES[ABBIE_POSE_ALIASES[name]] || ABBIE_POSES.wave;
 }
 
-function mountBees(root) {
+// Small placeholder SVG — shown only if the image 404s (file not uploaded
+// yet). Keeps the UI from looking broken during setup.
+const ABBIE_FALLBACK_SVG = `<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" aria-label="Abbie">
+  <ellipse cx="60" cy="70" rx="32" ry="30" fill="#F4C430" stroke="#8F6A14" stroke-width="1.5"/>
+  <path d="M30 64 Q60 76 90 64" stroke="#4B2E2A" stroke-width="6" fill="none" stroke-linecap="round"/>
+  <path d="M30 82 Q60 94 90 82" stroke="#4B2E2A" stroke-width="6" fill="none" stroke-linecap="round"/>
+  <circle cx="50" cy="58" r="4" fill="#2B2420"/>
+  <circle cx="68" cy="58" r="4" fill="#2B2420"/>
+  <circle cx="51" cy="56" r="1.2" fill="#fff"/>
+  <circle cx="69" cy="56" r="1.2" fill="#fff"/>
+  <path d="M50 70 Q59 76 68 70" stroke="#2B2420" stroke-width="2" fill="none" stroke-linecap="round"/>
+  <ellipse cx="38" cy="72" rx="4" ry="2.5" fill="#E89F87" opacity="0.55"/>
+  <ellipse cx="82" cy="72" rx="4" ry="2.5" fill="#E89F87" opacity="0.55"/>
+  <path d="M55 42 Q53 30 51 24" stroke="#4B2E2A" stroke-width="2" fill="none" stroke-linecap="round"/>
+  <circle cx="51" cy="24" r="3.5" fill="#C9A67E"/>
+  <path d="M65 42 Q67 30 69 24" stroke="#4B2E2A" stroke-width="2" fill="none" stroke-linecap="round"/>
+  <circle cx="69" cy="24" r="3.5" fill="#C9A67E"/>
+</svg>`;
+
+function mountAbbie(root) {
   const scope = root || document;
-  scope.querySelectorAll('.bee[data-bee-pose]').forEach(el => {
-    if (el.dataset.beeMounted) return;
-    const pose = el.dataset.beePose || 'wave';
-    const factory = BEE_POSES[pose] || BEE_POSES.wave;
-    el.innerHTML = factory();
-    el.dataset.beeMounted = '1';
-    if (el.dataset.beeHover === '1') el.classList.add('bee-hover');
+  scope.querySelectorAll('.abbie[data-abbie-pose]').forEach(el => {
+    if (el.dataset.abbieMounted) return;
+    const pose = el.dataset.abbiePose || 'wave';
+    const src = resolveAbbiePose(pose);
+    // Render an <img>. If it fails to load (404 while images aren't yet
+    // uploaded), swap in the placeholder SVG so the UI still reads.
+    const img = new Image();
+    img.src = src;
+    img.alt = 'Abbie — your classroom companion';
+    img.className = 'abbie-img';
+    img.onerror = () => { el.innerHTML = ABBIE_FALLBACK_SVG; };
+    el.innerHTML = '';
+    el.appendChild(img);
+    el.dataset.abbieMounted = '1';
+    if (el.dataset.abbieHover === '1') el.classList.add('abbie-hover');
   });
+  // Back-compat mount for any legacy .bee markup still in the DOM.
+  scope.querySelectorAll('.bee[data-bee-pose]').forEach(el => {
+    if (el.dataset.abbieMounted) return;
+    const pose = el.dataset.beePose || 'wave';
+    el.classList.add('abbie');
+    el.setAttribute('data-abbie-pose', pose);
+    if (el.dataset.beeHover === '1') el.setAttribute('data-abbie-hover', '1');
+    el.removeAttribute('data-bee-pose');
+    mountAbbie(el.parentNode || scope);
+  });
+}
+// Back-compat alias so older call sites keep working.
+const mountBees = mountAbbie;
+
+/* =========================================================================
+   ABBIE HELPER — the floating "Clippy-for-teachers" class assistant.
+   Small, ambient, out of the way. Click to see a contextual tip for the
+   current view. Appears with a red dot when there's a new tip for the
+   active view. Disabled per-teacher via profile.abbieEnabled.
+   ========================================================================= */
+const ABBIE_TIPS = {
+  dashboard: [
+    { id: 'dash-welcome',  label: 'Welcome in',       text: "This is home base — any weeks you've planned live here. Hit <strong>Monday Morning Mode</strong> up top to have a full week drafted in about a minute." },
+    { id: 'dash-rightnow', label: 'The live card',    text: "The big card at the top shows what's on right now, or what's coming next. It quietly updates during the day — handy at the start of a lesson." },
+    { id: 'dash-insights', label: 'Your patterns',    text: "Over time the <strong>Your patterns</strong> card surfaces what's landing with your class and what isn't. The more you rate lessons, the more useful it gets." },
+  ],
+  plan: [
+    { id: 'plan-resize',   label: 'Stretchy lessons', text: "Any lesson block on the week can be resized — grab the bottom edge and drag. I'll respect your breaks and any pinned slots." },
+    { id: 'plan-fresh',    label: 'Fresh draft',      text: "Open any lesson and hit <strong>Fresh draft</strong> to reshape it. You can ask for a younger pitch, more Gaeilge, a different angle — whatever's needed." },
+    { id: 'plan-subpack',  label: 'Sub Pack',         text: "Heading out for a day? Hit <strong>Sub Pack</strong> on the plan and you'll get a printable brief with your note, the day's lessons, and the school-day layout." },
+  ],
+  lesson: [
+    { id: 'lesson-feedback', label: 'Tell me how it went', text: "At the bottom of each lesson there's a quick feedback panel — a thumbs and a couple of tags. I use it to pitch next week's drafts closer to what's working for your class." },
+    { id: 'lesson-voice',    label: 'Voice notes',          text: "See the little mic? Ten seconds of speaking catches a quick thought — <em>'pair Niamh and Oisín next time'</em> — and saves it as searchable text with the lesson." },
+    { id: 'lesson-edit',     label: 'Make it yours',        text: "Click <strong>✎ Edit</strong> up top and you can override any part of the lesson with your own words. The original draft is kept in case you want to go back." },
+  ],
+  library: [
+    { id: 'library-archive', label: 'Keeping it tidy', text: "Plans you've moved past can be archived — they step off the dashboard but stay here under the <strong>Archived</strong> filter. Delete is one menu further in." },
+  ],
+  class: [
+    { id: 'class-tweak', label: 'Tune me to your class', text: "Everything on this page feeds into your plans. If something's off — too many pupils, wrong Gaeilge level, school day's different — a quick tweak here and next week's draft picks it up." },
+  ],
+  themes: [
+    { id: 'themes-pick', label: 'Pick a thread', text: "Themes run a thin story through the whole week — Gaeilge words in one subject, a history angle in another. Keeps the week feeling coherent instead of seven disconnected things." },
+  ],
+};
+
+const AbbieState = {
+  open: false,
+  currentView: null,
+  queue: [],
+  index: 0,
+  mutedUntil: 0,
+};
+
+function abbieIsEnabled() {
+  return (State.profile?.abbieEnabled !== false);
+}
+
+function abbieSeenKey(tipId) { return 'seachtain.abbie.seen.' + tipId; }
+function abbieIsSeen(tipId) {
+  try { return localStorage.getItem(abbieSeenKey(tipId)) === '1'; } catch(e){ return false; }
+}
+function abbieMarkSeen(tipId) {
+  try { localStorage.setItem(abbieSeenKey(tipId), '1'); } catch(e){}
+}
+
+function abbieRefresh() {
+  const helper = document.getElementById('abbie-helper');
+  const toggle = document.getElementById('abbie-helper-toggle');
+  if (!helper || !toggle) return;
+  if (!abbieIsEnabled()) { helper.classList.add('hidden'); helper.classList.remove('open'); return; }
+  helper.classList.remove('hidden');
+  // Mount the wave pose inside the toggle if not already mounted.
+  if (!toggle.dataset.abbieToggleMounted) {
+    const src = resolveAbbiePose('wave');
+    const img = new Image();
+    img.src = src;
+    img.alt = 'Abbie';
+    img.onerror = () => { toggle.innerHTML = ABBIE_FALLBACK_SVG; };
+    toggle.innerHTML = '';
+    toggle.appendChild(img);
+    toggle.dataset.abbieToggleMounted = '1';
+  }
+  // Queue fresh tips for the current view that haven't been seen yet.
+  const view = State.view;
+  AbbieState.currentView = view;
+  const all = ABBIE_TIPS[view] || [];
+  AbbieState.queue = all.filter(t => !abbieIsSeen(t.id));
+  AbbieState.index = 0;
+  toggle.classList.toggle('has-tip', AbbieState.queue.length > 0);
+  // Auto-peek on the teacher's first visit to a view: gently open the
+  // bubble if there's a tip and they're not currently interacting.
+  const muted = Date.now() < AbbieState.mutedUntil;
+  if (AbbieState.queue.length > 0 && !muted && !helper.classList.contains('open')) {
+    // Wait a beat so the view settles before Abbie pops in.
+    setTimeout(() => {
+      if (AbbieState.currentView === view && abbieIsEnabled()) abbieRenderBubble();
+    }, 900);
+  }
+}
+
+function abbieRenderBubble() {
+  const tip = AbbieState.queue[AbbieState.index];
+  const label = document.getElementById('abbie-helper-label');
+  const text  = document.getElementById('abbie-helper-tip');
+  const next  = document.getElementById('abbie-helper-next');
+  if (!tip) {
+    // Nothing new for this view — show a default "I'm here if you need me".
+    if (label) label.textContent = "I'm here if you need me";
+    if (text)  text.innerHTML = "Tap me any time for a quick pointer on the part of Seachtain you're looking at. You can turn me off from <em>My profile</em> if I'm in the way.";
+    if (next)  next.textContent = 'Grand';
+  } else {
+    if (label) label.textContent = tip.label;
+    if (text)  text.innerHTML = tip.text;
+    if (next)  next.textContent = (AbbieState.index < AbbieState.queue.length - 1) ? 'Next tip →' : 'Got it';
+  }
+  const helper = document.getElementById('abbie-helper');
+  if (helper) helper.classList.add('open');
+  AbbieState.open = true;
+}
+
+function abbieToggleBubble() {
+  const helper = document.getElementById('abbie-helper');
+  if (!helper) return;
+  if (AbbieState.open) { abbieCloseBubble(); return; }
+  abbieRenderBubble();
+}
+
+function abbieCloseBubble() {
+  const helper = document.getElementById('abbie-helper');
+  if (helper) helper.classList.remove('open');
+  AbbieState.open = false;
+}
+
+function abbieNextTip() {
+  const tip = AbbieState.queue[AbbieState.index];
+  if (tip) abbieMarkSeen(tip.id);
+  AbbieState.index += 1;
+  if (AbbieState.index >= AbbieState.queue.length) {
+    AbbieState.queue = [];
+    const toggle = document.getElementById('abbie-helper-toggle');
+    if (toggle) toggle.classList.remove('has-tip');
+    abbieCloseBubble();
+    return;
+  }
+  abbieRenderBubble();
+}
+
+function abbieMuteToday() {
+  // Suppress auto-peek for the rest of the session (until page reload).
+  AbbieState.mutedUntil = Date.now() + 24 * 60 * 60 * 1000;
+  abbieCloseBubble();
+  toast("Grand — I'll stay quiet. Click me any time if you need a hand.");
+}
+
+function abbieSetEnabled(on) {
+  if (!State.profile) return;
+  State.profile.abbieEnabled = !!on;
+  saveProfileStore();
+  abbieRefresh();
+  toast(on ? "Abbie's back — happy to help." : "Abbie's off. Turn her back on any time from My profile.");
 }
 
 /* =========================================================================
