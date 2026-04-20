@@ -10788,17 +10788,29 @@ const AuthModule = (() => {
     try {
       const r = await fetch('/api/config');
       if (r.ok) cfg = await r.json();
-    } catch (e) { /* ignore — offline dev */ }
+    } catch (e) { console.warn('[Seachtain] /api/config fetch failed', e); }
     configLoaded = true;
-    if (!cfg.supabaseUrl || !cfg.supabaseAnonKey || typeof window.supabase?.createClient !== 'function') {
-      // No cloud backend available — make sure the local-only banner shows
-      // only if the user hasn't dismissed it before.
+    // Validate: both keys must be present, URL must be absolute (https://...).
+    const urlLooksGood = typeof cfg.supabaseUrl === 'string' && /^https?:\/\/[^/\s]+/.test(cfg.supabaseUrl);
+    if (!urlLooksGood || !cfg.supabaseAnonKey || typeof window.supabase?.createClient !== 'function') {
+      if (cfg.supabaseUrl && !urlLooksGood) {
+        console.warn('[Seachtain] SUPABASE_URL is set but malformed — expected https://YOUR-PROJECT.supabase.co, got:', cfg.supabaseUrl);
+      }
+      if (!cfg.supabaseUrl && !cfg.supabaseAnonKey) {
+        console.info('[Seachtain] Running in local-only mode. Set SUPABASE_URL and SUPABASE_ANON_KEY in Vercel to enable accounts.');
+      }
       showLocalBanner();
       return;
     }
-    client = window.supabase.createClient(cfg.supabaseUrl, cfg.supabaseAnonKey, {
-      auth: { detectSessionInUrl: true, persistSession: true, autoRefreshToken: true },
-    });
+    try {
+      client = window.supabase.createClient(cfg.supabaseUrl, cfg.supabaseAnonKey, {
+        auth: { detectSessionInUrl: true, persistSession: true, autoRefreshToken: true },
+      });
+    } catch (e) {
+      console.error('[Seachtain] Supabase client init failed', e);
+      showLocalBanner();
+      return;
+    }
     // Initial session check.
     const { data: { session: s } } = await client.auth.getSession();
     session = s;
@@ -11001,8 +11013,19 @@ function submitSignIn(evt) {
       submitBtn.disabled = false;
     })
     .catch((e) => {
+      console.error('[Seachtain] sign-in failed', e);
       status.className = 'auth-status err';
-      status.textContent = e.message || 'Something went wrong. Try again.';
+      const msg = (e && e.message) || '';
+      // Common failure modes get a friendlier message.
+      if (/Unexpected end of JSON|Failed to execute 'json'/i.test(msg)) {
+        status.innerHTML = `Couldn't reach Supabase — the URL looks wrong. Double-check <code>SUPABASE_URL</code> in Vercel starts with <code>https://</code> and matches the project URL exactly.`;
+      } else if (/not configured/i.test(msg)) {
+        status.innerHTML = `Cloud sign-in isn't set up on this deployment yet. See <a href="https://github.com/iJellyx/seachtain/blob/main/SETUP.md" target="_blank" rel="noopener">SETUP.md</a>.`;
+      } else if (/invalid.*key|JWT/i.test(msg)) {
+        status.innerHTML = `Supabase rejected the anon key. Make sure <code>SUPABASE_ANON_KEY</code> in Vercel matches the <strong>anon public</strong> key in your Supabase project settings.`;
+      } else {
+        status.textContent = msg || 'Something went wrong. Try again.';
+      }
       submitBtn.textContent = 'Send me a magic link →';
       submitBtn.disabled = false;
     });

@@ -6,8 +6,18 @@
 module.exports = function handler(req, res) {
   res.setHeader('Cache-Control', 'public, max-age=60, s-maxage=60');
   res.setHeader('Access-Control-Allow-Origin', '*');
+  // Normalise the URL — a common footgun is setting SUPABASE_URL without the
+  // scheme, which causes the client SDK to treat it as a relative path and
+  // hit our own origin. Prepending https:// if missing saves a support
+  // ticket per teacher.
+  let url = (process.env.SUPABASE_URL || '').trim();
+  if (url && !/^https?:\/\//i.test(url)) url = 'https://' + url;
+  // Strip any trailing slash so the SDK's URL construction is predictable.
+  url = url.replace(/\/+$/, '');
   res.status(200).json({
-    supabaseUrl: process.env.SUPABASE_URL || '',
-    supabaseAnonKey: process.env.SUPABASE_ANON_KEY || '',
+    supabaseUrl: url,
+    supabaseAnonKey: (process.env.SUPABASE_ANON_KEY || '').trim(),
+    // For client-side diagnostics — doesn't leak anything that isn't public.
+    configured: !!(url && process.env.SUPABASE_ANON_KEY),
   });
 };
