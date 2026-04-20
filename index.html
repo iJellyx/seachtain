@@ -2361,7 +2361,7 @@
 
       <section class="landing-hero">
         <div class="abbie abbie-lg landing-bee" data-abbie-pose="flying" data-abbie-hover="1" aria-hidden="true"></div>
-        <div class="landing-eyebrow">Built for Irish primary teachers · NCCA 2023</div>
+        <div class="landing-eyebrow">Built for Irish primary teachers · NCCA 2023 · <span style="color: #8B6910;">✨ Bee-powered</span></div>
         <h1 class="landing-headline">Reclaim your<br><em>Sunday evening.</em></h1>
         <p class="landing-sub">Planner Bee drafts your full week — lessons, worksheets, differentiation, Gaeilge threading, sub cover — in about a minute. Grounded in the 2023 NCCA Primary Framework. Pitched to your class. Ready before the kettle boils.</p>
         <div class="landing-cta-row">
@@ -6907,7 +6907,31 @@ function generatePlanAI() {
   ).join('\n\n');
 
   barEl.style.width = '40%';
-  stageEl.textContent = 'Bee is drafting your week — usually about 20 seconds…';
+  stageEl.textContent = 'Bee is reading the NCCA curriculum for your grade…';
+
+  // Rotate in-flight status messages so the teacher sees motion during
+  // the ~15–25s generate window. Stops when the fetch resolves.
+  const inflightMessages = [
+    'Bee is reading the NCCA curriculum for your grade…',
+    'Pitching lessons to your class profile…',
+    'Threading the weekly theme through every subject…',
+    'Weaving in Gaeilge where it fits…',
+    'Building differentiation for support, core and extension…',
+    'Writing teacher notes and watch-outs…',
+    'Nearly there — Bee is polishing the last few lessons…',
+  ];
+  let msgIdx = 0;
+  const msgInterval = setInterval(() => {
+    msgIdx = Math.min(msgIdx + 1, inflightMessages.length - 1);
+    if (stageEl) stageEl.textContent = inflightMessages[msgIdx];
+    // Progress bar creeps forward while we wait — capped at 80% so the
+    // final jump to 100% on success still feels meaningful.
+    if (barEl) {
+      const current = parseFloat(barEl.style.width) || 40;
+      barEl.style.width = Math.min(80, current + 6) + '%';
+    }
+  }, 2400);
+  const clearInflight = () => clearInterval(msgInterval);
 
   fetch('/api/generate-week', {
     method: 'POST',
@@ -6935,8 +6959,9 @@ function generatePlanAI() {
       return r.json();
     })
     .then(data => {
+      clearInflight();
       barEl.style.width = '85%';
-      stageEl.textContent = 'Merging AI lessons into your timetable…';
+      stageEl.textContent = 'Merging Bee\'s lessons into your timetable…';
       const aiByKey = {};
       (data.lessons || []).forEach(l => { if (l.slotKey) aiByKey[l.slotKey] = l; });
       offlinePlan.lessons = offlinePlan.lessons.map(l => {
@@ -6959,6 +6984,7 @@ function generatePlanAI() {
       }, 400);
     })
     .catch(err => {
+      clearInflight();
       console.warn('AI week generation failed', err);
       stageEl.textContent = 'Bee is busy — falling back to the offline draft…';
       setTimeout(() => {
@@ -12153,7 +12179,16 @@ function abbieOpenChat() {
           abbieAppendMsg(m.role === 'user' ? 'you' : 'bee', m.content);
         });
       } else {
-        abbieAppendMsg('bee', "Hi! I'm Abbie. Ask me anything about how Planner Bee works, the NCCA curriculum, or teaching this week. I'll keep it short.");
+        // Greeting is light-touch view-aware so Abbie feels present, not scripted.
+        const greetings = {
+          dashboard: "Hi! You're on your dashboard — ask me how anything here works, or how to start a week.",
+          plan:      "Hi! You've a week open in front of you — ask me how the plan view works, or how to tune any lesson.",
+          lesson:    "Hi! You're looking at a lesson — ask me how anything here works, or for a hand with pacing / differentiation.",
+          library:   "Hi! This is your plan library — ask me about archiving, restoring, or anything else here.",
+          class:     "Hi! This is your class profile — ask me what any of these settings actually change.",
+          themes:    "Hi! These are the weekly themes — ask me how they work or when to pick one.",
+        };
+        abbieAppendMsg('bee', greetings[State.view] || "Hi! I'm Abbie. Ask me anything about how Planner Bee works, the NCCA curriculum, or teaching this week. I'll keep it short.");
       }
     }
   }
