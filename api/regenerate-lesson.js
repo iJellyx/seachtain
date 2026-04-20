@@ -1,60 +1,89 @@
-// Serverless proxy → Anthropic Messages API for AI lesson regeneration.
+// Serverless proxy -> Anthropic Messages API for AI lesson regeneration.
 // Runs on Vercel. Requires ANTHROPIC_API_KEY to be set in project env vars.
 //
-// Why a proxy instead of client-side fetch? Keeps the API key server-side,
-// keeps the browser bundle free of secrets, and lets us enforce a stable
-// request shape / output contract without the client having to know about
-// cache_control, anthropic-version, or model IDs.
+// Uses tool_use for guaranteed structured output. Instead of asking the
+// model to return JSON and hoping it does, we give it a tool with a
+// strict input schema and force it to call that tool. The SDK returns
+// the tool call's input as a proper object — zero parsing risk.
 
 const MODEL = 'claude-sonnet-4-6';
 const API_URL = 'https://api.anthropic.com/v1/messages';
 const API_VERSION = '2023-06-01';
 
-// System prompt — kept stable so Anthropic can cache it across requests.
-// The model's job is to return a single JSON object matching the agent
-// contract the existing UI expects (title, focus, outcomes, vocab,
-// resources, diff, plan, guide). No prose outside the JSON.
-const SYSTEM_PROMPT = `You are Seachtain, an Irish primary-school lesson-planning assistant for teachers.
+// System prompt — cached for cost efficiency across requests.
+const SYSTEM_PROMPT = `You are a lesson-planning companion for Irish primary-school teachers.
 
 Your role is to rewrite a single lesson so it lands right for the given class (grade, pupil count, SEN, Gaeilge medium, teacher feedback). You respect the NCCA 2023 Primary Curriculum Framework and pitch content to the right age band — Junior/Senior Infants get short, playful, story-led tasks; 1st–2nd get concrete manipulation and short writing; 3rd–4th move into procedural fluency and longer written tasks; 5th–6th handle abstraction, multi-step problems, and extended writing.
 
 Hard rules:
-- Every lesson you output MUST include Oral language work if it's English or Gaeilge, hands-on or visual work for Infants, and a clear pupil-facing opening.
-- Respect the Gaeilge medium: if it's a Gaelscoil/Gaeltacht class, lean harder into Gaeilge vocab and classroom language; if English-medium, a single Gaeilge phrase is enough for non-Gaeilge lessons.
-- Never invent curriculum strands that aren't in the provided NCCA reference. When naming strands/strand units, use the ones from the reference verbatim.
-- If teacher feedback is provided, address it directly (e.g. "too long" → shorter main activity; "not age-appropriate" → pitch differently).
-- Output valid JSON only, with no prose before or after. No markdown code fences.
+- Every lesson must include Oral language work if it's English or Gaeilge, hands-on or visual work for Infants, and a clear pupil-facing opening.
+- Respect the Gaeilge medium: if Gaelscoil/Gaeltacht, lean harder into Gaeilge vocab and classroom language; if English-medium, a single Gaeilge phrase is enough for non-Gaeilge lessons.
+- Never invent curriculum strands. When naming strands/strand units, use the ones from the provided NCCA reference verbatim.
+- If teacher feedback is provided, address it directly (e.g. "too long" → shorter main activity).
+- Call the return_lesson tool. Do not write prose outside the tool call.`;
 
-Return shape:
-{
-  "title": "short lesson title",
-  "focus": "one-sentence focus for this lesson",
-  "strand": "exact NCCA strand name",
-  "strandUnit": "exact NCCA strand unit if one fits, else null",
-  "outcomes": ["2–3 short learning outcomes in 'Pupils will …' form"],
-  "vocab": [{"ga": "Irish term (or null if not applicable)", "en": "English gloss"}],
-  "resources": ["2–5 concrete materials a teacher would need"],
-  "plan": {
-    "opening": "what the teacher does in the first 3–5 minutes",
-    "intro": "teaching input — what the teacher explains / models",
-    "main": "what pupils do during the main activity",
-    "plenary": "how the teacher closes the lesson and checks understanding"
+// Tool schema — forces the model into a known-good structure. Anthropic
+// routes tool_use through a strict validator, so malformed output is
+// impossible here.
+const LESSON_TOOL = {
+  name: 'return_lesson',
+  description: 'Return the rewritten lesson in structured form.',
+  input_schema: {
+    type: 'object',
+    properties: {
+      title:      { type: 'string', description: 'Short lesson title' },
+      focus:      { type: 'string', description: 'One-sentence focus for this lesson' },
+      strand:     { type: 'string', description: 'Exact NCCA strand name from the reference' },
+      strandUnit: { type: ['string', 'null'], description: 'Exact strand unit if one fits, else null' },
+      outcomes:   { type: 'array', items: { type: 'string' }, description: '2–3 short learning outcomes in "Pupils will …" form' },
+      vocab: {
+        type: 'array',
+        items: {
+          type: 'object',
+          properties: {
+            ga: { type: ['string', 'null'], description: 'Irish term (or null if not applicable)' },
+            en: { type: 'string', description: 'English gloss' },
+          },
+          required: ['en'],
+        },
+      },
+      resources: { type: 'array', items: { type: 'string' }, description: '2–5 concrete materials a teacher would need' },
+      plan: {
+        type: 'object',
+        properties: {
+          opening: { type: 'string', description: 'What the teacher does in the first 3–5 minutes' },
+          intro:   { type: 'string', description: 'Teaching input — what the teacher explains / models' },
+          main:    { type: 'string', description: 'What pupils do during the main activity' },
+          plenary: { type: 'string', description: 'How the teacher closes the lesson and checks understanding' },
+        },
+        required: ['opening', 'intro', 'main', 'plenary'],
+      },
+      guide: {
+        type: 'object',
+        properties: {
+          pupilVoice:  { type: 'string', description: 'One sentence teacher reads to pupils at the start' },
+          mustMention: { type: 'string', description: 'One key point the teacher must surface' },
+          success:     { type: 'array', items: { type: 'string' }, description: '2–3 observable success criteria' },
+          watchouts:   { type: 'array', items: { type: 'string' }, description: '2–3 realistic trip-ups' },
+          curriculum:  { type: 'string', description: 'One sentence linking this to the NCCA strand and strand unit' },
+          fallback:    { type: 'string', description: 'Short-on-time version if only 15 minutes are left' },
+          language:    { type: 'string', description: 'EAL / language-support note' },
+        },
+        required: ['pupilVoice', 'mustMention', 'success', 'watchouts', 'curriculum', 'fallback', 'language'],
+      },
+      diff: {
+        type: 'object',
+        properties: {
+          support:   { type: 'string', description: 'What scaffolds look like for pupils needing support' },
+          core:      { type: 'string', description: 'What the typical task is' },
+          extension: { type: 'string', description: 'A stretch task for pupils ready for more' },
+        },
+        required: ['support', 'core', 'extension'],
+      },
+    },
+    required: ['title', 'focus', 'strand', 'outcomes', 'vocab', 'resources', 'plan', 'guide', 'diff'],
   },
-  "guide": {
-    "pupilVoice": "1 sentence the teacher reads to pupils at the start",
-    "mustMention": "one key point the teacher must surface",
-    "success": ["2–3 observable success criteria"],
-    "watchouts": ["2–3 realistic things that might trip pupils up"],
-    "curriculum": "one sentence linking this to the NCCA strand and strand unit",
-    "fallback": "short-on-time version if only 15 minutes are left",
-    "language": "EAL / language-support note"
-  },
-  "diff": {
-    "support": "one sentence — what scaffolds look like for pupils needing support",
-    "core": "one sentence — what the typical task is",
-    "extension": "one sentence — a stretch task for pupils ready for more"
-  }
-}`;
+};
 
 function cors(res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -72,12 +101,8 @@ module.exports = async function handler(req, res) {
   if (req.method !== 'POST') return bad(res, 405, 'POST only');
 
   const key = process.env.ANTHROPIC_API_KEY;
-  if (!key) {
-    return bad(res, 503, 'AI regeneration is not configured on this deployment — the teacher-facing UI stays in offline variant mode. Set ANTHROPIC_API_KEY in Vercel to enable live generation.');
-  }
+  if (!key) return bad(res, 503, 'AI isn\'t configured on this deployment. Offline variants keep the flow moving.');
 
-  // Parse body (Vercel auto-parses JSON when content-type is application/json,
-  // but fall back to manual parse just in case).
   let body = req.body;
   if (typeof body === 'string') {
     try { body = JSON.parse(body); } catch (e) { return bad(res, 400, 'Invalid JSON'); }
@@ -93,8 +118,10 @@ module.exports = async function handler(req, res) {
     model: MODEL,
     max_tokens: 2500,
     system: [
-      { type: 'text', text: SYSTEM_PROMPT, cache_control: { type: 'ephemeral' } }
+      { type: 'text', text: SYSTEM_PROMPT, cache_control: { type: 'ephemeral' } },
     ],
+    tools: [LESSON_TOOL],
+    tool_choice: { type: 'tool', name: 'return_lesson' },
     messages: [{ role: 'user', content: userPrompt }],
   };
 
@@ -110,26 +137,15 @@ module.exports = async function handler(req, res) {
       body: JSON.stringify(payload),
     });
     const data = await resp.json();
-    if (!resp.ok) {
-      return bad(res, resp.status, data?.error?.message || 'Anthropic API error');
-    }
-    // Extract text from the content blocks.
-    const text = (data.content || [])
-      .filter(b => b.type === 'text')
-      .map(b => b.text)
-      .join('\n')
-      .trim();
-    // Strip any stray code fences just in case, then parse.
-    const cleaned = text.replace(/^```(?:json)?\s*/i, '').replace(/\s*```\s*$/i, '').trim();
-    let lessonJson;
-    try {
-      lessonJson = JSON.parse(cleaned);
-    } catch (e) {
-      return bad(res, 502, 'Model returned non-JSON response — try again.');
+    if (!resp.ok) return bad(res, resp.status, data?.error?.message || 'Anthropic API error');
+    const toolUse = (data.content || []).find(b => b.type === 'tool_use' && b.name === 'return_lesson');
+    if (!toolUse || !toolUse.input) {
+      console.warn('No tool_use in response', JSON.stringify(data.content).slice(0, 500));
+      return bad(res, 502, 'Model did not return a structured lesson. Please try again.');
     }
     cors(res);
     res.status(200).json({
-      lesson: lessonJson,
+      lesson: toolUse.input,
       usage: data.usage || null,
       model: data.model || MODEL,
     });
@@ -188,7 +204,7 @@ function buildUserPrompt({ lesson, plan, profile, direction, tags, comment, curr
   }
 
   lines.push(`# Your task`);
-  lines.push(`Return a single lesson JSON object (per the schema in the system prompt) that reshapes this lesson to land right for the class above. Address the teacher's direction. Keep the total time roughly ${lesson.minutes} minutes. Name a real NCCA strand from the reference — never invent one.`);
+  lines.push(`Call the return_lesson tool with a lesson that reshapes this one to land right for the class above. Address the teacher's direction. Keep the total time roughly ${lesson.minutes} minutes. Name a real NCCA strand from the reference — never invent one.`);
 
   return lines.join('\n');
 }

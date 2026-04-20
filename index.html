@@ -358,6 +358,55 @@
   .ai-banner .btn { padding: 5px 10px; font-size: 12px; }
 
   /* =========================================================================
+     AI BUTTON SYSTEM — visually distinct from offline actions. The AI
+     button is the hero: honey-gradient background, sparkle badge,
+     gentle glow. Offline fallbacks are ghost and smaller so teachers see
+     which one to reach for first.
+     ========================================================================= */
+  .btn-ai {
+    background: linear-gradient(135deg, #E8B739 0%, #D4A72C 50%, #C48A1A 100%);
+    color: #3A2A0A; border: none;
+    box-shadow: 0 2px 6px rgba(196, 138, 26, 0.30), 0 1px 2px rgba(59, 42, 10, 0.10), inset 0 1px 0 rgba(255,255,255,0.35);
+    font-weight: 700;
+    position: relative;
+    transition: transform 0.12s, box-shadow 0.15s, filter 0.15s;
+  }
+  .btn-ai:hover {
+    filter: brightness(1.06);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 18px rgba(196, 138, 26, 0.40), 0 2px 4px rgba(59, 42, 10, 0.14), inset 0 1px 0 rgba(255,255,255,0.45);
+  }
+  .btn-ai:active { transform: translateY(0); filter: brightness(0.98); }
+  .btn-ai:disabled { opacity: 0.6; cursor: not-allowed; filter: none; transform: none; }
+  .btn-ai .ai-spark {
+    display: inline-block; margin-right: 2px; font-size: 1em;
+    animation: ai-spark 2.4s ease-in-out infinite;
+  }
+  @keyframes ai-spark {
+    0%, 100% { transform: scale(1) rotate(0deg); opacity: 1; }
+    50%      { transform: scale(1.2) rotate(-8deg); opacity: 0.85; }
+  }
+  .btn-ai-lg { padding: 14px 22px; font-size: 15px; border-radius: 12px; }
+  /* Offline counterpart — deliberately quiet */
+  .btn-offline {
+    background: var(--surface); color: var(--ink-soft);
+    border: 1px solid var(--line);
+    font-weight: 500;
+  }
+  .btn-offline:hover { background: var(--surface-alt); color: var(--ink); }
+
+  /* Inline AI badge — attachable to any control to mark it as AI-powered */
+  .ai-badge {
+    display: inline-flex; align-items: center; gap: 4px;
+    font-size: 10px; font-weight: 700; letter-spacing: 0.08em;
+    text-transform: uppercase; color: #8B6910;
+    background: linear-gradient(135deg, rgba(232, 183, 57, 0.22), rgba(212, 167, 44, 0.14));
+    padding: 2px 8px; border-radius: 999px; border: 1px solid rgba(196, 138, 26, 0.35);
+    line-height: 1.5;
+  }
+  .ai-badge::before { content: '✨'; font-size: 11px; }
+
+  /* =========================================================================
      ABBIE — class-assistant mascot.
      Deliberately small and ambient across the app. See BRAND.md and the
      Abbie helper section below for the Clippy-style contextual companion.
@@ -489,6 +538,89 @@
     margin-left: auto; border: none; color: var(--ink-faint); font-size: 11px;
   }
   .abbie-helper-card .ah-actions button.ah-quiet:hover { color: var(--ink-soft); background: transparent; text-decoration: underline; }
+
+  /* Chat mode inside the helper bubble */
+  .abbie-helper-card .ah-chat-head {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 8px; margin-bottom: 10px; padding-bottom: 8px;
+    border-bottom: 1px solid var(--line);
+  }
+  .abbie-helper-card .ah-chat-close {
+    background: none; border: none; color: var(--ink-faint); cursor: pointer;
+    font-size: 20px; line-height: 1; padding: 0 4px;
+  }
+  .abbie-helper-card .ah-chat-close:hover { color: var(--ink); }
+  .abbie-helper-card .ah-chat-log {
+    display: flex; flex-direction: column; gap: 8px;
+    max-height: 320px; overflow-y: auto;
+    padding: 4px 2px 8px; margin-bottom: 6px;
+  }
+  .abbie-helper-card .ah-msg {
+    padding: 8px 12px; border-radius: 12px; font-size: 13px; line-height: 1.5;
+    max-width: 92%; word-wrap: break-word;
+  }
+  .abbie-helper-card .ah-msg.ah-msg-bee {
+    background: var(--surface-alt); color: var(--ink);
+    border-top-left-radius: 4px; align-self: flex-start;
+  }
+  .abbie-helper-card .ah-msg.ah-msg-you {
+    background: var(--primary-soft); color: var(--primary);
+    border-top-right-radius: 4px; align-self: flex-end;
+  }
+  .abbie-helper-card .ah-msg.ah-msg-bee.thinking {
+    color: var(--ink-faint); font-style: italic;
+  }
+  .abbie-helper-card .ah-msg.ah-msg-bee.thinking::after {
+    content: '●●●'; letter-spacing: 2px; margin-left: 4px;
+    animation: ah-dots 1.2s infinite;
+  }
+  @keyframes ah-dots {
+    0%, 20% { opacity: 0.3; }
+    50%     { opacity: 1; }
+    100%    { opacity: 0.3; }
+  }
+  .abbie-helper-card .ah-msg.ah-msg-err {
+    background: #F5D9CB; color: #7a2d1a;
+    border-top-left-radius: 4px; align-self: flex-start;
+  }
+  .abbie-helper-card .ah-chat-suggest {
+    display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 8px;
+  }
+  .abbie-helper-card .ah-suggest-chip {
+    background: var(--surface-alt); color: var(--ink-soft);
+    border: 1px solid var(--line); border-radius: 999px;
+    padding: 4px 10px; font-size: 11px; cursor: pointer;
+    font-family: inherit;
+  }
+  .abbie-helper-card .ah-suggest-chip:hover {
+    background: var(--primary-soft); color: var(--primary);
+    border-color: var(--primary);
+  }
+  .abbie-helper-card .ah-chat-form {
+    display: flex; gap: 6px; align-items: center;
+    border-top: 1px solid var(--line); padding-top: 10px;
+  }
+  .abbie-helper-card .ah-chat-input {
+    flex: 1; padding: 8px 12px; border: 1px solid var(--line);
+    border-radius: 999px; font-size: 13px; font-family: inherit;
+    background: var(--surface); color: var(--ink);
+  }
+  .abbie-helper-card .ah-chat-input:focus {
+    outline: none; border-color: var(--primary);
+    box-shadow: 0 0 0 3px var(--primary-soft);
+  }
+  .abbie-helper-card .ah-chat-send {
+    width: 32px; height: 32px; border-radius: 50%; flex-shrink: 0;
+    background: var(--primary); color: white; border: none;
+    font-size: 16px; line-height: 1; cursor: pointer;
+    transition: background 0.12s, transform 0.12s;
+  }
+  .abbie-helper-card .ah-chat-send:hover { background: #25513A; }
+  .abbie-helper-card .ah-chat-send:disabled {
+    background: var(--line-strong); cursor: not-allowed;
+  }
+  /* Chat widens the card a little for readability */
+  .abbie-helper.chat-open .abbie-helper-card { max-width: 360px; min-width: 320px; }
   .abbie-helper.hidden { display: none; }
   /* On very small screens, shrink the toggle and give the card more breathing room */
   @media (max-width: 480px) {
@@ -2622,12 +2754,12 @@
           <div class="sub">It's Sunday 19 April — ready to plan week beginning <strong>Mon 20 April</strong>?</div>
         </div>
         <div style="display:flex; gap:8px; flex-wrap: wrap;">
-          <button class="btn btn-ghost" onclick="startMondayMorningMode()" title="Pre-fill from last week + seasonal theme, AI-generate the whole week. One tap.">
-            <span style="font-size:15px;">✨</span> Monday Morning Mode
-          </button>
-          <button class="btn btn-primary" onclick="startNewPlan()">
+          <button class="btn btn-offline" onclick="startNewPlan()" title="Open the wizard to tune the week by hand">
             <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
             New weekly plan
+          </button>
+          <button class="btn btn-ai btn-ai-lg" onclick="startMondayMorningMode()" title="Pre-fill from last week + seasonal theme, Bee drafts the whole week. One tap.">
+            <span class="ai-spark">✨</span> Monday Morning Mode
           </button>
         </div>
       </div>
@@ -2810,8 +2942,8 @@
 
         <div class="wizard-footer">
           <button class="btn btn-ghost" id="wizard-back" onclick="wizardStep(-1)">← Back</button>
-          <button class="btn btn-ghost" id="wizard-next-ai" onclick="wizardAIGenerate()" style="display:none;">✨ Let Bee draft it</button>
-          <button class="btn btn-primary" id="wizard-next" onclick="wizardStep(1)">Next →</button>
+          <button class="btn btn-offline" id="wizard-next" onclick="wizardStep(1)">Offline draft →</button>
+          <button class="btn btn-ai btn-ai-lg" id="wizard-next-ai" onclick="wizardAIGenerate()" style="display:none;"><span class="ai-spark">✨</span> Generate with Bee</button>
         </div>
       </div>
     </section>
@@ -2926,8 +3058,8 @@
             <div id="parent-note-output" class="parent-note-card" contenteditable="true"></div>
             <div style="margin-top: 12px; display:flex; gap:8px; flex-wrap: wrap;">
               <button class="btn btn-ghost btn-sm" onclick="copyParentNote()">📋 Copy text</button>
-              <button class="btn btn-ghost btn-sm" onclick="aiRewriteParentNote()" title="Let Bee rewrite this — matches this week's lessons and your tone">✨ Rewrite with Bee</button>
-              <button class="btn btn-ghost btn-sm" onclick="renderParentNote(currentPlan(), true)">↻ Offline rewrite</button>
+              <button class="btn btn-ai btn-sm" onclick="aiRewriteParentNote()" title="Let Bee rewrite this — matches this week's lessons and your tone"><span class="ai-spark">✨</span> Rewrite with Bee</button>
+              <button class="btn btn-offline btn-sm" onclick="renderParentNote(currentPlan(), true)" title="Re-run the offline generator">↻ Offline rewrite</button>
               <button class="btn btn-ghost btn-sm" onclick="printParentNote()">🖨 Print / PDF</button>
               <span class="muted" style="font-size: 12px; margin-left: auto; align-self:center;" id="pn-word-count"></span>
             </div>
@@ -2952,8 +3084,8 @@
         <div style="display:flex; gap:8px;">
           <button class="btn btn-ghost" onclick="toggleEdit()" id="edit-btn">✎ Edit</button>
           <button class="btn btn-ghost" onclick="window.print()">🖨 Print</button>
-          <button class="btn btn-ghost" onclick="openAIRegenerateModal()" title="Reshape this lesson against NCCA and your class profile">✨ Fresh draft</button>
-          <button class="btn btn-ghost" onclick="regenerateLesson()" title="Swap opening / plenary for variety">↻ Quick refresh</button>
+          <button class="btn btn-ai" onclick="openAIRegenerateModal()" title="Reshape this lesson against NCCA and your class profile"><span class="ai-spark">✨</span> Fresh draft with Bee</button>
+          <button class="btn btn-offline btn-sm" onclick="regenerateLesson()" title="Swap opening / plenary for variety — no AI">↻ Quick refresh</button>
         </div>
       </div>
 
@@ -3266,12 +3398,28 @@
      hidden entirely when the teacher's turned her off in settings. -->
 <div class="abbie-helper hidden" id="abbie-helper" role="complementary" aria-label="Abbie — your classroom companion">
   <div class="abbie-helper-card" id="abbie-helper-card">
-    <div class="ah-label" id="abbie-helper-label">Hi there!</div>
-    <p class="ah-tip" id="abbie-helper-tip">Tip content goes here.</p>
-    <div class="ah-actions">
-      <button class="primary" id="abbie-helper-next" onclick="abbieNextTip()">Got it</button>
-      <button onclick="abbieCloseBubble()">Close</button>
-      <button class="ah-quiet" onclick="abbieMuteToday()">Not now</button>
+    <!-- Tip mode: contextual single tip with dismiss controls -->
+    <div id="abbie-tip-mode">
+      <div class="ah-label" id="abbie-helper-label">Hi there!</div>
+      <p class="ah-tip" id="abbie-helper-tip">Tip content goes here.</p>
+      <div class="ah-actions">
+        <button class="primary" id="abbie-helper-next" onclick="abbieNextTip()">Got it</button>
+        <button onclick="abbieOpenChat()">💬 Ask a question</button>
+        <button class="ah-quiet" onclick="abbieMuteToday()">Not now</button>
+      </div>
+    </div>
+    <!-- Chat mode: ask-Abbie conversation -->
+    <div id="abbie-chat-mode" style="display:none;">
+      <div class="ah-chat-head">
+        <div class="ah-label">Ask Abbie</div>
+        <button class="ah-chat-close" onclick="abbieCloseChat()" aria-label="Close">×</button>
+      </div>
+      <div class="ah-chat-log" id="abbie-chat-log"></div>
+      <div class="ah-chat-suggest" id="abbie-chat-suggest"></div>
+      <form class="ah-chat-form" onsubmit="return abbieSubmitQuestion(event)">
+        <input type="text" class="ah-chat-input" id="abbie-chat-input" placeholder="Ask me anything about your week…" autocomplete="off" maxlength="800">
+        <button type="submit" class="ah-chat-send" aria-label="Send">↑</button>
+      </form>
     </div>
   </div>
   <button class="abbie-helper-toggle" id="abbie-helper-toggle" onclick="abbieToggleBubble()" aria-label="Ask Abbie">
@@ -6053,7 +6201,7 @@ function renderWizardStep() {
     s.classList.toggle('done', n < State.wizardStep);
   });
   document.getElementById('wizard-back').style.visibility = State.wizardStep === 1 ? 'hidden' : 'visible';
-  document.getElementById('wizard-next').textContent = State.wizardStep === 4 ? 'Offline generate →' : 'Next →';
+  document.getElementById('wizard-next').textContent = State.wizardStep === 4 ? 'Offline draft →' : 'Next →';
   const aiBtn = document.getElementById('wizard-next-ai');
   if (aiBtn) aiBtn.style.display = State.wizardStep === 4 ? '' : 'none';
 
@@ -10975,8 +11123,8 @@ function openAIRegenerateModal() {
     <div id="ai-regen-status" style="margin-top: 10px; font-size: 12px; color: var(--ink-soft);"></div>
   `;
   const ok = document.getElementById('modal-ok');
-  ok.textContent = '✨ Regenerate';
-  ok.className = 'btn btn-primary';
+  ok.innerHTML = '<span class="ai-spark">✨</span> Fresh draft';
+  ok.className = 'btn btn-ai btn-ai-lg';
   ok.onclick = () => runAIRegenerate(l);
   m.classList.add('show');
 }
@@ -11048,6 +11196,7 @@ async function runAIRegenerate(l) {
       </div>`;
     }
     ok.disabled = false;
+    ok.className = 'btn btn-offline';
     ok.textContent = '↻ Use offline variants instead';
     ok.onclick = () => { closeModal(); doRegenerateLesson(l); };
   }
@@ -11922,6 +12071,139 @@ function abbieSetEnabled(on) {
   saveProfileStore();
   abbieRefresh();
   toast(on ? "Abbie's back — happy to help." : "Abbie's off. Turn her back on any time from My profile.");
+}
+
+/* =========================================================================
+   ABBIE CHATBOT
+   Conversational "ask Abbie" inside the helper bubble. Keeps a short
+   rolling history in memory (not persisted), pulls view/class context
+   so answers are grounded in what the teacher's actually looking at.
+   ========================================================================= */
+const AbbieChat = {
+  history: [],  // [{role:'user'|'assistant', content:string}]
+  busy: false,
+};
+
+const ABBIE_SUGGESTIONS = {
+  dashboard:  ["How do I start a week?", "What is Monday Morning Mode?", "How do I see past plans?"],
+  plan:       ["How do I extend a lesson?", "Can I change a subject's slot?", "What's the Sub Pack?"],
+  lesson:     ["How does Fresh draft work?", "How do I override a lesson?", "Add a voice note?"],
+  library:    ["How do I archive a plan?", "Restore an archived plan?"],
+  class:      ["How do I change my grade?", "What does DES minimum mean?", "Can I set fixed slots?"],
+  themes:     ["Pick a theme for the term?", "What does a theme actually do?"],
+  default:    ["How do I generate a week?", "What is the NCCA framework?", "How do I print?"],
+};
+
+function abbieOpenChat() {
+  const helper = document.getElementById('abbie-helper');
+  const tipMode = document.getElementById('abbie-tip-mode');
+  const chatMode = document.getElementById('abbie-chat-mode');
+  if (!helper || !tipMode || !chatMode) return;
+  tipMode.style.display = 'none';
+  chatMode.style.display = 'block';
+  helper.classList.add('chat-open');
+  helper.classList.add('open');
+  AbbieState.open = true;
+  // Seed with a warm first-time message if the log's empty.
+  const log = document.getElementById('abbie-chat-log');
+  if (log && !log.children.length) {
+    abbieAppendMsg('bee', "Hi! I'm Abbie. Ask me anything about how Planner Bee works, the NCCA curriculum, or teaching this week. I'll keep it short.");
+  }
+  // Refresh suggestion chips for the current view.
+  const suggestBox = document.getElementById('abbie-chat-suggest');
+  if (suggestBox) {
+    const list = ABBIE_SUGGESTIONS[State.view] || ABBIE_SUGGESTIONS.default;
+    suggestBox.innerHTML = list.map(s =>
+      `<button type="button" class="ah-suggest-chip" onclick="abbieAskSuggestion('${s.replace(/'/g, "\\'")}')">${escape(s)}</button>`
+    ).join('');
+  }
+  setTimeout(() => document.getElementById('abbie-chat-input')?.focus(), 100);
+}
+
+function abbieCloseChat() {
+  const helper = document.getElementById('abbie-helper');
+  const tipMode = document.getElementById('abbie-tip-mode');
+  const chatMode = document.getElementById('abbie-chat-mode');
+  if (tipMode) tipMode.style.display = 'block';
+  if (chatMode) chatMode.style.display = 'none';
+  if (helper) helper.classList.remove('chat-open');
+  abbieCloseBubble();
+}
+
+function abbieAppendMsg(who, text, cls) {
+  const log = document.getElementById('abbie-chat-log');
+  if (!log) return null;
+  const div = document.createElement('div');
+  div.className = 'ah-msg ' + (who === 'you' ? 'ah-msg-you' : 'ah-msg-bee') + (cls ? ' ' + cls : '');
+  div.textContent = text;
+  log.appendChild(div);
+  log.scrollTop = log.scrollHeight;
+  return div;
+}
+
+function abbieAskSuggestion(text) {
+  const input = document.getElementById('abbie-chat-input');
+  if (input) input.value = text;
+  abbieSubmitQuestion(new Event('submit'));
+}
+
+async function abbieSubmitQuestion(evt) {
+  if (evt) evt.preventDefault();
+  if (AbbieChat.busy) return false;
+  const input = document.getElementById('abbie-chat-input');
+  const sendBtn = document.querySelector('.ah-chat-send');
+  const suggestBox = document.getElementById('abbie-chat-suggest');
+  if (!input) return false;
+  const q = (input.value || '').trim();
+  if (!q) return false;
+  input.value = '';
+  if (suggestBox) suggestBox.innerHTML = ''; // suggestions only shown up-front
+  abbieAppendMsg('you', q);
+  AbbieChat.history.push({ role: 'user', content: q });
+  AbbieChat.busy = true;
+  if (sendBtn) sendBtn.disabled = true;
+  const thinking = abbieAppendMsg('bee', 'Thinking', 'thinking');
+
+  const plan = currentPlan();
+  const l = currentLesson();
+  const P = State.profile || {};
+  const context = {
+    view: State.view,
+    grade: P.grade, pupils: P.pupils, medium: P.medium,
+    planTitle: plan?.title || null,
+    lessonTitle: l?.title || null,
+    subject: l?.subject || null,
+  };
+
+  try {
+    const resp = await fetch('/api/ask-abbie', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({
+        question: q,
+        history: AbbieChat.history.slice(-6, -1), // everything except the turn we just added
+        context,
+      }),
+    });
+    if (!resp.ok) {
+      const err = await resp.json().catch(() => ({}));
+      throw new Error(err.error || `HTTP ${resp.status}`);
+    }
+    const data = await resp.json();
+    if (thinking) thinking.remove();
+    const answer = data.answer || "I'm not sure — try rephrasing?";
+    abbieAppendMsg('bee', answer);
+    AbbieChat.history.push({ role: 'assistant', content: answer });
+    try { logEvent('abbie_question', { view: State.view, length: q.length }); } catch(e) {}
+  } catch (e) {
+    if (thinking) thinking.remove();
+    abbieAppendMsg('bee', (e.message || "I couldn't reach myself there. Try again in a moment?"), 'ah-msg-err');
+  } finally {
+    AbbieChat.busy = false;
+    if (sendBtn) sendBtn.disabled = false;
+    input.focus();
+  }
+  return false;
 }
 
 /* =========================================================================
