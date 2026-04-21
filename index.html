@@ -364,40 +364,65 @@
      which one to reach for first.
      ========================================================================= */
   .btn-ai {
-    background: linear-gradient(135deg, #E8B739 0%, #D4A72C 50%, #C48A1A 100%);
-    color: #3A2A0A; border: none;
-    box-shadow: 0 2px 6px rgba(196, 138, 26, 0.30), 0 1px 2px rgba(59, 42, 10, 0.10), inset 0 1px 0 rgba(255,255,255,0.35);
+    /* Deep amber gradient — richer progression, better text contrast.
+       Top is warm honey, bottom is deep toffee, so the button feels
+       three-dimensional like a honeycomb cell under soft light. */
+    background: linear-gradient(180deg, #F5C84A 0%, #D4A72C 40%, #9E7213 100%);
+    color: #2B1906;
+    border: none;
     font-weight: 700;
+    letter-spacing: 0.005em;
+    /* Subtle highlight ↑ / shadow ↓ so text sits clearly on the gradient */
+    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.4);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.55),
+      inset 0 -2px 0 rgba(110, 75, 10, 0.35),
+      0 2px 8px rgba(158, 114, 19, 0.32);
     position: relative;
-    transition: transform 0.12s, box-shadow 0.15s, filter 0.15s, clip-path 0.15s;
+    transition: transform 0.12s, box-shadow 0.15s, filter 0.15s;
   }
+  .btn-ai:hover {
+    filter: brightness(1.04);
+    transform: translateY(-1px);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.6),
+      inset 0 -2px 0 rgba(110, 75, 10, 0.38),
+      0 6px 18px rgba(158, 114, 19, 0.42);
+  }
+  .btn-ai:active { transform: translateY(0); filter: brightness(0.97); }
+  .btn-ai:disabled { opacity: 0.55; cursor: not-allowed; filter: none; transform: none; }
+  .btn-ai .ai-spark {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 14px; height: 14px;
+    animation: ai-spark 2.6s ease-in-out infinite;
+  }
+  .btn-ai .ai-spark svg { width: 100%; height: 100%; display: block; }
 
   /* =========================================================================
-     HONEYCOMB BUTTON SHAPE — primary buttons (btn-primary and btn-ai) get
-     a jagged hex-cell right edge, with the left corners cut to match. The
-     button reads as a single honeycomb cell, not a rectangle with decoration.
-     Applied via clip-path so it's pure CSS — no SVG assets, no extra DOM.
+     HONEYCOMB BUTTON SHAPE — primary buttons get a jagged hex-cell right
+     edge. Each hex cell contributes FOUR vertices on the right edge (top-
+     angle-in → top-right-corner → bottom-right-corner → bottom-angle-in)
+     rather than a single peak, giving a proper flat-sided hex silhouette
+     instead of diamond/sawtooth points.
      ========================================================================= */
   .btn-primary, .btn-ai {
-    /* Hex-cell silhouette: left corners nicked, right edge cuts into
-       two peaks/valleys to form two adjacent honeycomb cells. The peaks
-       bite outward past the text area, the valleys pull back inward. */
     clip-path: polygon(
-      6px 0,
-      calc(100% - 10px) 0,
-      100% 25%,
-      calc(100% - 10px) 50%,
-      100% 75%,
-      calc(100% - 10px) 100%,
-      6px 100%,
+      6px 0,                         /* top-left nicked corner */
+      calc(100% - 14px) 0,           /* top edge flat to here */
+      100% 12%,                      /* hex 1: top-right corner */
+      100% 38%,                      /* hex 1: bottom-right corner (flat vertical side) */
+      calc(100% - 14px) 50%,         /* shared inner valley between hex 1 + 2 */
+      100% 62%,                      /* hex 2: top-right corner */
+      100% 88%,                      /* hex 2: bottom-right corner */
+      calc(100% - 14px) 100%,        /* bottom edge flat to here */
+      6px 100%,                      /* bottom-left nicked corner */
       0 calc(100% - 6px),
       0 6px
     );
     border-radius: 0;
-    padding-right: 28px;   /* keep label clear of the hex peaks */
-    padding-left: 20px;    /* match the left corner cuts for balance */
+    padding-right: 32px;
+    padding-left: 20px;
   }
-  .btn-ai { padding-right: 32px; }
 
   /* Opt-out utility + small buttons don't get the hex shape */
   .btn-primary.no-honey, .btn-ai.no-honey {
@@ -410,22 +435,11 @@
     border-radius: 8px;
     padding-left: 12px; padding-right: 12px;
   }
-  .btn-ai:hover {
-    filter: brightness(1.06);
-    transform: translateY(-1px);
-    box-shadow: 0 6px 18px rgba(196, 138, 26, 0.40), 0 2px 4px rgba(59, 42, 10, 0.14), inset 0 1px 0 rgba(255,255,255,0.45);
-  }
-  .btn-ai:active { transform: translateY(0); filter: brightness(0.98); }
-  .btn-ai:disabled { opacity: 0.6; cursor: not-allowed; filter: none; transform: none; }
-  .btn-ai .ai-spark {
-    display: inline-block; margin-right: 2px; font-size: 1em;
-    animation: ai-spark 2.4s ease-in-out infinite;
-  }
   @keyframes ai-spark {
     0%, 100% { transform: scale(1) rotate(0deg); opacity: 1; }
-    50%      { transform: scale(1.2) rotate(-8deg); opacity: 0.85; }
+    50%      { transform: scale(1.25) rotate(-10deg); opacity: 0.85; }
   }
-  .btn-ai-lg { padding: 14px 22px; font-size: 15px; border-radius: 12px; }
+  .btn-ai-lg { padding: 14px 26px; font-size: 15px; }
   /* Offline counterpart — deliberately quiet */
   .btn-offline {
     background: var(--surface); color: var(--ink-soft);
@@ -3155,12 +3169,12 @@
           <div class="sub">It's Sunday 19 April — ready to plan week beginning <strong>Mon 20 April</strong>?</div>
         </div>
         <div style="display:flex; gap:8px; flex-wrap: wrap;">
-          <button class="btn btn-offline" onclick="startNewPlan()" title="Open the wizard to tune the week by hand">
+          <button class="btn btn-offline" onclick="startNewPlan()" title="Open the wizard to build the week yourself — no AI">
             <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
-            New weekly plan
+            Manual Generation
           </button>
-          <button class="btn btn-ai btn-ai-lg" onclick="startMondayMorningMode()" title="Pre-fill from last week + seasonal theme, Bee drafts the whole week. One tap.">
-            <span class="ai-spark">✨</span> Monday Morning Mode
+          <button class="btn btn-ai btn-ai-lg" onclick="startMondayMorningMode()" title="Bee drafts the whole week in about a minute — pitched to your class, grounded in NCCA">
+            <span class="ai-spark"><svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0.5 L9.6 5.6 L14.8 7.3 L9.6 9 L8 14.1 L6.4 9 L1.2 7.3 L6.4 5.6 Z"/></svg></span> AI Generate
           </button>
         </div>
       </div>
@@ -3346,7 +3360,7 @@
         <div class="wizard-footer">
           <button class="btn btn-ghost" id="wizard-back" onclick="wizardStep(-1)">← Back</button>
           <button class="btn btn-offline" id="wizard-next" onclick="wizardStep(1)">Offline draft →</button>
-          <button class="btn btn-ai btn-ai-lg" id="wizard-next-ai" onclick="wizardAIGenerate()" style="display:none;"><span class="ai-spark">✨</span> Generate with Bee</button>
+          <button class="btn btn-ai btn-ai-lg" id="wizard-next-ai" onclick="wizardAIGenerate()" style="display:none;"><span class="ai-spark"><svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0.5 L9.6 5.6 L14.8 7.3 L9.6 9 L8 14.1 L6.4 9 L1.2 7.3 L6.4 5.6 Z"/></svg></span> Generate with Bee</button>
         </div>
       </div>
     </section>
@@ -3461,7 +3475,7 @@
             <div id="parent-note-output" class="parent-note-card" contenteditable="true"></div>
             <div style="margin-top: 12px; display:flex; gap:8px; flex-wrap: wrap;">
               <button class="btn btn-ghost btn-sm" onclick="copyParentNote()">📋 Copy text</button>
-              <button class="btn btn-ai btn-sm" onclick="aiRewriteParentNote()" title="Let Bee rewrite this — matches this week's lessons and your tone"><span class="ai-spark">✨</span> Rewrite with Bee</button>
+              <button class="btn btn-ai btn-sm" onclick="aiRewriteParentNote()" title="Let Bee rewrite this — matches this week's lessons and your tone"><span class="ai-spark"><svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0.5 L9.6 5.6 L14.8 7.3 L9.6 9 L8 14.1 L6.4 9 L1.2 7.3 L6.4 5.6 Z"/></svg></span> Rewrite with Bee</button>
               <button class="btn btn-offline btn-sm" onclick="renderParentNote(currentPlan(), true)" title="Re-run the offline generator">↻ Offline rewrite</button>
               <button class="btn btn-ghost btn-sm" onclick="printParentNote()">🖨 Print / PDF</button>
               <span class="muted" style="font-size: 12px; margin-left: auto; align-self:center;" id="pn-word-count"></span>
@@ -3487,7 +3501,7 @@
         <div style="display:flex; gap:8px;">
           <button class="btn btn-ghost" onclick="toggleEdit()" id="edit-btn">✎ Edit</button>
           <button class="btn btn-ghost" onclick="window.print()">🖨 Print</button>
-          <button class="btn btn-ai" onclick="openAIRegenerateModal()" title="Rewrite this lesson with Bee, grounded in your direction + NCCA"><span class="ai-spark">✨</span> Regenerate</button>
+          <button class="btn btn-ai" onclick="openAIRegenerateModal()" title="Rewrite this lesson with Bee, grounded in your direction + NCCA"><span class="ai-spark"><svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0.5 L9.6 5.6 L14.8 7.3 L9.6 9 L8 14.1 L6.4 9 L1.2 7.3 L6.4 5.6 Z"/></svg></span> Regenerate</button>
           <button class="btn btn-offline btn-sm" onclick="regenerateLesson()" title="Swap opening / plenary for variety — no AI">↻ Quick refresh</button>
         </div>
       </div>
@@ -6556,7 +6570,7 @@ function renderTodayPanel() {
         <path d="M22 34h20M22 42h14"/>
       </svg>
       <div class="today-empty">No plan for this week yet — let's build one le chéile.</div>
-      <div class="today-mini-cta"><button class="btn btn-primary btn-sm" onclick="startNewPlan()">+ New weekly plan</button></div>
+      <div class="today-mini-cta"><button class="btn btn-primary btn-sm" onclick="startNewPlan()">+ Manual Generation</button></div>
     `;
     return;
   }
@@ -10532,7 +10546,7 @@ function renderCuntas(plan) {
       ${plan.cuntasAi ? `<span class="ai-badge">Bee-regenerated · ${escape(new Date(plan.cuntasAi.generatedAt).toLocaleDateString('en-IE', { day: 'numeric', month: 'short' }))}</span>` : `<span class="faint" style="font-size:12px;">Offline template — good for a quick draft.</span>`}
     </div>
     <div class="cuntas-toolbar-actions">
-      <button class="btn btn-ai btn-sm no-honey" onclick="generateCuntasAI()" title="Write a fuller Cúntas from what was actually taught + your feedback"><span class="ai-spark">✨</span> Regenerate with Bee</button>
+      <button class="btn btn-ai btn-sm no-honey" onclick="generateCuntasAI()" title="Write a fuller Cúntas from what was actually taught + your feedback"><span class="ai-spark"><svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0.5 L9.6 5.6 L14.8 7.3 L9.6 9 L8 14.1 L6.4 9 L1.2 7.3 L6.4 5.6 Z"/></svg></span> Regenerate with Bee</button>
       ${plan.cuntasAi ? `<button class="btn btn-offline btn-sm" onclick="clearCuntasAI()">Back to offline</button>` : ''}
       <button class="btn btn-ghost btn-sm" onclick="copyCuntasToClipboard()">📋 Copy</button>
     </div>
@@ -10924,7 +10938,7 @@ function renderLessonHomework(l) {
           <p style="margin: 0 0 14px; color: var(--ink-soft); font-size: 14px;">Tell Bee what should be on the take-home — or just hit Generate and we'll pick up what's already set for this lesson.</p>
           <textarea id="hw-teacher-note" placeholder="Optional · e.g. Keep it to 15 minutes. / Focus only on the first two sums we did in class." style="width: 100%; max-width: 520px; min-height: 56px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 8px; font-family: inherit; font-size: 13px; resize: vertical; margin-bottom: 10px;"></textarea>
           <div>
-            <button class="btn btn-ai" onclick="generateHomework()"><span class="ai-spark">✨</span> Generate homework</button>
+            <button class="btn btn-ai" onclick="generateHomework()"><span class="ai-spark"><svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0.5 L9.6 5.6 L14.8 7.3 L9.6 9 L8 14.1 L6.4 9 L1.2 7.3 L6.4 5.6 Z"/></svg></span> Generate homework</button>
           </div>
           <div id="hw-status" class="faint" style="margin-top: 12px; font-size: 12px;"></div>
         </div>
@@ -10972,7 +10986,7 @@ function renderLessonHomework(l) {
       ${hw.parentNote ? `
         <div class="callout callout-primary"><h4>Note for parents</h4><p style="margin:0;">${escape(hw.parentNote)}</p></div>` : ''}
       <div class="hw-actions no-print">
-        <button class="btn btn-ai btn-sm" onclick="generateHomework(true)" title="Generate a different version"><span class="ai-spark">✨</span> Regenerate</button>
+        <button class="btn btn-ai btn-sm" onclick="generateHomework(true)" title="Generate a different version"><span class="ai-spark"><svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0.5 L9.6 5.6 L14.8 7.3 L9.6 9 L8 14.1 L6.4 9 L1.2 7.3 L6.4 5.6 Z"/></svg></span> Regenerate</button>
         <button class="btn btn-ghost btn-sm" onclick="printHomework()">🖨 Print</button>
         <button class="btn btn-ghost btn-sm" onclick="copyHomework()">📋 Copy text</button>
         <button class="btn btn-ghost btn-sm" onclick="clearHomework()" style="color: #b2382a;">Clear</button>
@@ -12263,7 +12277,7 @@ function openAIRegenerateModal() {
     <div id="ai-regen-status" style="margin-top: 10px; font-size: 12px; color: var(--ink-soft);"></div>
   `;
   const ok = document.getElementById('modal-ok');
-  ok.innerHTML = '<span class="ai-spark">✨</span> Regenerate';
+  ok.innerHTML = '<span class="ai-spark"><svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0.5 L9.6 5.6 L14.8 7.3 L9.6 9 L8 14.1 L6.4 9 L1.2 7.3 L6.4 5.6 Z"/></svg></span> Regenerate';
   ok.className = 'btn btn-ai btn-ai-lg';
   ok.onclick = () => runAIRegenerate(l);
   m.classList.add('show');
@@ -13477,7 +13491,7 @@ const RateLimit = {
    ========================================================================= */
 const ABBIE_TIPS = {
   dashboard: [
-    { id: 'dash-welcome',  label: 'Welcome in',       text: "This is home base — any weeks you've planned live here. Hit <strong>Monday Morning Mode</strong> up top to have a full week drafted in about a minute." },
+    { id: 'dash-welcome',  label: 'Welcome in',       text: "This is home base — any weeks you've planned live here. Hit <strong>AI Generate</strong> up top to have a full week drafted in about a minute, or <strong>Manual Generation</strong> to build it yourself in the wizard." },
     { id: 'dash-rightnow', label: 'The live card',    text: "The big card at the top shows what's on right now, or what's coming next. It quietly updates during the day — handy at the start of a lesson." },
     { id: 'dash-insights', label: 'Your patterns',    text: "Over time the <strong>Your patterns</strong> card surfaces what's landing with your class and what isn't. The more you rate lessons, the more useful it gets." },
   ],
@@ -13644,7 +13658,7 @@ function abbiePersistChat() {
 }
 
 const ABBIE_SUGGESTIONS = {
-  dashboard:  ["How do I start a week?", "What is Monday Morning Mode?", "How do I see past plans?"],
+  dashboard:  ["How do I start a week?", "What does AI Generate do?", "AI Generate vs Manual Generation?", "How do I see past plans?"],
   plan:       ["How do I extend a lesson?", "Can I change a subject's slot?", "What's the Sub Pack?"],
   lesson:     ["How does Regenerate use my direction?", "How do I override a lesson?", "Add a voice note?"],
   library:    ["How do I archive a plan?", "Restore an archived plan?"],
