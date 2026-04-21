@@ -363,78 +363,91 @@
      gentle glow. Offline fallbacks are ghost and smaller so teachers see
      which one to reach for first.
      ========================================================================= */
+  /* =========================================================================
+     PRIMARY BUTTONS — redesigned from scratch. Two tiers, no clip-path,
+     no gradient sludge. Clean rounded rectangles with clear hierarchy.
+
+     • btn-primary: solid forest green — the default "do it" action.
+     • btn-ai:      solid honey amber with a tiny hex chip badge as the
+                    brand identity marker (replaces the sawtooth edge).
+
+     Both get a soft elevation shadow, 2px active-state shift, and
+     focus-visible ring for keyboard users. Padding + sizes handled by
+     .btn / .btn-sm / .btn-ai-lg.
+     ========================================================================= */
+  .btn-primary {
+    background: #2D5F3F;
+    color: #FFFFFF;
+    border: none;
+    border-radius: 10px;
+    font-weight: 600;
+    letter-spacing: 0.005em;
+    box-shadow:
+      0 1px 0 rgba(255, 255, 255, 0.14) inset,
+      0 2px 5px rgba(45, 95, 63, 0.25),
+      0 1px 1px rgba(0, 0, 0, 0.04);
+    transition: background 0.15s, transform 0.1s, box-shadow 0.15s;
+  }
+  .btn-primary:hover {
+    background: #25513A;
+    box-shadow:
+      0 1px 0 rgba(255, 255, 255, 0.18) inset,
+      0 4px 10px rgba(45, 95, 63, 0.30),
+      0 1px 2px rgba(0, 0, 0, 0.05);
+  }
+  .btn-primary:active { transform: translateY(1px); box-shadow: 0 1px 2px rgba(45, 95, 63, 0.2); }
+  .btn-primary:disabled { background: var(--line-strong); cursor: not-allowed; box-shadow: none; transform: none; }
+
   .btn-ai {
-    /* Deep amber gradient — richer progression, better text contrast.
-       Top is warm honey, bottom is deep toffee, so the button feels
-       three-dimensional like a honeycomb cell under soft light. */
-    background: linear-gradient(180deg, #F5C84A 0%, #D4A72C 40%, #9E7213 100%);
+    background: #D4A72C;
     color: #2B1906;
     border: none;
+    border-radius: 10px;
     font-weight: 700;
     letter-spacing: 0.005em;
-    /* Subtle highlight ↑ / shadow ↓ so text sits clearly on the gradient */
-    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.4);
     box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 0.55),
-      inset 0 -2px 0 rgba(110, 75, 10, 0.35),
-      0 2px 8px rgba(158, 114, 19, 0.32);
-    position: relative;
-    transition: transform 0.12s, box-shadow 0.15s, filter 0.15s;
+      0 1px 0 rgba(255, 255, 255, 0.40) inset,
+      0 -1px 0 rgba(110, 75, 10, 0.25) inset,
+      0 2px 5px rgba(158, 114, 19, 0.28),
+      0 1px 1px rgba(0, 0, 0, 0.04);
+    transition: background 0.15s, transform 0.1s, box-shadow 0.15s;
   }
   .btn-ai:hover {
-    filter: brightness(1.04);
-    transform: translateY(-1px);
+    background: #C09522;
     box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 0.6),
-      inset 0 -2px 0 rgba(110, 75, 10, 0.38),
-      0 6px 18px rgba(158, 114, 19, 0.42);
+      0 1px 0 rgba(255, 255, 255, 0.45) inset,
+      0 -1px 0 rgba(110, 75, 10, 0.28) inset,
+      0 4px 12px rgba(158, 114, 19, 0.36),
+      0 1px 2px rgba(0, 0, 0, 0.05);
   }
-  .btn-ai:active { transform: translateY(0); filter: brightness(0.97); }
-  .btn-ai:disabled { opacity: 0.55; cursor: not-allowed; filter: none; transform: none; }
+  .btn-ai:active { transform: translateY(1px); box-shadow: 0 1px 2px rgba(158, 114, 19, 0.25); }
+  .btn-ai:disabled { opacity: 0.55; cursor: not-allowed; box-shadow: none; transform: none; }
+
+  /* The sparkle that precedes AI button labels. Small inline SVG, dark
+     amber so it reads clearly on the honey background. */
   .btn-ai .ai-spark {
     display: inline-flex; align-items: center; justify-content: center;
-    width: 14px; height: 14px;
+    width: 13px; height: 13px;
     animation: ai-spark 2.6s ease-in-out infinite;
   }
   .btn-ai .ai-spark svg { width: 100%; height: 100%; display: block; }
+  @keyframes ai-spark {
+    0%, 100% { transform: scale(1) rotate(0); opacity: 1; }
+    50%      { transform: scale(1.25) rotate(-10deg); opacity: 0.85; }
+  }
+  .btn-ai-lg { padding: 13px 24px; font-size: 15px; }
 
-  /* =========================================================================
-     HONEYCOMB BUTTON SHAPE — primary buttons get a jagged hex-cell right
-     edge. Each hex cell contributes FOUR vertices on the right edge (top-
-     angle-in → top-right-corner → bottom-right-corner → bottom-angle-in)
-     rather than a single peak, giving a proper flat-sided hex silhouette
-     instead of diamond/sawtooth points.
-     ========================================================================= */
-  .btn-primary, .btn-ai {
-    clip-path: polygon(
-      6px 0,                         /* top-left nicked corner */
-      calc(100% - 14px) 0,           /* top edge flat to here */
-      100% 12%,                      /* hex 1: top-right corner */
-      100% 38%,                      /* hex 1: bottom-right corner (flat vertical side) */
-      calc(100% - 14px) 50%,         /* shared inner valley between hex 1 + 2 */
-      100% 62%,                      /* hex 2: top-right corner */
-      100% 88%,                      /* hex 2: bottom-right corner */
-      calc(100% - 14px) 100%,        /* bottom edge flat to here */
-      6px 100%,                      /* bottom-left nicked corner */
-      0 calc(100% - 6px),
-      0 6px
-    );
-    border-radius: 0;
-    padding-right: 32px;
-    padding-left: 20px;
+  /* Keyboard focus ring for both primary tiers. */
+  .btn-primary:focus-visible,
+  .btn-ai:focus-visible {
+    outline: none;
+    box-shadow:
+      0 0 0 3px rgba(255, 255, 255, 0.9),
+      0 0 0 5px var(--primary);
   }
 
-  /* Opt-out utility + small buttons don't get the hex shape */
-  .btn-primary.no-honey, .btn-ai.no-honey {
-    clip-path: none;
-    border-radius: 8px;
-    padding-left: 16px; padding-right: 16px;
-  }
-  .btn-sm.btn-primary, .btn-sm.btn-ai {
-    clip-path: none;
-    border-radius: 8px;
-    padding-left: 12px; padding-right: 12px;
-  }
+  /* Legacy opt-out flag kept working — everything's already no-clip now. */
+  .btn-primary.no-honey, .btn-ai.no-honey { border-radius: 10px; }
   @keyframes ai-spark {
     0%, 100% { transform: scale(1) rotate(0deg); opacity: 1; }
     50%      { transform: scale(1.25) rotate(-10deg); opacity: 0.85; }
@@ -559,6 +572,122 @@
     background: var(--primary-soft); color: var(--primary);
     border-radius: 10px; font-size: 13px;
   }
+
+  /* =========================================================================
+     TEMPLATES VIEW + picker + per-lesson banner
+     ========================================================================= */
+  .tpl-empty {
+    display: flex; gap: 20px; align-items: flex-start;
+    background: var(--surface); border: 1px dashed var(--line-strong);
+    border-radius: 14px; padding: 28px 30px; max-width: 760px;
+  }
+  .tpl-empty .abbie { flex-shrink: 0; }
+
+  .tpl-defaults { margin-bottom: 22px; }
+  .tpl-defaults-card {
+    background: var(--primary-soft); border: 1px solid rgba(45, 95, 63, 0.18);
+    border-radius: 12px; padding: 16px 20px;
+  }
+  .tpl-defaults-card h4 {
+    margin: 0 0 10px; font-family: 'Fraunces', serif; font-size: 14px;
+    letter-spacing: 0.02em; color: var(--primary);
+  }
+  .tpl-defaults-list { display: flex; flex-wrap: wrap; gap: 12px 18px; }
+  .tpl-default-entry { display: flex; align-items: center; gap: 6px; font-size: 13px; }
+  .tpl-default-arrow { color: var(--ink-faint); font-size: 11px; }
+  .tpl-default-name { font-weight: 600; color: var(--ink); }
+  .tpl-defaults-hint { margin-top: 8px; font-size: 12px; color: var(--ink-soft); line-height: 1.5; }
+
+  .tpl-grid {
+    display: grid; gap: 14px;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  }
+  .tpl-card {
+    background: var(--surface); border: 1px solid var(--line);
+    border-radius: 14px; padding: 16px 18px;
+    display: flex; flex-direction: column; gap: 8px;
+    box-shadow: var(--shadow-sm);
+  }
+  .tpl-card-head {
+    display: flex; justify-content: space-between; align-items: flex-start;
+    gap: 10px;
+  }
+  .tpl-card-subject { font-size: 11px; display: flex; gap: 4px; align-items: center; margin-bottom: 4px; }
+  .tpl-card-name {
+    font-family: 'Fraunces', serif; font-weight: 600;
+    font-size: 16px; line-height: 1.25;
+  }
+  .tpl-card-actions { display: flex; gap: 4px; flex-shrink: 0; }
+  .tpl-action-btn {
+    width: 28px; height: 28px; border-radius: 6px;
+    border: none; background: transparent; color: var(--ink-faint);
+    cursor: pointer; font-size: 14px; line-height: 1;
+    display: grid; place-items: center;
+  }
+  .tpl-action-btn:hover { background: var(--surface-alt); color: var(--ink); }
+  .tpl-card-summary {
+    margin: 0; font-size: 13px; line-height: 1.5;
+    color: var(--ink-soft);
+  }
+  .tpl-card-tags { display: flex; flex-wrap: wrap; gap: 4px; }
+  .tpl-tag {
+    display: inline-block; padding: 2px 8px;
+    background: var(--surface-alt); color: var(--ink-soft);
+    border-radius: 999px; font-size: 11px;
+  }
+  .tpl-card-foot {
+    margin-top: auto; padding-top: 8px; font-size: 11px; color: var(--ink-faint);
+    border-top: 1px solid var(--line);
+  }
+
+  /* Picker modal */
+  .tpl-picker-list {
+    display: flex; flex-direction: column; gap: 6px;
+    max-height: 400px; overflow-y: auto; padding: 2px;
+  }
+  .tpl-picker-item {
+    text-align: left; background: var(--surface);
+    border: 1px solid var(--line); border-radius: 10px;
+    padding: 12px 14px; cursor: pointer; font-family: inherit;
+    transition: all 0.12s;
+  }
+  .tpl-picker-item:hover { border-color: var(--primary); background: var(--primary-soft); }
+  .tpl-picker-item.tpl-match { border-color: var(--primary); }
+  .tpl-pick-name {
+    font-family: 'Fraunces', serif; font-weight: 600; font-size: 14px;
+    margin-bottom: 2px; color: var(--ink);
+  }
+  .tpl-pick-meta { font-size: 11px; color: var(--ink-soft); }
+  .tpl-default-chip {
+    display: inline-block; padding: 1px 6px;
+    background: var(--primary); color: white;
+    border-radius: 6px; font-size: 10px; font-weight: 600;
+    letter-spacing: 0.04em; vertical-align: middle; margin-left: 4px;
+  }
+
+  /* "Always use for this subject" checkbox row (modal) */
+  .tpl-default-row {
+    display: flex; gap: 10px; align-items: flex-start;
+    padding: 10px 12px; background: var(--surface-alt);
+    border-radius: 8px; cursor: pointer; margin-top: 8px;
+  }
+  .tpl-default-row input { margin-top: 3px; flex-shrink: 0; }
+  .tpl-default-title {
+    font-weight: 600; font-size: 13px; color: var(--ink);
+  }
+  .tpl-default-hint {
+    font-size: 11px; color: var(--ink-soft); line-height: 1.45; margin-top: 2px;
+  }
+
+  /* In-lesson "template applied" banner */
+  .template-banner {
+    display: flex; align-items: center; gap: 12px;
+    background: var(--surface-alt); border: 1px solid var(--line);
+    border-radius: 10px; padding: 10px 14px; margin-bottom: 14px;
+  }
+  .template-banner .tb-icon { font-size: 16px; }
+  .template-banner .tb-text { flex: 1; font-size: 13px; color: var(--ink); }
+  .template-banner .tb-text strong { font-family: 'Fraunces', serif; }
 
   /* Friday reflection — dashboard prompt + full walk-through */
   .reflection-prompt {
@@ -1656,9 +1785,7 @@
     transition: transform 0.1s, background 0.15s, box-shadow 0.15s;
   }
   .btn:active { transform: translateY(1px); }
-  .btn-primary { background: var(--primary); color: var(--primary-ink); box-shadow: var(--shadow-sm); }
-  .btn-primary:hover { background: #25513a; box-shadow: var(--shadow); }
-  .btn-primary:disabled { background: var(--line-strong); cursor: not-allowed; box-shadow: none; }
+  /* .btn-primary + .btn-ai live in the "PRIMARY BUTTONS" block higher up. */
   .btn-ghost { background: transparent; color: var(--ink); border: 1px solid var(--line); }
   .btn-ghost:hover { background: var(--surface-alt); }
   .btn-accent { background: var(--accent); color: white; }
@@ -2685,6 +2812,10 @@
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="13.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="10.5" r="2.5"/><circle cx="8.5" cy="7.5" r="2.5"/><circle cx="6.5" cy="12.5" r="2.5"/><path d="M12 2a10 10 0 1 0 10 10c0-.46-.04-.92-.1-1.36-.22 1.23-1.34 2.36-2.9 2.36-2 0-3-1-3-3 0-1.4.83-2.16 2-2.52A7 7 0 1 0 12 2z"/></svg>
       Themes
     </button>
+    <button class="nav-item" data-nav="templates" onclick="goto('templates')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 L21 7 L21 17 L12 22 L3 17 L3 7 Z"/><path d="M12 7 L17 9.5 L17 14.5 L12 17 L7 14.5 L7 9.5 Z"/></svg>
+      Templates
+    </button>
     <div class="nav-section-label">Settings</div>
     <button class="nav-item" data-nav="class" onclick="goto('class')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
@@ -3498,8 +3629,10 @@
           <div class="muted" id="lesson-subtitle">—</div>
           <div class="lesson-pills" id="lesson-pills"></div>
         </div>
-        <div style="display:flex; gap:8px;">
+        <div style="display:flex; gap:8px; flex-wrap: wrap;">
           <button class="btn btn-ghost" onclick="toggleEdit()" id="edit-btn">✎ Edit</button>
+          <button class="btn btn-ghost" onclick="openApplyTemplateModal()" title="Start this lesson from a saved template">📋 Templates</button>
+          <button class="btn btn-ghost" onclick="openSaveTemplateModal()" title="Save this lesson's shape as a reusable template">💾 Save as template</button>
           <button class="btn btn-ghost" onclick="window.print()">🖨 Print</button>
           <button class="btn btn-ai" onclick="openAIRegenerateModal()" title="Rewrite this lesson with Bee, grounded in your direction + NCCA"><span class="ai-spark"><svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0.5 L9.6 5.6 L14.8 7.3 L9.6 9 L8 14.1 L6.4 9 L1.2 7.3 L6.4 5.6 Z"/></svg></span> Regenerate</button>
           <button class="btn btn-offline btn-sm" onclick="regenerateLesson()" title="Swap opening / plenary for variety — no AI">↻ Quick refresh</button>
@@ -3618,6 +3751,22 @@
         </div>
       </div>
       <div class="theme-grid" id="themes-gallery"></div>
+    </section>
+
+    <!-- ============ TEMPLATES ============ -->
+    <section id="view-templates" class="view">
+      <div class="page-head">
+        <div class="title-block">
+          <h1>Lesson templates</h1>
+          <div class="sub">Save any lesson shape you love — structure, outcomes, differentiation, the lot. Reuse it from the wizard, apply it to any lesson, or set one as the default so every new lesson of that subject starts there.</div>
+        </div>
+        <div style="display:flex; gap:8px; flex-wrap: wrap;">
+          <button class="btn btn-ghost" onclick="openTemplatesHelp()">What are templates?</button>
+        </div>
+      </div>
+      <div id="templates-empty" style="display:none;"></div>
+      <div id="templates-defaults" class="tpl-defaults no-print"></div>
+      <div id="templates-grid" class="tpl-grid"></div>
     </section>
 
     <!-- ============ PROFILE ============ -->
@@ -5347,6 +5496,10 @@ const DEFAULT_PROFILE = {
   subjectEmojis: (() => { const o = {}; SUBJECTS.forEach(s => o[s.id] = s.emoji); return o; })(),
   // School day structure — grade-aware (default '2nd' → 1st-6th tier, so 14:40 end).
   ...defaultSchoolTimesForGrade('2nd'),
+  // Teacher-built lesson templates. Each item carries a full lesson-content
+  // snapshot (plan, outcomes, vocab, resources, diff, guide) plus metadata
+  // (name, tags, subject, defaultForSubject). See buildTemplateFromLesson().
+  templates: [],
   // Fixed slots — e.g. { subject:'pe', day:'Tuesday', minutes:120, note:'Hall booked' }
   // These are honoured first when the auto-balancer generates a week.
   fixedSlots: [
@@ -5747,6 +5900,7 @@ const VIEW_TO_PATH = {
   lesson:     '/lesson',
   library:    '/my-plans',
   themes:     '/themes',
+  templates:  '/templates',
   class:      '/profile',
   create:     '/new-plan',
   // `generating` is a transient in-flight view — don't give it a URL.
@@ -5762,6 +5916,7 @@ const PATH_TO_VIEW = {
   '/lesson':     'lesson',
   '/my-plans':   'library',
   '/themes':     'themes',
+  '/templates':  'templates',
   '/profile':    'class',
   '/new-plan':   'create',
 };
@@ -5774,6 +5929,7 @@ const VIEW_TITLES = {
   lesson:     'Lesson · Planner Bee',
   library:    'My plans · Planner Bee',
   themes:     'Themes · Planner Bee',
+  templates:  'Lesson templates · Planner Bee',
   class:      'My profile · Planner Bee',
   create:     'New plan · Planner Bee',
   generating: 'Drafting… · Planner Bee',
@@ -5812,6 +5968,7 @@ function goto(view, opts = {}) {
   try { mountAbbie(el); } catch(e) {}
   // Refresh the floating Abbie helper for this view (hides on landing/onboarding via CSS).
   try { abbieRefresh(); } catch(e) {}
+  if (view === 'templates') renderTemplatesView();
   if (view === 'dashboard') renderDashboard();
   if (view === 'library') renderLibrary();
   if (view === 'themes') renderThemes();
@@ -6025,7 +6182,7 @@ function renderNowHero() {
     const remaining = currentLesson.endMin - nowMins;
     const pct = Math.min(100, Math.max(0, Math.round((elapsed / total) * 100)));
     mount.innerHTML = nowHeroCard({
-      kicker: `<span class="nh-pulse"></span> Right now · ${currentLesson.startStr}–${currentLesson.endStr}`,
+      kicker: `Right now · ${currentLesson.startStr}–${currentLesson.endStr}`,
       emoji: emojiFor(currentLesson.subject),
       subject: subjectLabel(currentLesson.subject),
       title: currentLesson.title,
@@ -7319,6 +7476,10 @@ function generatePlan() {
       clearInterval(interval);
       setTimeout(() => {
         const plan = buildPlanFromDraft();
+        // Before the plan goes live, apply any default templates the teacher
+        // has marked "always use" for a subject. AI Generate uses per-lesson
+        // direction instead, so this only runs in the offline path.
+        try { applyDefaultTemplatesToPlan(plan); } catch(e) { console.warn('template apply failed', e); }
         State.plans.push(plan);
         State.currentPlanId = plan.id;
         save();
@@ -11294,6 +11455,17 @@ function renderLessonPlan(l) {
       <button class="btn btn-ghost" onclick="saveLessonVariant()" title="Save this version so you can come back to it">💾 Save this version</button>
       ${l._preAI ? `<button class="btn btn-ghost" onclick="revertAIRegeneration()">↺ Revert</button>` : ''}
     </div>` : '';
+  // Template banner — a calmer note when a template's been applied recently.
+  const templateBanner = (l.templateAppliedAt && !l.aiGeneratedAt) ? (() => {
+    const tpl = (State.profile.templates || []).find(t => t.id === l.templateAppliedId);
+    const name = tpl?.name || 'template';
+    return `
+    <div class="template-banner">
+      <div class="tb-icon">📋</div>
+      <div class="tb-text"><strong>Template applied</strong> · ${escape(name)}</div>
+      ${l._preTemplate ? `<button class="btn btn-ghost" onclick="revertTemplateApply()">↺ Revert</button>` : ''}
+    </div>`;
+  })() : '';
   // Variants picker — only shown if there are saved versions.
   const variants = Array.isArray(l.variants) ? l.variants : [];
   const activeVariant = l.activeVariantId ? variants.find(v => v.id === l.activeVariantId) : null;
@@ -11313,6 +11485,7 @@ function renderLessonPlan(l) {
   main.innerHTML = `
     ${tabSubtitle}
     ${aiBanner}
+    ${templateBanner}
     ${variantsBlock}
     ${pinHtml}
     ${recapHtml}
@@ -13125,6 +13298,394 @@ async function handleSignOut() {
 }
 
 /* =========================================================================
+   LESSON TEMPLATES
+   Teachers save any lesson shape as a reusable template: structure,
+   outcomes, differentiation, vocab, resources, guide. Templates live on
+   the profile (so they follow the teacher across devices via Supabase).
+   - Tag support for filtering/search.
+   - defaultForSubject: when true for a subject, the template replaces
+     every matching-subject lesson's content the next time that subject
+     is generated (offline path — AI path respects the teacher's per-
+     lesson direction instead).
+   ========================================================================= */
+function ensureTemplates() {
+  if (!Array.isArray(State.profile.templates)) State.profile.templates = [];
+}
+
+// Snapshot the lesson content fields that make sense in a template.
+// Keeps it portable across subjects the teacher applies it to.
+function buildTemplateFromLesson(l, meta) {
+  return {
+    id: 'tpl-' + Date.now() + '-' + Math.random().toString(36).slice(2, 7),
+    name: meta.name || (l.title + ' template'),
+    subject: meta.subject || l.subject || null,
+    tags: Array.isArray(meta.tags) ? meta.tags : [],
+    defaultForSubject: !!meta.defaultForSubject,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+    // Full lesson content snapshot — the same fields lesson variants use.
+    snapshot: {
+      title: l.title, focus: l.focus, strand: l.strand, strandUnit: l.strandUnit || null,
+      plan: JSON.parse(JSON.stringify(l.plan || {})),
+      outcomes: Array.isArray(l.outcomes) ? [...l.outcomes] : [],
+      vocab: Array.isArray(l.vocab) ? JSON.parse(JSON.stringify(l.vocab)) : [],
+      resources: Array.isArray(l.resources) ? [...l.resources] : [],
+      guide: l.guide ? JSON.parse(JSON.stringify(l.guide)) : {},
+      diff: l.diff ? JSON.parse(JSON.stringify(l.diff)) : {},
+    },
+  };
+}
+
+// Apply a template's snapshot to a lesson (in-place).
+function applyTemplateToLesson(template, l) {
+  const s = template.snapshot || {};
+  if (s.title)      l.title = s.title;
+  if (s.focus)      l.focus = s.focus;
+  if (s.strand)     l.strand = s.strand;
+  if (s.strandUnit) l.strandUnit = s.strandUnit;
+  if (s.plan)       l.plan = JSON.parse(JSON.stringify(s.plan));
+  if (Array.isArray(s.outcomes))  l.outcomes  = [...s.outcomes];
+  if (Array.isArray(s.vocab))     l.vocab     = JSON.parse(JSON.stringify(s.vocab));
+  if (Array.isArray(s.resources)) l.resources = [...s.resources];
+  if (s.guide)  l.guide = JSON.parse(JSON.stringify(s.guide));
+  if (s.diff)   l.diff  = JSON.parse(JSON.stringify(s.diff));
+  l.templateAppliedId = template.id;
+  l.templateAppliedAt = new Date().toISOString();
+}
+
+// Save-as-template modal opened from a lesson. Pre-fills subject + name.
+function openSaveTemplateModal() {
+  const l = currentLesson();
+  const plan = currentPlan();
+  if (!l || !plan) return;
+  ensureTemplates();
+  const m = document.getElementById('modal');
+  document.getElementById('modal-title').textContent = 'Save as a lesson template';
+  document.getElementById('modal-body').innerHTML = `
+    <p style="margin: 0 0 12px; font-size: 13px; color: var(--ink-soft);">
+      Save this lesson's structure as a reusable template — the plan, outcomes, differentiation, vocab, resources, everything. You can apply it to any future lesson.
+    </p>
+    <div class="field">
+      <label>Name</label>
+      <input type="text" class="input" id="tpl-name" placeholder="e.g. Maths warmup + pair practice" value="${escape(l.title || '')}" maxlength="80">
+    </div>
+    <div class="field-row">
+      <div class="field">
+        <label>Subject</label>
+        <select class="input" id="tpl-subject">
+          ${SUBJECTS.map(s => `<option value="${s.id}" ${s.id === l.subject ? 'selected' : ''}>${escape(s.name)}</option>`).join('')}
+          <option value="">Any subject</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Tags <span class="faint">(comma-separated)</span></label>
+        <input type="text" class="input" id="tpl-tags" placeholder="e.g. short, revision, pair-work">
+      </div>
+    </div>
+    <label class="tpl-default-row">
+      <input type="checkbox" id="tpl-default">
+      <div>
+        <div class="tpl-default-title">Always use for this subject</div>
+        <div class="tpl-default-hint">Every new lesson for this subject will start from this template when you use Manual Generation. (AI Generate respects your per-lesson direction instead.)</div>
+      </div>
+    </label>
+  `;
+  const ok = document.getElementById('modal-ok');
+  ok.textContent = 'Save template';
+  ok.className = 'btn btn-primary no-honey';
+  ok.onclick = () => {
+    const name = (document.getElementById('tpl-name').value || '').trim();
+    if (!name) { toast('Give it a name first.'); return; }
+    const subject = document.getElementById('tpl-subject').value || null;
+    const tags = (document.getElementById('tpl-tags').value || '')
+      .split(',').map(t => t.trim()).filter(Boolean);
+    const defaultForSubject = document.getElementById('tpl-default').checked;
+    const template = buildTemplateFromLesson(l, { name, subject, tags, defaultForSubject });
+    ensureTemplates();
+    // If this one's marked default for a subject, clear that flag from
+    // the previous default for the same subject (only one can be default).
+    if (defaultForSubject && subject) {
+      State.profile.templates.forEach(t => {
+        if (t.subject === subject && t.defaultForSubject) t.defaultForSubject = false;
+      });
+    }
+    State.profile.templates.push(template);
+    saveProfileStore();
+    try { logEvent('template_saved', { subject, tags, defaultForSubject }); } catch(e){}
+    closeModal();
+    ok.onclick = null;
+    toast(`Template "${name}" saved.`);
+  };
+  m.classList.add('show');
+}
+
+// Apply-template picker on the lesson view.
+function openApplyTemplateModal() {
+  const l = currentLesson();
+  if (!l) return;
+  ensureTemplates();
+  const templates = State.profile.templates.slice().sort((a, b) => {
+    // Prefer same-subject templates first
+    if (a.subject === l.subject && b.subject !== l.subject) return -1;
+    if (b.subject === l.subject && a.subject !== l.subject) return 1;
+    return (b.updatedAt || b.createdAt || '').localeCompare(a.updatedAt || a.createdAt || '');
+  });
+  if (!templates.length) {
+    confirmAction({
+      title: 'No templates yet',
+      body: `<p style="margin:0;">You haven't saved any templates. Use <strong>Save as template</strong> on any lesson to build your library.</p>`,
+      okLabel: 'OK',
+      onConfirm: () => {},
+    });
+    return;
+  }
+  const m = document.getElementById('modal');
+  document.getElementById('modal-title').textContent = 'Apply a template to this lesson';
+  document.getElementById('modal-body').innerHTML = `
+    <p style="margin: 0 0 12px; font-size: 13px; color: var(--ink-soft);">
+      Pick a template. Its structure replaces this lesson's content — your direction, feedback and position in the week all stay.
+    </p>
+    <div class="tpl-picker-list">
+      ${templates.map(t => {
+        const subj = t.subject ? (SUBJECTS.find(s => s.id === t.subject)?.name || t.subject) : 'Any subject';
+        const match = t.subject === l.subject;
+        return `
+          <button type="button" class="tpl-picker-item ${match ? 'tpl-match' : ''}" onclick="pickTemplateFromModal('${t.id}')">
+            <div class="tpl-pick-name">${escape(t.name)}${t.defaultForSubject ? ' <span class="tpl-default-chip">Default</span>' : ''}</div>
+            <div class="tpl-pick-meta">
+              <span>${escape(subj)}</span>
+              ${t.tags && t.tags.length ? '· ' + t.tags.map(escape).join(', ') : ''}
+            </div>
+          </button>`;
+      }).join('')}
+    </div>
+  `;
+  const ok = document.getElementById('modal-ok');
+  ok.textContent = 'Cancel';
+  ok.className = 'btn btn-ghost';
+  ok.onclick = () => { closeModal(); ok.onclick = null; };
+  m.classList.add('show');
+}
+
+function pickTemplateFromModal(templateId) {
+  const l = currentLesson();
+  const template = (State.profile.templates || []).find(t => t.id === templateId);
+  if (!l || !template) return;
+  // Snapshot "before" so teachers can revert the apply.
+  if (!l._preTemplate) {
+    l._preTemplate = {
+      title: l.title, focus: l.focus, plan: JSON.parse(JSON.stringify(l.plan || {})),
+      outcomes: l.outcomes, vocab: l.vocab, resources: l.resources,
+      guide: JSON.parse(JSON.stringify(l.guide || {})), diff: l.diff,
+      strand: l.strand, strandUnit: l.strandUnit,
+    };
+  }
+  applyTemplateToLesson(template, l);
+  save();
+  try { logEvent('template_applied', { templateId, subject: l.subject, lessonId: l.id }); } catch(e){}
+  closeModal();
+  renderLesson();
+  toast(`Applied "${template.name}".`);
+}
+
+function revertTemplateApply() {
+  const l = currentLesson();
+  if (!l || !l._preTemplate) return;
+  const snap = l._preTemplate;
+  Object.assign(l, {
+    title: snap.title, focus: snap.focus, plan: snap.plan, outcomes: snap.outcomes,
+    vocab: snap.vocab, resources: snap.resources, guide: snap.guide, diff: snap.diff,
+    strand: snap.strand, strandUnit: snap.strandUnit,
+  });
+  delete l._preTemplate;
+  delete l.templateAppliedId;
+  delete l.templateAppliedAt;
+  save();
+  renderLesson();
+  toast('Template reverted.');
+}
+
+// The templates view — list + defaults summary + inline edit.
+function renderTemplatesView() {
+  ensureTemplates();
+  const empty = document.getElementById('templates-empty');
+  const defaults = document.getElementById('templates-defaults');
+  const grid = document.getElementById('templates-grid');
+  if (!empty || !defaults || !grid) return;
+  const templates = State.profile.templates.slice().sort((a, b) =>
+    (b.updatedAt || b.createdAt || '').localeCompare(a.updatedAt || a.createdAt || '')
+  );
+
+  if (!templates.length) {
+    empty.style.display = 'block';
+    empty.innerHTML = `
+      <div class="tpl-empty">
+        <div class="abbie abbie-sm" data-abbie-pose="clipboard" aria-hidden="true"></div>
+        <div>
+          <h3 style="font-family: 'Fraunces', serif; font-size: 18px; margin: 0 0 4px;">No templates yet</h3>
+          <p style="margin: 0 0 12px; color: var(--ink-soft); font-size: 14px;">When you've a lesson shape you like — a warmup-practice-plenary rhythm, a spelling routine, a PE circuit format — open that lesson and hit <strong>Save as template</strong>. Come back here to reuse, rename, or set one as the default for its subject.</p>
+          <button class="btn btn-ghost" onclick="openTemplatesHelp()">How templates work →</button>
+        </div>
+      </div>`;
+    defaults.innerHTML = '';
+    grid.innerHTML = '';
+    try { mountAbbie(empty); } catch(e){}
+    return;
+  }
+  empty.style.display = 'none';
+
+  // Defaults summary (which template is "always use" for each subject)
+  const defaultTpls = SUBJECTS
+    .map(s => ({ subject: s, template: templates.find(t => t.subject === s.id && t.defaultForSubject) }))
+    .filter(x => x.template);
+  defaults.innerHTML = defaultTpls.length ? `
+    <div class="tpl-defaults-card">
+      <h4>Always-use defaults</h4>
+      <div class="tpl-defaults-list">
+        ${defaultTpls.map(x => `
+          <div class="tpl-default-entry">
+            <span class="chip ${subjectChipClass(x.subject.id)}">${escape(x.subject.name)}</span>
+            <span class="tpl-default-arrow">→</span>
+            <span class="tpl-default-name">${escape(x.template.name)}</span>
+          </div>`).join('')}
+      </div>
+      <div class="tpl-defaults-hint">Manual Generation starts every new lesson of that subject from this template. Unset a default by editing the template below.</div>
+    </div>` : '';
+
+  grid.innerHTML = templates.map(t => {
+    const subj = t.subject ? (SUBJECTS.find(s => s.id === t.subject)) : null;
+    const subjLabel = subj ? subj.name : 'Any subject';
+    const subjChip = subj ? subjectChipClass(subj.id) : '';
+    const summary = (t.snapshot?.plan?.main || t.snapshot?.focus || '').toString().slice(0, 120);
+    return `
+      <div class="tpl-card">
+        <div class="tpl-card-head">
+          <div>
+            <div class="tpl-card-subject"><span class="chip ${subjChip}">${escape(subjLabel)}</span>${t.defaultForSubject ? `<span class="chip chip-primary" style="margin-left:4px;">Default</span>` : ''}</div>
+            <div class="tpl-card-name">${escape(t.name)}</div>
+          </div>
+          <div class="tpl-card-actions">
+            <button class="tpl-action-btn" onclick="editTemplate('${t.id}')" title="Edit name / tags / default">✎</button>
+            <button class="tpl-action-btn" onclick="deleteTemplate('${t.id}')" title="Delete template">🗑</button>
+          </div>
+        </div>
+        ${summary ? `<p class="tpl-card-summary">${escape(summary)}${summary.length >= 120 ? '…' : ''}</p>` : ''}
+        <div class="tpl-card-tags">
+          ${(t.tags || []).map(tag => `<span class="tpl-tag">${escape(tag)}</span>`).join('')}
+        </div>
+        <div class="tpl-card-foot">
+          <span class="faint">Saved ${escape(new Date(t.createdAt).toLocaleDateString('en-IE', { day: 'numeric', month: 'short' }))}</span>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+function editTemplate(templateId) {
+  ensureTemplates();
+  const t = State.profile.templates.find(x => x.id === templateId);
+  if (!t) return;
+  const m = document.getElementById('modal');
+  document.getElementById('modal-title').textContent = 'Edit template';
+  document.getElementById('modal-body').innerHTML = `
+    <div class="field">
+      <label>Name</label>
+      <input type="text" class="input" id="tpl-edit-name" value="${escape(t.name)}" maxlength="80">
+    </div>
+    <div class="field-row">
+      <div class="field">
+        <label>Subject</label>
+        <select class="input" id="tpl-edit-subject">
+          ${SUBJECTS.map(s => `<option value="${s.id}" ${s.id === t.subject ? 'selected' : ''}>${escape(s.name)}</option>`).join('')}
+          <option value="" ${!t.subject ? 'selected' : ''}>Any subject</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Tags <span class="faint">(comma-separated)</span></label>
+        <input type="text" class="input" id="tpl-edit-tags" value="${escape((t.tags || []).join(', '))}">
+      </div>
+    </div>
+    <label class="tpl-default-row">
+      <input type="checkbox" id="tpl-edit-default" ${t.defaultForSubject ? 'checked' : ''}>
+      <div>
+        <div class="tpl-default-title">Always use for this subject</div>
+        <div class="tpl-default-hint">Every new lesson for this subject will start from this template when you use Manual Generation.</div>
+      </div>
+    </label>
+  `;
+  const ok = document.getElementById('modal-ok');
+  ok.textContent = 'Save changes';
+  ok.className = 'btn btn-primary no-honey';
+  ok.onclick = () => {
+    t.name = (document.getElementById('tpl-edit-name').value || '').trim() || t.name;
+    t.subject = document.getElementById('tpl-edit-subject').value || null;
+    t.tags = (document.getElementById('tpl-edit-tags').value || '').split(',').map(s => s.trim()).filter(Boolean);
+    const newDefault = document.getElementById('tpl-edit-default').checked;
+    if (newDefault && t.subject) {
+      State.profile.templates.forEach(other => {
+        if (other !== t && other.subject === t.subject && other.defaultForSubject) other.defaultForSubject = false;
+      });
+    }
+    t.defaultForSubject = newDefault;
+    t.updatedAt = new Date().toISOString();
+    saveProfileStore();
+    closeModal();
+    ok.onclick = null;
+    renderTemplatesView();
+    toast('Template updated.');
+  };
+  m.classList.add('show');
+}
+
+function deleteTemplate(templateId) {
+  ensureTemplates();
+  const t = State.profile.templates.find(x => x.id === templateId);
+  if (!t) return;
+  confirmAction({
+    title: `Delete "${t.name}"?`,
+    body: `<p style="margin:0;">The template will be removed. Any lessons you've already applied it to stay as they are — deleting the template just takes it out of your library.</p>`,
+    okLabel: 'Delete template',
+    danger: true,
+    onConfirm: () => {
+      State.profile.templates = State.profile.templates.filter(x => x.id !== templateId);
+      saveProfileStore();
+      renderTemplatesView();
+      toast('Template deleted.');
+    }
+  });
+}
+
+function openTemplatesHelp() {
+  confirmAction({
+    title: 'How templates work',
+    body: `
+      <p style="margin: 0 0 10px;">A template is a saved lesson shape — the plan, outcomes, vocab, resources, differentiation — ready to drop onto any future lesson.</p>
+      <p style="margin: 0 0 10px;"><strong>Save one</strong> by opening any lesson you like and hitting <em>Save as template</em> (top-right).</p>
+      <p style="margin: 0 0 10px;"><strong>Apply one</strong> from the same menu — pick any template and its content replaces the lesson's content.</p>
+      <p style="margin: 0 0 10px;"><strong>Set a default</strong> and every new lesson of that subject starts from this template when you use <em>Manual Generation</em>. (AI Generate respects your per-lesson direction instead.)</p>
+      <p style="margin: 0;">Tags are free-form — handy for "revision" / "short" / "pair-work" so you find the right one fast.</p>
+    `,
+    okLabel: 'Got it',
+    onConfirm: () => {},
+  });
+}
+
+// Called during offline generation. For each lesson in a freshly-balanced
+// week, if there's a default template for that subject, apply it.
+function applyDefaultTemplatesToPlan(plan) {
+  ensureTemplates();
+  const defaults = (State.profile.templates || []).filter(t => t.defaultForSubject && t.subject);
+  if (!defaults.length) return;
+  const bySubject = {};
+  defaults.forEach(t => { bySubject[t.subject] = t; });
+  (plan.lessons || []).forEach(l => {
+    const t = bySubject[l.subject];
+    if (!t) return;
+    if (l.coachBrief) return; // PE coach-brief lessons keep their bespoke content
+    applyTemplateToLesson(t, l);
+  });
+}
+
+/* =========================================================================
    LANDING / DEMO ROUTING
    First-time unauthed visitors land on the marketing page. Once they either
    sign in or explicitly click "See a demo week", they skip straight to the
@@ -13514,6 +14075,10 @@ const ABBIE_TIPS = {
   themes: [
     { id: 'themes-pick', label: 'Pick a thread', text: "Themes run a thin story through the whole week — Gaeilge words in one subject, a history angle in another. Keeps the week feeling coherent instead of seven disconnected things." },
   ],
+  templates: [
+    { id: 'templates-save', label: 'Save a shape you love', text: "Open any lesson you like — warmup rhythm, spelling routine, PE circuit — and hit <strong>Save as template</strong> up top. It'll land here ready to reuse." },
+    { id: 'templates-default', label: 'Set a default', text: "Tick <strong>Always use for this subject</strong> on any template, and every new Manual Generation lesson for that subject starts from it. AI Generate respects your per-lesson direction instead." },
+  ],
 };
 
 const AbbieState = {
@@ -13660,10 +14225,11 @@ function abbiePersistChat() {
 const ABBIE_SUGGESTIONS = {
   dashboard:  ["How do I start a week?", "What does AI Generate do?", "AI Generate vs Manual Generation?", "How do I see past plans?"],
   plan:       ["How do I extend a lesson?", "Can I change a subject's slot?", "What's the Sub Pack?"],
-  lesson:     ["How does Regenerate use my direction?", "How do I override a lesson?", "Add a voice note?"],
+  lesson:     ["How does Regenerate use my direction?", "Save this as a template?", "Add a voice note?"],
   library:    ["How do I archive a plan?", "Restore an archived plan?"],
   class:      ["How do I change my grade?", "What does DES minimum mean?", "Can I set fixed slots?"],
   themes:     ["Pick a theme for the term?", "What does a theme actually do?"],
+  templates:  ["How do I save a template?", "What's a default template?", "Templates vs Regenerate?"],
   default:    ["How do I generate a week?", "What is the NCCA framework?", "How do I print?"],
 };
 
