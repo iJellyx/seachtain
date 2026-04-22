@@ -5666,7 +5666,32 @@ const NCCA_CURRICULUM = {
       'first-second': 'Extended oral language, decoding and phonics, simple sentence writing, connected writing in short bursts.',
       'third-fourth': 'Comprehension strategies, genre awareness, paragraph writing, grammar in context.',
       'fifth-sixth': 'Critical reading, extended writing across genres, editing and revising, presentation skills.'
-    }
+    },
+    // Paraphrased NCCA learning outcome descriptors. Used as grounding in
+    // the AI prompt so Bee references real curriculum intent, not invented
+    // codes. Each array is scoped to the band.
+    learningOutcomes: {
+      infants: [
+        'Oral language: engage in play-based listening and turn-taking; build a core vocabulary through song, rhyme and story.',
+        'Reading: develop book-handling behaviours, phonological awareness, initial phonics (letter-sound correspondence).',
+        'Writing: mark-making and emergent writing; write own name; label drawings.',
+      ],
+      'first-second': [
+        'Oral language: listen with sustained attention; use expanding vocabulary to describe, predict and explain; ask and answer questions clearly.',
+        'Reading: decode regular words using phonics; read short connected text with growing fluency; understand simple story structure.',
+        'Writing: form letters correctly; write simple sentences with capital letter and full stop; compose short connected writing.',
+      ],
+      'third-fourth': [
+        'Oral language: participate in structured discussion; justify ideas; use subject-specific vocabulary.',
+        'Reading: apply comprehension strategies (predict, clarify, summarise); read fluently with expression; identify genre features.',
+        'Writing: write paragraphs with a clear main idea; use the writing process (plan, draft, revise); apply grammar in context.',
+      ],
+      'fifth-sixth': [
+        'Oral language: sustain extended talk on a topic; respond critically to others; present with awareness of audience.',
+        'Reading: read critically across genres; evaluate author\'s craft and viewpoint; use text evidence to support response.',
+        'Writing: craft extended writing across purposes (narrative, persuasive, informational); edit with attention to cohesion, punctuation and word choice.',
+      ],
+    },
   },
   gaeilge: {
     strands: ['Teanga ó bhéal', 'Léitheoireacht', 'Scríbhneoireacht'],
@@ -5680,7 +5705,29 @@ const NCCA_CURRICULUM = {
       'first-second': 'Frásaí laethúla, ceisteanna simplí, scéalta pictiúrtha, scríbhneoireacht threoraithe.',
       'third-fourth': 'Comhrá níos faide, léitheoireacht neamhspleách ar théacsanna gairide, scríobh phíosaí simplí.',
       'fifth-sixth': 'Comhráite casta, léitheoireacht neamhspleách, próiseas scríbhneoireachta, gramadach i gcomhthéacs.'
-    }
+    },
+    learningOutcomes: {
+      infants: [
+        'Teanga ó bhéal: éist le scéalta agus amhráin Ghaeilge; aithin agus abair foclóir bunúsach (dathanna, uimhreacha, teaghlach).',
+        'Léitheoireacht: aithin litreacha agus fuaimeanna tosaigh; déan comhléamh ar théacsanna simplí le pictiúir.',
+        'Scríbhneoireacht: déan marcadh agus scríbhneoireacht aibhsithe; scríobh d\'ainm féin.',
+      ],
+      'first-second': [
+        'Teanga ó bhéal: úsáid frásaí laethúla (sa seomra ranga, cúrsaí aimsire, caitheamh aimsire); freagair ceisteanna simplí.',
+        'Léitheoireacht: léigh téacsanna gairide le pictiúir; aithin príomhfhoclaíocht na gceachtanna.',
+        'Scríbhneoireacht: scríobh abairtí simplí treoraithe; cóipeáil go néata.',
+      ],
+      'third-fourth': [
+        'Teanga ó bhéal: glac páirt i gcomhráite gairide; cuir ceisteanna agus tabhair freagraí iomlána.',
+        'Léitheoireacht: léigh scéalta gairide go neamhspleách; tuig príomhphointí an téacs.',
+        'Scríbhneoireacht: scríobh giotaí gairide faoi thopaicí eolais; úsáid aimsir chaite agus aimsir láithreach.',
+      ],
+      'fifth-sixth': [
+        'Teanga ó bhéal: coimeád comhrá níos faide ar bun; úsáid Gaeilge san obair ghrúpa go nádúrtha.',
+        'Léitheoireacht: léigh raon téacsanna (litríocht, eolas, alt nuachtáin) go neamhspleách; tuig agus pléigh.',
+        'Scríbhneoireacht: scríobh píosaí níos faide le struchtúr soiléir; bain úsáid as raon réimníochtaí.',
+      ],
+    },
   },
   maths: {
     strands: ['Number', 'Algebra', 'Shape and space', 'Measures', 'Data and chance'],
@@ -5696,7 +5743,33 @@ const NCCA_CURRICULUM = {
       'first-second': 'Counting to 100+, place value to tens, addition/subtraction within 20, simple patterns, telling time to the hour/half-hour.',
       'third-fourth': 'Multiplication/division facts, fractions of quantities, decimals introduced, area by counting, simple data handling.',
       'fifth-sixth': 'Operations with decimals and fractions, percentages, algebra with unknowns, multi-step word problems, probability.'
-    }
+    },
+    learningOutcomes: {
+      infants: [
+        'Number: count reliably to 10 (Junior) or 20 (Senior); match numeral to quantity; compare more/fewer/same.',
+        'Shape & space: recognise and name 2-D shapes (circle, square, triangle, rectangle); describe position (above, below, beside).',
+        'Measures: compare and order by length, weight and capacity using informal language; sequence events of the day.',
+      ],
+      'first-second': [
+        'Number: count, read and write numbers to 100+; understand place value (tens and units); add and subtract within 20 fluently.',
+        'Shape & space: identify and describe 2-D and 3-D shapes; use position and direction language.',
+        'Measures: estimate and measure length, weight, capacity with non-standard and standard units; tell time to the hour and half-hour.',
+        'Data: collect and represent data with pictograms and simple bar charts.',
+      ],
+      'third-fourth': [
+        'Number: recall multiplication facts to 10; work with fractions of quantities; begin decimals (tenths, hundredths).',
+        'Algebra: identify and extend number and shape patterns; solve simple equations with unknowns.',
+        'Measures: calculate perimeter and area by counting; read scales; convert between common units.',
+        'Data & chance: interpret bar charts and pictograms; predict outcomes of simple chance events.',
+      ],
+      'fifth-sixth': [
+        'Number: apply all four operations to whole numbers, decimals and fractions; calculate percentages in context.',
+        'Algebra: solve equations with unknowns; work with number patterns using expressions.',
+        'Shape & space: classify angles, construct shapes accurately; plot coordinates on the first quadrant.',
+        'Measures: calculate area and volume; convert between units with decimals; solve multi-step measurement problems.',
+        'Data & chance: draw and interpret line graphs; calculate averages; describe probability with fractions.',
+      ],
+    },
   },
   sese: {
     strands: ['History', 'Geography', 'Science'],
@@ -5710,7 +5783,29 @@ const NCCA_CURRICULUM = {
       'first-second': 'Wider community and landscape; simple investigations of plants, weather, materials; stories from the past.',
       'third-fourth': 'Local area studies, Irish myths and legends, life in the past (Celts, Vikings), fair tests in science.',
       'fifth-sixth': 'Global geography, Irish history themes (Famine, 1916, Independence), ecosystems, forces, energy.'
-    }
+    },
+    learningOutcomes: {
+      infants: [
+        'History: talk about self, family, home and school; sequence events in own day.',
+        'Geography: describe immediate surroundings using senses; name features of the local environment.',
+        'Science: observe living things, weather and materials with curiosity; ask "what, how, why".',
+      ],
+      'first-second': [
+        'History: explore stories from the past (myths, folk tales); identify what life was like long ago through artefacts.',
+        'Geography: describe the local area with simple maps and photos; identify different weather types.',
+        'Science: carry out simple investigations (plants, water, magnets) with teacher guidance; record findings.',
+      ],
+      'third-fourth': [
+        'History: study local heritage; explore early Irish societies (Celts, Vikings) through evidence; sequence key events.',
+        'Geography: use maps, atlases and globes; describe human and natural features of Ireland.',
+        'Science: design and conduct fair tests; identify variables; represent findings in simple tables.',
+      ],
+      'fifth-sixth': [
+        'History: research and present on major Irish events (Famine, 1916, Emigration); compare sources; evaluate change over time.',
+        'Geography: investigate global regions and issues; use Ordnance Survey maps; consider environmental change.',
+        'Science: explore ecosystems, energy, forces; apply scientific process to multi-step investigations; communicate findings.',
+      ],
+    },
   },
   pe: {
     strands: ['Athletics', 'Dance', 'Gymnastics', 'Games', 'Outdoor and adventure activities', 'Aquatics'],
@@ -5727,7 +5822,29 @@ const NCCA_CURRICULUM = {
       'first-second': 'Sending/receiving with control; simple invasion games; rhythmic movement; stations and circuits.',
       'third-fourth': 'Small-sided games with rules; athletics technique (triple jump, standing long jump); dance compositions.',
       'fifth-sixth': 'Tactical play; peer coaching; dance performances; longer outdoor pursuits.'
-    }
+    },
+    learningOutcomes: {
+      infants: [
+        'Demonstrate fundamental locomotor skills (run, hop, skip, jump) with confidence.',
+        'Participate in co-operative play that encourages turn-taking and fair play.',
+        'Explore simple body-awareness and spatial concepts (high/low, fast/slow, near/far).',
+      ],
+      'first-second': [
+        'Send, receive and travel with a ball using hands and feet with growing control.',
+        'Create and perform short movement sequences in response to a stimulus.',
+        'Participate safely in circuits and station work, listening to teacher cues.',
+      ],
+      'third-fourth': [
+        'Apply skills in small-sided games with a simple rule framework.',
+        'Develop athletics technique for running, jumping and throwing.',
+        'Compose and perform a short dance phrase with a partner or small group.',
+      ],
+      'fifth-sixth': [
+        'Apply tactical awareness in invasion, net and striking games.',
+        'Peer-coach basic technique using observable cues.',
+        'Demonstrate refined performance in a chosen dance, gymnastics or athletics activity.',
+      ],
+    },
   },
   arts: {
     strands: ['Visual Arts', 'Music', 'Drama'],
@@ -5741,7 +5858,29 @@ const NCCA_CURRICULUM = {
       'first-second': 'Mixed media, instrument families, role-play drama exploring familiar stories.',
       'third-fourth': 'Colour theory, rhythm and pulse literacy, improvisation.',
       'fifth-sixth': 'Composition with theme, formal musical notation, devised drama with purpose.'
-    }
+    },
+    learningOutcomes: {
+      infants: [
+        'Visual Arts: make marks, prints and simple constructions; respond to visual stimuli.',
+        'Music: sing and chant; keep a simple beat; listen and respond with movement.',
+        'Drama: engage in imaginative and dramatic play based on familiar experience.',
+      ],
+      'first-second': [
+        'Visual Arts: explore colour, shape and pattern across a range of media; talk about own work and others\'.',
+        'Music: recognise families of instruments; perform simple songs in unison.',
+        'Drama: take on roles in a shared story; use voice and movement to express character.',
+      ],
+      'third-fourth': [
+        'Visual Arts: apply colour theory (primary, secondary) and compositional ideas to own work.',
+        'Music: read and perform simple rhythmic notation; recognise pulse and metre.',
+        'Drama: improvise from a stimulus; reflect on the choices made in role.',
+      ],
+      'fifth-sixth': [
+        'Visual Arts: plan and create sustained work on a theme; evaluate own work critically.',
+        'Music: read standard notation for simple melodies; compose short pieces on a given theme.',
+        'Drama: devise and refine short drama pieces with clear dramatic purpose.',
+      ],
+    },
   },
   sphe: {
     strands: ['Myself', 'Myself and others', 'Myself and the wider world'],
@@ -5755,7 +5894,29 @@ const NCCA_CURRICULUM = {
       'first-second': 'Healthy eating, hygiene, kindness, road safety.',
       'third-fourth': 'Bodily changes, bullying and inclusion, responsible choices online.',
       'fifth-sixth': 'Puberty/RSE, decision-making, citizenship, media literacy.'
-    }
+    },
+    learningOutcomes: {
+      infants: [
+        'Myself: identify and name basic emotions; describe what keeps the body healthy (rest, food, play).',
+        'Myself & others: take turns and share; describe who is in my family.',
+        'Safety: know home address; identify trusted adults; road-safety basics.',
+      ],
+      'first-second': [
+        'Myself: recognise healthy food choices, hygiene routines and personal safety.',
+        'Myself & others: listen to others; resolve small disagreements with kind words.',
+        'Wider world: describe the local community and who helps us (teacher, gardaí, nurse).',
+      ],
+      'third-fourth': [
+        'Myself: recognise changes during growth; articulate own strengths.',
+        'Myself & others: identify bullying and understand how to respond; respect difference.',
+        'Wider world: make responsible choices online; consider rules and their purpose.',
+      ],
+      'fifth-sixth': [
+        'Myself: understand puberty and emotional changes; decision-making skills.',
+        'Myself & others: develop empathy; recognise peer pressure and how to respond.',
+        'Wider world: active citizenship, media literacy and critical thinking about information.',
+      ],
+    },
   },
   religion: {
     strands: ['Christian faith', 'Christian story', 'Christian prayer', 'Christian morality', 'Sacraments', 'Other religions and worldviews'],
@@ -5772,7 +5933,29 @@ const NCCA_CURRICULUM = {
       'first-second': 'Preparing for First Confession / First Communion (where applicable), liturgical year, saints.',
       'third-fourth': 'Scripture in context, parables, Christian community.',
       'fifth-sixth': 'Confirmation preparation, moral reasoning, comparative religions.'
-    }
+    },
+    learningOutcomes: {
+      infants: [
+        'Christian faith: explore wonder and belonging through story, song and ritual.',
+        'Christian story: hear and respond to simple Bible stories with illustrations.',
+        'Christian prayer: learn the sign of the cross and simple prayers (Our Father, grace).',
+      ],
+      'first-second': [
+        'Prepare for the sacraments of First Confession and First Communion (where applicable).',
+        'Explore the liturgical year (Advent, Lent, Easter) through story and ritual.',
+        'Christian story: learn about saints and local Christian heritage.',
+      ],
+      'third-fourth': [
+        'Read and reflect on parables; discuss their meaning for today.',
+        'Explore the Christian community: Mass, sacraments, service to others.',
+        'Christian morality: identify right and wrong in concrete situations; practise forgiveness.',
+      ],
+      'fifth-sixth': [
+        'Prepare for Confirmation (where applicable): gifts of the Spirit, commitment.',
+        'Explore scripture in context; compare stories across the Old and New Testament.',
+        'Engage with other world religions (Judaism, Islam, Hinduism, Buddhism) with respect and curiosity.',
+      ],
+    },
   }
 };
 
@@ -5790,6 +5973,10 @@ function nccaGradeBand(gradeId) {
 
 // Render a compact text block of the NCCA reference for a subject, scoped
 // to the grade band. Passed into the AI prompt so the model stays grounded.
+// Includes strands + strand units + paraphrased learning outcomes + the
+// qualitative pitch note for the band. These give the model enough to
+// name real strands, reference real outcome intent, and pitch the activity
+// to the right age without fabricating outcome codes.
 function nccaContextFor(subjectId, gradeId) {
   const ref = NCCA_CURRICULUM[subjectId];
   if (!ref) return '';
@@ -5798,9 +5985,13 @@ function nccaContextFor(subjectId, gradeId) {
     const units = (ref.strandUnits?.[s] || []).slice(0, 8);
     return `  - ${s}${units.length ? ': ' + units.join('; ') : ''}`;
   }).join('\n');
+  const outcomes = (ref.learningOutcomes?.[band] || []);
+  const outcomeBlock = outcomes.length
+    ? `\n\nLearning outcomes for this band (${band}) — paraphrased from the NCCA 2023 Primary Curriculum Framework. Reference these outcomes by theme (not invented codes) when writing guide.curriculum:\n${outcomes.map(o => '  - ' + o).join('\n')}`
+    : '';
   const note = ref.gradeNotes?.[band] || '';
   return `Strands and strand units (NCCA 2023 Primary Curriculum Framework):
-${strandBlock}
+${strandBlock}${outcomeBlock}
 
 Pitch guidance for this grade band (${band}): ${note}`;
 }
@@ -7784,6 +7975,135 @@ function buildPlanFromDraft() {
 // teacher running 3 weeks in a row doesn't get identical lessons.
 const pickByWeek = (arr, i) => arr[(i || 0) % arr.length];
 
+/* =========================================================================
+   BAND PITCH — grade-aware content overlay for the offline agents.
+   The agents produce a base lesson; this helper rewrites opening / main /
+   plenary / outcomes / differentiation so the content actually matches the
+   teacher's grade band (Infants through 5th-6th). Keeps each agent's
+   subject-specific structure while fixing the grade-pitch gap.
+   ========================================================================= */
+const BAND_PITCH = {
+  infants: {
+    label: 'Infants',
+    durationPhrase: 'short 10–15 min bursts',
+    openingTemplate: (theme) => `Gather on the rug. Pose a wonder question — ${theme ? `about "${theme.name || theme}"` : 'linked to the week\'s theme'}. Accept every answer. Keep it under 3 minutes.`,
+    introTemplate: 'Show one concrete object or picture and model what we\'ll do together. Use gestures and voices to hold attention. Pre-teach one or two key words with pictures.',
+    mainTemplate: 'Hands-on discovery at stations or rug work. Adult-supported rotation: small groups of 4–6. Pupils manipulate real objects, talk through what they notice. 8–10 minutes.',
+    plenaryTemplate: 'Everyone holds up thumbs. Pick two pupils to share what they noticed with the class. Sing or chant a closing rhyme if time.',
+    writingNote: 'Emergent writing only: mark-making, drawings with a labelled word, teacher scribing full sentences.',
+    readingNote: 'Shared reading from a big book or picture book. Point to words as you read; children chime in on repeated phrases.',
+    sessionFormat: 'Whole-class rug + 2 adult-supported stations.',
+    supportDiff: 'Adult-supported; one concrete object per child; focus on one key word.',
+    coreDiff: 'Work in pairs; retell to a partner; pupils use a sentence starter.',
+    extensionDiff: 'Extend with a "what if…?" question; draw what might happen next.',
+  },
+  'first-second': {
+    label: '1st–2nd class',
+    durationPhrase: 'structured 25–35 min lesson',
+    openingTemplate: (theme) => `Quick hook — a question, image or short prop${theme ? ` tied to "${theme.name || theme}"` : ''}. Share today's learning target in one sentence. 3–4 minutes.`,
+    introTemplate: 'Model the skill on the board or with manipulatives. Think aloud as you do it. One clear worked example before pupils try.',
+    mainTemplate: 'Guided practice in pairs (5 min) → independent practice (10 min). Teacher circulates for mini-conferences. Focus on accuracy over quantity.',
+    plenaryTemplate: 'Turn-and-share with a partner: "One thing I learned today was…". Pick two pupils to share with the class. Exit ticket optional.',
+    writingNote: 'Simple sentences with a capital letter and full stop. Connected writing of 3–5 sentences on a familiar topic.',
+    readingNote: 'Guided reading of a levelled text (100–200 words). Teacher supports decoding and comprehension questions.',
+    sessionFormat: 'Whole-class input + partner/independent work.',
+    supportDiff: 'Sentence starters or word bank. Reduced quantity. Adult checks at each step.',
+    coreDiff: 'Work independently after modelling. Use a simple planning frame.',
+    extensionDiff: 'Add a second sentence with "because…" or a detail. Challenge word to include.',
+  },
+  'third-fourth': {
+    label: '3rd–4th class',
+    durationPhrase: 'full 40–50 min lesson',
+    openingTemplate: (theme) => `Open with a question that activates prior learning${theme ? ` (linked to "${theme.name || theme}")` : ''}. Share learning intention and success criteria. 4–5 minutes.`,
+    introTemplate: 'Demonstrate the strategy with a worked example. Ask pupils to explain what you did and why. Introduce subject-specific vocabulary explicitly.',
+    mainTemplate: 'Pupils work through graduated tasks: first together with a partner, then independently. Mini-plenary at the halfway mark to check progress. 20–25 min.',
+    plenaryTemplate: 'Pupils review their own work against the success criteria. Two volunteers present their thinking. Teacher clarifies one common misconception.',
+    writingNote: 'Paragraph writing with a clear main idea. Use the plan-draft-revise cycle. Attention to grammar in context.',
+    readingNote: 'Longer text (300–400 words). Pupils apply comprehension strategies (predict, clarify, summarise) with a partner.',
+    sessionFormat: 'Whole-class input → partner → independent; mini-plenary check.',
+    supportDiff: 'Reduced scope but same format. Graphic organiser to scaffold thinking.',
+    coreDiff: 'Grade-level task with 1 worked example then independent application.',
+    extensionDiff: 'Deeper question ("why does this work?") or apply the strategy to a new context.',
+  },
+  'fifth-sixth': {
+    label: '5th–6th class',
+    durationPhrase: 'full 50–60 min lesson',
+    openingTemplate: (theme) => `Short challenge or provocation${theme ? ` linked to "${theme.name || theme}"` : ''}. Share learning intention, success criteria, and connection to prior learning. 5 minutes.`,
+    introTemplate: 'Brief teacher input (5–8 min) with subject-specific vocabulary. Pupils draw on prior learning. Model only where necessary — expect growing independence.',
+    mainTemplate: 'Multi-step task with choice of approach. Pupils plan, execute, and review. Peer review against success criteria at a natural break. 25–35 min.',
+    plenaryTemplate: 'Structured self and peer review. Pupils articulate what went well, what to improve. Bridge to next lesson: one open question.',
+    writingNote: 'Extended writing across purposes. Editing for cohesion, precise word choice and audience awareness.',
+    readingNote: 'Critical reading across genres. Pupils use text evidence to support analysis and respond to the author\'s craft.',
+    sessionFormat: 'Brief input → independent/pair work → peer review → plenary.',
+    supportDiff: 'Clear scaffold on approach; reduced cognitive load; check-in halfway.',
+    coreDiff: 'Independent planning and execution; expect draft + revision.',
+    extensionDiff: 'Transfer the strategy to an unfamiliar context; write a brief analysis of the approach.',
+  },
+};
+
+// Apply the band overlay to a lesson object produced by one of the offline
+// agents. Rewrites the opening/intro/main/plenary scripts, the teacher
+// guide's curriculum link (citing paraphrased outcomes), and the diff
+// wording so every tier matches band expectations. Keeps the agent's
+// subject-specific focus and outcomes unless they're obviously too
+// advanced / simple for the band (in which case we soften the wording).
+function applyBandPitchToLesson(lesson, subjectId, gradeId, theme) {
+  const band = nccaGradeBand(gradeId);
+  const pitch = BAND_PITCH[band];
+  if (!pitch || !lesson) return lesson;
+  const ncca = NCCA_CURRICULUM[subjectId];
+  const outcomes = ncca?.learningOutcomes?.[band] || [];
+  const pitchedLesson = { ...lesson };
+  // Remember the original agent content as fallback; only replace when the
+  // band overlay has a meaningful rewrite.
+  pitchedLesson.plan = { ...(lesson.plan || {}) };
+  pitchedLesson.plan.opening = pitch.openingTemplate(theme);
+  pitchedLesson.plan.intro   = pitch.introTemplate;
+  // Main activity: prepend the base focus so subject-specific activity
+  // isn't lost, then add the band-appropriate format.
+  const baseMain = (lesson.plan && lesson.plan.main) ? lesson.plan.main : '';
+  pitchedLesson.plan.main = baseMain
+    ? `${baseMain} — ${pitch.mainTemplate}`
+    : pitch.mainTemplate;
+  pitchedLesson.plan.plenary = pitch.plenaryTemplate;
+
+  // Outcomes: if agent produced generic ones, swap in band-matched ones
+  // drawn from NCCA data. Cap at 3 so the side card stays scannable.
+  if (outcomes.length) {
+    pitchedLesson.outcomes = outcomes.slice(0, 3).map(o => {
+      // Convert from "Area: description" into a "Pupils will..." outcome.
+      const colonIdx = o.indexOf(':');
+      const body = colonIdx > 0 ? o.slice(colonIdx + 1).trim() : o;
+      return 'Pupils will ' + body.replace(/\.$/, '').toLowerCase();
+    });
+  }
+
+  // Differentiation: keep any focus-specific tier but make sure each tier's
+  // wording matches the band. If the agent's tier is empty, use the band default.
+  pitchedLesson.diff = {
+    support:   (lesson.diff && lesson.diff.support)   || pitch.supportDiff,
+    core:      (lesson.diff && lesson.diff.core)      || pitch.coreDiff,
+    extension: (lesson.diff && lesson.diff.extension) || pitch.extensionDiff,
+  };
+
+  // Guide: surface the band label + NCCA outcome reference for the Cúntas.
+  const guide = { ...(lesson.guide || {}) };
+  if (outcomes.length) {
+    const themed = outcomes[0]; // Use first outcome as the anchor reference.
+    const colonIdx = themed.indexOf(':');
+    const area = colonIdx > 0 ? themed.slice(0, colonIdx).trim() : 'the strand';
+    const body = colonIdx > 0 ? themed.slice(colonIdx + 1).trim() : themed;
+    guide.curriculum = `${pitch.label} · ${area}: ${body}`;
+  }
+  guide.pacing = pitch.durationPhrase;
+  pitchedLesson.guide = guide;
+
+  // Attach metadata so the UI can show "Pitched for 3rd–4th class" on the lesson.
+  pitchedLesson.pitchedBand = band;
+  pitchedLesson.pitchedBandLabel = pitch.label;
+  return pitchedLesson;
+}
+
 // Shared scaffolding-level text that every agent tailors for its subject.
 function tierWrap(title, subtitle, coreSections, supportSections, extensionSections) {
   return {
@@ -9222,7 +9542,7 @@ function synthesizeLessonsFromBalance(theme, grade, subjectsTargets, slots, fixe
       const agent = getAgent(a.subject);
       const generated = agent(ctx);
       subjCounter[a.subject]++;
-      return {
+      const baseLesson = {
         id: `l-${Date.now()}-${i}`,
         day: a.day,
         slotIdx: a.slotIdx,
@@ -9233,6 +9553,11 @@ function synthesizeLessonsFromBalance(theme, grade, subjectsTargets, slots, fixe
         theme: theme.id === 'none' ? 'Standard week — no cross-curricular thread.' : (theme.name + ' theme'),
         ...generated,
       };
+      // Apply the band-aware pitch overlay so the lesson's opening / main /
+      // plenary / diff / outcomes actually match the teacher's grade band.
+      // PE keeps its bespoke coachBrief — skip the overlay for those.
+      if (baseLesson.coachBrief) return baseLesson;
+      return applyBandPitchToLesson(baseLesson, a.subject, grade?.id, theme);
     });
 }
 
@@ -11101,10 +11426,18 @@ function renderLesson() {
   document.getElementById('lesson-subtitle').textContent = `${l.day} · ${l.minutes} min · ${subjectLabel(l.subject)}`;
   document.getElementById('lesson-crumb-title').textContent = l.title;
   const pills = document.getElementById('lesson-pills');
+  // Work out the grade band this lesson is pitched for. Prefer the stamp
+  // from the offline band-pitch overlay; fall back to deriving from the
+  // plan or profile grade so AI-generated lessons get the chip too.
+  const plan = currentPlan();
+  const bandLabel = l.pitchedBandLabel
+    || (BAND_PITCH[nccaGradeBand(plan?.grade || plan?.gradeId || State.profile?.grade)] || {}).label
+    || null;
   pills.innerHTML = `
     <span class="chip ${subjectChipClass(l.subject)}">${subjectLabel(l.subject)}</span>
     <span class="chip">${l.day}</span>
     <span class="chip">${l.minutes} min</span>
+    ${bandLabel ? `<span class="chip" title="Pitched to the NCCA curriculum for this band">📘 ${escape(bandLabel)}</span>` : ''}
   `;
   // Worksheet tab label switches to "Coach brief" for PE / any lesson with a coachBrief.
   const wsTabLabel = document.getElementById('worksheet-tab-label');

@@ -23,6 +23,7 @@ Hard rules:
 - Vary across the week — don't repeat the same activity format in two slots of the same subject.
 - Total time per lesson should match the slot minutes shown.
 - Honour every teacherDirection verbatim. If a Maths slot says teacherDirection="Focus on long division", the lesson is about long division. Do not substitute a related topic.
+- In guide.curriculum, reference the relevant learning outcome BY THEME (e.g. "Develops place-value understanding to hundreds — aligns with Stage 2 NCCA number outcomes"). Do NOT invent numbered outcome codes (1.3, 2.4 etc.). Paraphrase the outcome's intent so it reads naturally in a Cúntas Míosúil.
 - Call the return_week tool. Do not write prose outside the tool call.`;
 
 // Sub-schema for a single lesson — reused inside the week tool below.

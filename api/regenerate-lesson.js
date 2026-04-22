@@ -25,6 +25,7 @@ Hard rules:
 - Every lesson must include Oral language work if it's English or Gaeilge, hands-on or visual work for Infants, and a clear pupil-facing opening.
 - Respect the Gaeilge medium: if Gaelscoil/Gaeltacht, lean harder into Gaeilge vocab and classroom language; if English-medium, a single Gaeilge phrase is enough for non-Gaeilge lessons.
 - Never invent curriculum strands. When naming strands/strand units, use the ones from the provided NCCA reference verbatim.
+- In guide.curriculum, reference the relevant learning outcome BY THEME (e.g. "This lesson develops oral language skill: sustained attention and asking clarifying questions, aligned with the NCCA outcomes for this band"). Do NOT invent numbered outcome codes (1.3, 2.4 etc.). Paraphrase the outcome's intent so it reads naturally in a Cúntas Míosúil.
 - If teacher feedback is provided, address it directly (e.g. "too long" → shorter main activity).
 - Call the return_lesson tool. Do not write prose outside the tool call.`;
 
