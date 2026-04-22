@@ -186,8 +186,11 @@ function buildUserPrompt({ plan, profile, skeleton, curriculum }) {
   lines.push(`# Timetable skeleton (one lesson required per line; slotKey must match exactly)`);
   skeleton.forEach(s => {
     const direction = s.teacherDirection ? ` · TEACHER DIRECTION: "${s.teacherDirection}"` : '';
-    lines.push(`- slotKey="${s.day}|${s.slotIdx}" · subject=${s.subject} · minutes=${s.minutes}${s.fixed ? ' · fixed slot' : ''}${s.time ? ' · ' + s.time : ''}${direction}`);
+    const position = s.position && s.position !== 'any' ? ` · position: ${s.position}` : '';
+    lines.push(`- slotKey="${s.day}|${s.slotIdx}" · subject=${s.subject} · minutes=${s.minutes}${s.fixed ? ' · fixed slot' : ''}${s.time ? ' · ' + s.time : ''}${position}${direction}`);
   });
+  lines.push('');
+  lines.push(`Position hints ("before-small-break", "after-big-lunch", etc.) describe where the lesson sits in the day — use this to inform pacing: lessons before breaks should wrap cleanly with minutes to spare, lessons after lunch need an active or engaging opening to re-focus the class.`);
   lines.push('');
 
   if (curriculum) {

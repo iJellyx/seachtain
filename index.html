@@ -1956,6 +1956,51 @@
   }
   .subject-row:last-child { border-bottom: none; }
   .subject-icon { width: 36px; height: 36px; border-radius: 9px; display: grid; place-items: center; font-size: 18px; }
+  /* Per-subject scheduling preference row: icon | name | duration stepper | position dropdown */
+  .pref-row {
+    display: grid; grid-template-columns: 44px 1fr 150px 200px; align-items: center;
+    gap: 14px; padding: 10px 0; border-bottom: 1px solid var(--line);
+  }
+  .pref-row:last-child { border-bottom: none; }
+  .pref-name { font-weight: 600; font-size: 14px; }
+  .pref-duration {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--surface-alt); border: 1px solid var(--line);
+    border-radius: 8px; padding: 4px 8px;
+  }
+  .pref-step {
+    width: 26px; height: 26px; border-radius: 6px;
+    border: 1px solid var(--line); background: var(--surface);
+    color: var(--ink); font-size: 15px; cursor: pointer; font-family: inherit;
+    display: grid; place-items: center;
+  }
+  .pref-step:hover { background: var(--primary-soft); border-color: var(--primary); color: var(--primary); }
+  .pref-duration-val {
+    font-weight: 600; font-size: 13px; min-width: 52px; text-align: center;
+    font-variant-numeric: tabular-nums;
+  }
+  .pref-position { font-size: 13px; padding: 7px 10px; }
+
+  /* Inline lesson duration editor (modal) */
+  .dur-editor {
+    display: flex; align-items: center; gap: 16px; justify-content: center;
+    padding: 20px; background: var(--surface-alt); border-radius: 12px;
+  }
+  .dur-editor .dur-step {
+    width: 44px; height: 44px; border-radius: 10px;
+    border: 1px solid var(--line); background: var(--surface);
+    font-size: 22px; cursor: pointer; font-family: inherit; color: var(--ink);
+  }
+  .dur-editor .dur-step:hover { background: var(--primary-soft); border-color: var(--primary); color: var(--primary); }
+  .dur-editor .dur-value { text-align: center; }
+  .dur-editor input[type=number] { -moz-appearance: textfield; }
+  .dur-editor input[type=number]::-webkit-outer-spin-button,
+  .dur-editor input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+  @media (max-width: 640px) {
+    .pref-row { grid-template-columns: 40px 1fr; gap: 10px; }
+    .pref-duration, .pref-position { grid-column: 1 / -1; width: 100%; }
+    .pref-duration { justify-content: space-between; }
+  }
   .subject-name { font-weight: 600; font-size: 14px; }
   .subject-meta { font-size: 12px; color: var(--ink-soft); }
   .time-slider { display: flex; align-items: center; gap: 8px; }
@@ -3657,6 +3702,7 @@
           <button class="btn btn-ghost" onclick="toggleEdit()" id="edit-btn">✎ Edit</button>
           <button class="btn btn-ghost" onclick="openApplyTemplateModal()" title="Start this lesson from a saved template">📋 Templates</button>
           <button class="btn btn-ghost" onclick="openSaveTemplateModal()" title="Save this lesson's shape as a reusable template">💾 Save as template</button>
+          <button class="btn btn-ghost" onclick="openLessonDurationEditor()" title="Change this lesson's minutes in 5-min steps">⏱ Change duration</button>
           <button class="btn btn-ghost" onclick="window.print()">🖨 Print</button>
           <button class="btn btn-ai" onclick="openAIRegenerateModal()" title="Rewrite this lesson with Bee, grounded in your direction + NCCA"><span class="ai-spark"><svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0.5 L9.6 5.6 L14.8 7.3 L9.6 9 L8 14.1 L6.4 9 L1.2 7.3 L6.4 5.6 Z"/></svg></span> Regenerate</button>
           <button class="btn btn-offline btn-sm" onclick="regenerateLesson()" title="Swap opening / plenary for variety — no AI">↻ Quick refresh</button>
@@ -3929,6 +3975,13 @@
       </div>
 
       <div class="card card-lg" style="max-width: 760px; margin-top: 14px;">
+        <h3 style="margin-bottom: 4px;">🎯 How each subject lands in your day</h3>
+        <p class="muted" style="margin-bottom: 18px; font-size:13px;">Set each subject's default lesson length and where in the day it should sit. The generator uses these to build your week — English as a 45-min lesson before small break, Gaeilge as 30 min after big lunch, etc.</p>
+        <div id="p-preference-rows"></div>
+        <p class="faint" style="font-size: 12px; margin-top: 14px; line-height: 1.5;">Lesson durations are in 5-minute steps and don't need to match the weekly totals above — these are just the <em>default lengths</em>, the generator can stretch them where it has room.</p>
+      </div>
+
+      <div class="card card-lg" style="max-width: 760px; margin-top: 14px;">
         <h3 style="margin-bottom: 4px;">📌 Pinned lessons</h3>
         <p class="muted" style="margin-bottom:18px; font-size:13px;">Lessons that must fall on a specific day (e.g. PE when the hall is booked). When generating a plan you can toggle any pin off for that week.</p>
         <div id="p-fixed-slots"></div>
@@ -4148,27 +4201,67 @@ function computeSlots(P) {
   const lnS   = toMin(P.lunchStart   || '12:15');
   const lnE   = toMin(P.lunchEnd     || '12:55');
   const slots = [];
-  // Helper to split a window into 1–2 slots depending on length.
-  function addWindow(a, b) {
+
+  // Try to match slot durations to the teacher's most-preferred subject
+  // durations. When a window is carved in two, we prefer splits like
+  // 40 / 30 min over the default 50/50 if the teacher has real preferences.
+  const prefs = P.subjectPreferences || {};
+  const preferredDurations = Array.from(new Set(
+    Object.values(prefs).map(p => p && typeof p.duration === 'number' ? p.duration : null).filter(Boolean)
+  )).sort((a, b) => b - a); // longest first
+
+  // Position labels: slot-position hints used later by the balancer to
+  // match subjects to their preferred time of day. 'any' means nothing
+  // specific about position.
+  // Window: before small break
+  function addMorningWindow(a, b) {
     const span = b - a;
     if (span <= 0) return;
     if (span <= 55) {
-      slots.push({ time: `${toHM(a)} – ${toHM(b)}`, length: span, break: null });
-    } else if (span <= 95) {
-      // Single long lesson-block (e.g. 80-min literacy slot before small break).
-      slots.push({ time: `${toHM(a)} – ${toHM(b)}`, length: span, break: null });
+      // Small window: one slot right before the break.
+      slots.push({ time: `${toHM(a)} – ${toHM(b)}`, length: span, break: null, positions: ['before-small-break', 'morning-early'] });
     } else {
-      // Long window — split roughly in half into two teaching periods.
-      const mid = a + Math.round(span / 2 / 5) * 5;
-      slots.push({ time: `${toHM(a)} – ${toHM(mid)}`, length: mid - a, break: null });
-      slots.push({ time: `${toHM(mid)} – ${toHM(b)}`, length: b - mid, break: null });
+      // Longer window: try to carve it into an "early" slot + a "before break"
+      // slot, using preferred durations where possible. Default to a sensible
+      // split that leaves the larger block before the break (maths/literacy window).
+      const preferred = preferredDurations.find(d => d > 20 && d <= span - 20) || Math.round(span / 2 / 5) * 5;
+      const first = Math.min(preferred, span - 20);
+      slots.push({ time: `${toHM(a)} – ${toHM(a + first)}`, length: first, break: null, positions: ['morning-early'] });
+      slots.push({ time: `${toHM(a + first)} – ${toHM(b)}`, length: span - first, break: null, positions: ['before-small-break'] });
     }
   }
-  addWindow(start, sbS);
+  // Window: between small break and lunch
+  function addMidWindow(a, b) {
+    const span = b - a;
+    if (span <= 0) return;
+    if (span <= 55) {
+      slots.push({ time: `${toHM(a)} – ${toHM(b)}`, length: span, break: null, positions: ['after-small-break', 'before-big-lunch'] });
+    } else {
+      const preferred = preferredDurations.find(d => d > 20 && d <= span - 20) || Math.round(span / 2 / 5) * 5;
+      const first = Math.min(preferred, span - 20);
+      slots.push({ time: `${toHM(a)} – ${toHM(a + first)}`, length: first, break: null, positions: ['after-small-break'] });
+      slots.push({ time: `${toHM(a + first)} – ${toHM(b)}`, length: span - first, break: null, positions: ['before-big-lunch'] });
+    }
+  }
+  // Window: after lunch through end of day
+  function addAfternoonWindow(a, b) {
+    const span = b - a;
+    if (span <= 0) return;
+    if (span <= 55) {
+      slots.push({ time: `${toHM(a)} – ${toHM(b)}`, length: span, break: null, positions: ['after-big-lunch', 'afternoon-late'] });
+    } else {
+      const preferred = preferredDurations.find(d => d > 20 && d <= span - 20) || Math.round(span / 2 / 5) * 5;
+      const first = Math.min(preferred, span - 20);
+      slots.push({ time: `${toHM(a)} – ${toHM(a + first)}`, length: first, break: null, positions: ['after-big-lunch'] });
+      slots.push({ time: `${toHM(a + first)} – ${toHM(b)}`, length: span - first, break: null, positions: ['afternoon-late'] });
+    }
+  }
+
+  addMorningWindow(start, sbS);
   slots.push({ break: `Sos (small break) ${toHM(sbS)} – ${toHM(sbE)}` });
-  addWindow(sbE, lnS);
+  addMidWindow(sbE, lnS);
   slots.push({ break: `Lón (big break) ${toHM(lnS)} – ${toHM(lnE)}` });
-  addWindow(lnE, end);
+  addAfternoonWindow(lnE, end);
   return slots;
 }
 
@@ -4250,9 +4343,23 @@ function autoBalanceSlots(profile, subjectsTargets, fixedSlots, slots) {
   //            would-be total overshoots 120% of target for the cell size.
   //   Tier 3 — no subject below target, or all candidates would overshoot:
   //            fall back to the biggest remaining target gap.
-  const pickSubjectFor = (cellLength) => {
+  // Preference-aware scoring. Each slot carries a `positions` array (e.g.
+  // ['before-small-break', 'morning-early']). If a subject's preferred
+  // position matches any of them, it gets a small scoring bonus that acts
+  // as a tie-breaker — not a hard constraint (DES floors + targets still
+  // dominate) but enough to meaningfully reshape how subjects land.
+  const subjectPrefs = profile?.subjectPreferences || {};
+  const positionBonus = (sid, slotPositions) => {
+    const pref = subjectPrefs[sid];
+    if (!pref || !pref.position || pref.position === 'any') return 0;
+    if (Array.isArray(slotPositions) && slotPositions.includes(pref.position)) return 1;
+    return 0;
+  };
+
+  const pickSubjectFor = (cellLength, slotPositions) => {
     const sids = Object.keys(subjectsTargets);
-    // Tier 1: floor violations.
+    // Tier 1: floor violations — proportional shortfall wins, position is
+    // a soft tie-breaker at the end.
     const tier1 = sids.filter(sid => (assigned[sid] || 0) < (floors[sid] || 0));
     if (tier1.length) {
       return tier1.reduce((best, sid) => {
@@ -4263,9 +4370,12 @@ function autoBalanceSlots(profile, subjectsTargets, fixedSlots, slots) {
         const bGot   = assigned[best] || 0;
         const bR     = (bFloor - bGot) / bFloor;
         if (r > bR + 0.001) return sid;
-        // Tie-break on absolute remaining floor need, then on larger target
-        // (cores get the nudge), so identical-shortfall subjects stay stable.
         if (Math.abs(r - bR) < 0.001) {
+          // Preference match first (matches teacher's position preference)
+          const pBonus = positionBonus(sid, slotPositions) - positionBonus(best, slotPositions);
+          if (pBonus > 0) return sid;
+          if (pBonus < 0) return best;
+          // Then absolute remaining floor need, then larger target.
           const absGap = floor - got, bAbs = bFloor - bGot;
           if (absGap > bAbs) return sid;
           if (absGap === bAbs && (subjectsTargets[sid] || 0) > (subjectsTargets[best] || 0)) return sid;
@@ -4280,18 +4390,21 @@ function autoBalanceSlots(profile, subjectsTargets, fixedSlots, slots) {
       const got = assigned[sid] || 0;
       return got < target && (got + cellLength) <= target * 1.2;
     });
+    // Position-aware shortfall scorer — shortfall stays primary, but a
+    // matching position bumps the score by +0.08 which is enough to flip
+    // near-ties toward the teacher's preferred placement.
     const pickByTargetShortfall = (pool) => pool.reduce((best, sid) => {
       const target = subjectsTargets[sid] || 1;
       const got    = assigned[sid] || 0;
-      const r      = (target - got) / target;
+      const r      = (target - got) / target + positionBonus(sid, slotPositions) * 0.08;
       const bT = subjectsTargets[best] || 1;
       const bG = assigned[best] || 0;
-      const bR = (bT - bG) / bT;
+      const bR = (bT - bG) / bT + positionBonus(best, slotPositions) * 0.08;
       return r > bR + 0.001 ? sid : best;
     });
     if (tier2.length) return pickByTargetShortfall(tier2);
     // Tier 3: everyone at/over target — fall back to biggest remaining gap
-    // (possibly zero/negative). This keeps the cell filled rather than dropping it.
+    // (possibly zero/negative). Position still acts as a tiebreaker.
     const tier3 = sids.filter(sid => (subjectsTargets[sid] || 0) > 0);
     if (tier3.length) return pickByTargetShortfall(tier3);
     return sids[0];
@@ -4305,7 +4418,8 @@ function autoBalanceSlots(profile, subjectsTargets, fixedSlots, slots) {
   //           over-assigned neighbour (handles rare edge cases where cell
   //           sizes don't cleanly hit a floor).
   for (const cell of cells) {
-    const sid = pickSubjectFor(cell.length);
+    const slot = slots[cell.idx] || {};
+    const sid = pickSubjectFor(cell.length, slot.positions);
     if (!sid) continue;
     assignments.push({ day: cell.day, slotIdx: cell.idx, subject: sid, minutes: cell.length });
     assigned[sid] += cell.length;
@@ -5518,6 +5632,27 @@ const DEFAULT_PROFILE = {
   subjects: (() => { const o = {}; SUBJECTS.forEach(s => o[s.id] = s.recommended); return o; })(),
   // Teacher-customisable emoji per subject (applied to timetable tiles + worksheet headers).
   subjectEmojis: (() => { const o = {}; SUBJECTS.forEach(s => o[s.id] = s.emoji); return o; })(),
+  // Per-subject scheduling preferences. `duration` = default lesson length
+  // (5-min steps), `position` = where in the day it should land. The slot
+  // generator + balancer both read this. Teachers can edit in My profile.
+  //   position values: 'any' | 'morning-early' | 'before-small-break'
+  //                    | 'after-small-break' | 'before-big-lunch'
+  //                    | 'after-big-lunch' | 'afternoon-late'
+  subjectPreferences: (() => {
+    const defaults = {
+      english:  { duration: 45, position: 'morning-early' },
+      gaeilge:  { duration: 30, position: 'after-big-lunch' },
+      maths:    { duration: 50, position: 'before-small-break' },
+      sese:     { duration: 40, position: 'after-small-break' },
+      pe:       { duration: 60, position: 'any' },
+      arts:     { duration: 45, position: 'afternoon-late' },
+      sphe:     { duration: 30, position: 'any' },
+      religion: { duration: 30, position: 'morning-early' },
+    };
+    const o = {};
+    SUBJECTS.forEach(s => { o[s.id] = defaults[s.id] || { duration: 40, position: 'any' }; });
+    return o;
+  })(),
   // School day structure — grade-aware (default '2nd' → 1st-6th tier, so 14:40 end).
   ...defaultSchoolTimesForGrade('2nd'),
   // Teacher-built lesson templates. Each item carries a full lesson-content
@@ -7251,6 +7386,8 @@ function renderProfile() {
     updateProfileTotals();
   });
   updateProfileTotals();
+  // Per-subject scheduling preferences (duration + position-of-day).
+  renderPreferenceRows();
   // School day times — fall back to grade-aware defaults when a field is blank.
   const tDefaults = defaultSchoolTimesForGrade(P.grade);
   const sStart = document.getElementById('p-school-start'); if (sStart) sStart.value = P.schoolStart || tDefaults.schoolStart;
@@ -7345,6 +7482,78 @@ function renderEmojiGrid() {
 
 function escapeAttr(s) {
   return String(s || '').replace(/"/g, '&quot;').replace(/</g, '&lt;');
+}
+
+// Per-subject duration + position-of-day editor. Each row shows a short
+// duration stepper (5-min steps 15-90) + a position dropdown. Saves
+// directly into State.profile.subjectPreferences on change.
+function ensureSubjectPreferences() {
+  if (!State.profile.subjectPreferences) State.profile.subjectPreferences = {};
+  const defaults = {
+    english:  { duration: 45, position: 'morning-early' },
+    gaeilge:  { duration: 30, position: 'after-big-lunch' },
+    maths:    { duration: 50, position: 'before-small-break' },
+    sese:     { duration: 40, position: 'after-small-break' },
+    pe:       { duration: 60, position: 'any' },
+    arts:     { duration: 45, position: 'afternoon-late' },
+    sphe:     { duration: 30, position: 'any' },
+    religion: { duration: 30, position: 'morning-early' },
+  };
+  SUBJECTS.forEach(s => {
+    if (!State.profile.subjectPreferences[s.id]) {
+      State.profile.subjectPreferences[s.id] = defaults[s.id] || { duration: 40, position: 'any' };
+    }
+  });
+}
+
+const POSITION_OPTIONS = [
+  { id: 'any',                 label: 'Anywhere — flexible' },
+  { id: 'morning-early',       label: 'Morning — first thing' },
+  { id: 'before-small-break',  label: 'Before small break' },
+  { id: 'after-small-break',   label: 'After small break' },
+  { id: 'before-big-lunch',    label: 'Before big lunch' },
+  { id: 'after-big-lunch',     label: 'After big lunch' },
+  { id: 'afternoon-late',      label: 'Afternoon — towards end of day' },
+];
+
+function renderPreferenceRows() {
+  const host = document.getElementById('p-preference-rows');
+  if (!host) return;
+  ensureSubjectPreferences();
+  const prefs = State.profile.subjectPreferences;
+  host.innerHTML = SUBJECTS.map(s => {
+    const p = prefs[s.id] || { duration: 40, position: 'any' };
+    return `<div class="pref-row">
+      <div class="subject-icon ls-${subjectColor(s.id)}">${s.icon}</div>
+      <div class="pref-name">${escape(s.name)}</div>
+      <div class="pref-duration">
+        <button type="button" class="pref-step" onclick="stepPrefDuration('${s.id}', -5)" aria-label="Decrease">−</button>
+        <span class="pref-duration-val" data-pref-dur="${s.id}">${p.duration} min</span>
+        <button type="button" class="pref-step" onclick="stepPrefDuration('${s.id}', 5)" aria-label="Increase">+</button>
+      </div>
+      <select class="input pref-position" data-pref-pos="${s.id}" onchange="setPrefPosition('${s.id}', this.value)">
+        ${POSITION_OPTIONS.map(o => `<option value="${o.id}" ${o.id === p.position ? 'selected' : ''}>${escape(o.label)}</option>`).join('')}
+      </select>
+    </div>`;
+  }).join('');
+}
+
+function stepPrefDuration(subjectId, delta) {
+  ensureSubjectPreferences();
+  const p = State.profile.subjectPreferences[subjectId];
+  if (!p) return;
+  // Clamp 15–90 in 5-min steps — anything outside that range is rarely useful
+  // in primary classrooms.
+  p.duration = Math.max(15, Math.min(90, p.duration + delta));
+  const valEl = document.querySelector(`[data-pref-dur="${subjectId}"]`);
+  if (valEl) valEl.textContent = p.duration + ' min';
+  saveProfileStore();
+}
+
+function setPrefPosition(subjectId, position) {
+  ensureSubjectPreferences();
+  State.profile.subjectPreferences[subjectId].position = position;
+  saveProfileStore();
 }
 
 function updateProfileTotals() {
@@ -7730,15 +7939,22 @@ function generatePlanAI() {
 
   // Step 2: build the skeleton for the AI endpoint. If a teacher has
   // stored a per-lesson direction on a prior run, carry it into the new
-  // generation so the whole-week build respects those specifics.
+  // generation so the whole-week build respects those specifics. Also
+  // attach each slot's position-in-day label so Bee knows whether a
+  // lesson sits before a break, after lunch, etc. (shapes pacing).
+  const slotGrid = offlinePlan.timetable || TIMETABLE_SLOTS;
   const skeleton = (offlinePlan.lessons || [])
     .filter(l => !l.coachBrief) // PE keeps its offline coach-brief for now (the SVG pitch)
-    .map(l => ({
-      day: l.day, slotIdx: l.slotIdx, subject: l.subject,
-      minutes: l.minutes, fixed: !!l.fixed,
-      time: ((offlinePlan.timetable || TIMETABLE_SLOTS)[l.slotIdx] || {}).time || '',
-      teacherDirection: l.teacherDirection || undefined,
-    }));
+    .map(l => {
+      const slot = slotGrid[l.slotIdx] || {};
+      return {
+        day: l.day, slotIdx: l.slotIdx, subject: l.subject,
+        minutes: l.minutes, fixed: !!l.fixed,
+        time: slot.time || '',
+        position: Array.isArray(slot.positions) && slot.positions[0] ? slot.positions[0] : 'any',
+        teacherDirection: l.teacherDirection || undefined,
+      };
+    });
   // If there's nothing to regenerate with AI (every lesson is PE), just ship the offline plan.
   if (!skeleton.length) {
     State.plans.push(offlinePlan);
@@ -13776,6 +13992,64 @@ function applyTemplateToLesson(template, l) {
 }
 
 // Save-as-template modal opened from a lesson. Pre-fills subject + name.
+// Inline lesson-duration editor. Lets teachers set any lesson to any
+// 5-minute value between 15 and 120 min without having to drag across
+// slot boundaries. Adjusts plan.timetable[slotIdx].length so the lesson
+// renders at the new height; neighbouring slots don't shift (existing
+// drag-to-extend still handles that).
+function openLessonDurationEditor() {
+  const l = currentLesson();
+  const plan = currentPlan();
+  if (!l || !plan) return;
+  const slots = plan.timetable || TIMETABLE_SLOTS;
+  const slot = slots[l.slotIdx];
+  if (!slot) return;
+  const m = document.getElementById('modal');
+  document.getElementById('modal-title').textContent = 'Change lesson duration';
+  const current = l.minutes || slot.length || 40;
+  document.getElementById('modal-body').innerHTML = `
+    <p style="margin: 0 0 14px; font-size: 13px; color: var(--ink-soft);">
+      How long do you want this lesson to run? Any 5-minute value from 15 to 120 minutes.
+    </p>
+    <div class="dur-editor">
+      <button type="button" class="dur-step" onclick="nudgeLessonDuration(-5)" aria-label="Subtract 5 min">−</button>
+      <div class="dur-value">
+        <input type="number" min="15" max="120" step="5" value="${current}" id="dur-input" style="width: 80px; font-size: 28px; font-weight: 700; text-align: center; border: none; background: transparent; font-family: 'Fraunces', serif; color: var(--primary);">
+        <div style="font-size: 11px; color: var(--ink-faint); letter-spacing: 0.08em; text-transform: uppercase; font-weight: 600;">minutes</div>
+      </div>
+      <button type="button" class="dur-step" onclick="nudgeLessonDuration(5)" aria-label="Add 5 min">+</button>
+    </div>
+    <p class="faint" style="margin: 14px 0 0; font-size: 11px;">Note: changing duration resizes this lesson's slot only — doesn't shift the rest of the day. Use drag-to-extend on the timetable if you need to absorb neighbouring time too.</p>
+  `;
+  const ok = document.getElementById('modal-ok');
+  ok.textContent = 'Save duration';
+  ok.className = 'btn btn-primary';
+  ok.onclick = () => {
+    const input = document.getElementById('dur-input');
+    let mins = +(input?.value || current);
+    if (isNaN(mins)) mins = current;
+    mins = Math.max(15, Math.min(120, Math.round(mins / 5) * 5));
+    // Mutate the plan's own timetable copy (so it's per-plan, not global).
+    if (!plan.timetable) plan.timetable = slots.map(s => ({ ...s }));
+    plan.timetable[l.slotIdx] = { ...plan.timetable[l.slotIdx], length: mins, customised: true };
+    l.minutes = mins;
+    save();
+    closeModal();
+    ok.onclick = null;
+    renderLesson();
+    toast(`Lesson set to ${mins} min.`);
+  };
+  m.classList.add('show');
+}
+
+function nudgeLessonDuration(delta) {
+  const input = document.getElementById('dur-input');
+  if (!input) return;
+  let v = +input.value || 40;
+  v = Math.max(15, Math.min(120, v + delta));
+  input.value = v;
+}
+
 function openSaveTemplateModal() {
   const l = currentLesson();
   const plan = currentPlan();
