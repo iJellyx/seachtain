@@ -779,6 +779,13 @@
     background: var(--surface); border: 1px solid var(--line);
     border-radius: 14px; padding: 18px 22px; margin-top: 24px;
   }
+  .rf-confirm {
+    background: var(--primary-soft); border: 1px solid rgba(45, 95, 63, 0.18);
+    border-radius: 12px; padding: 14px 18px; margin-top: 20px;
+    display: flex; flex-direction: column; gap: 6px;
+    font-size: 13px; color: var(--primary);
+  }
+  .rf-confirm-row strong { font-weight: 700; }
   .rf-sum-row {
     display: flex; justify-content: space-between;
     padding: 8px 0; border-bottom: 1px solid var(--line);
@@ -817,6 +824,12 @@
     display: flex; gap: 8px; flex-wrap: wrap;
     margin-top: 18px; padding-top: 14px;
     border-top: 1px solid var(--line);
+  }
+  .homework-gate {
+    padding: 10px 14px; margin-bottom: 12px;
+    background: var(--gold-soft); color: #7a5e0e;
+    border-radius: 8px; font-size: 12px; line-height: 1.5;
+    max-width: 520px;
   }
   @media (max-width: 560px) {
     .homework-empty { flex-direction: column; }
@@ -1157,6 +1170,16 @@
     .abbie-helper { right: 14px; bottom: 14px; flex-direction: column; align-items: flex-end; }
     .abbie-helper-toggle { width: 64px; height: 64px; }
     .abbie-helper-card { max-width: calc(100vw - 40px); }
+    /* Sidebar squash — at 390px the brand name wraps and pushes nav
+       items around. Tighten everything so it fits on a single row. */
+    .sidebar .brand-name { font-size: 15px !important; white-space: nowrap; }
+    .sidebar .brand-mark { width: 28px !important; height: 28px !important; border-radius: 8px !important; }
+    .sidebar .brand { gap: 8px !important; padding: 0 !important; min-width: 0 !important; }
+    .sidebar .nav-item { padding: 6px 8px; font-size: 12px; }
+    .sidebar-new-plan { font-size: 12px; padding: 8px 10px; }
+    /* Onboarding progress dots scale down too */
+    .ob-progress .ob-dot { max-width: 32px !important; }
+    .ob-step-count { font-size: 10px !important; }
   }
   /* Print / onboarding / landing — hide the floating helper */
   body.onboarding-mode .abbie-helper,
@@ -3342,8 +3365,8 @@
       <div id="onboarding-hint" class="no-print" style="display:none; background: var(--gold-soft); border-left: 3px solid var(--gold); padding: 14px 18px; border-radius: 0 10px 10px 0; margin-bottom: 20px;">
         <div style="display:flex; justify-content:space-between; align-items: flex-start; gap: 14px;">
           <div>
-            <strong style="font-family: 'Fraunces', serif; font-size: 16px;">Demo tip</strong>
-            <div style="font-size: 13px; color: #7a5e0e; margin-top: 2px;">We've seeded an <strong>Ireland Week</strong> plan so you have something to explore. Click it to see the full week, or hit <em>New weekly plan</em> to generate your own.</div>
+            <strong style="font-family: 'Fraunces', serif; font-size: 16px;">👋 This is a sample week</strong>
+            <div style="font-size: 13px; color: #7a5e0e; margin-top: 2px;">The <strong>Ireland Week</strong> below is a demo so you can explore how Planner Bee works. Click into any lesson to see what a full plan looks like. When you're ready, tap <em>AI Generate</em> or <em>Manual Generation</em> to build your own week.</div>
           </div>
           <button class="btn btn-sm btn-ghost" onclick="dismissHint()">Got it</button>
         </div>
@@ -3517,6 +3540,7 @@
             <span class="chip chip-primary" id="plan-chip-grade">—</span>
             <span class="chip chip-gold" id="plan-chip-theme">—</span>
             <span class="chip" id="plan-chip-mins">—</span>
+            <span class="chip" id="plan-chip-source" style="display:none;">—</span>
           </div>
         </div>
         <div style="display:flex; gap:8px; flex-wrap: wrap;">
@@ -5429,7 +5453,7 @@ function applyContinuityRecaps(lessons, planIdBeingBuilt) {
             lesson.recap = `Last week in ${subjLabelForArea(subject)}: "${last.title}" — ${last.theme || 'prior focus'}.`;
             lesson.recapKind = 'week';
           } else {
-            lesson.recap = `Last week we didn't cover ${subjLabelForArea(subject)} — this is a fresh start.`;
+            lesson.recap = `Last week we didn't cover ${subjLabelForArea(subject)} — this is a new unit.`;
             lesson.recapKind = 'fresh';
           }
         } else {
@@ -6671,15 +6695,20 @@ function findPlanForDate(dateObj) {
   // A plan's week runs from plan.weekDate (Monday) through Friday (+4 days).
   // Archived plans are excluded — once archived, they no longer drive the
   // dashboard, Right-Now hero, or Today panel.
+  //
+  // Compare YYYY-MM-DD strings in local time, NOT Date objects built from
+  // a bare "YYYY-MM-DD" — `new Date('2026-04-20')` is parsed as UTC midnight,
+  // which drifts by a day in Dublin during IST. ymdLocal() reads local
+  // year/month/day, so it's stable across DST.
+  const todayYmd = ymdLocal(new Date(dateObj));
   for (const p of State.plans) {
     if (!p.weekDate || p.archived) continue;
-    const start = new Date(p.weekDate);
-    start.setHours(0,0,0,0);
-    const end = new Date(start);
-    end.setDate(start.getDate() + 4); // Friday
-    const d = new Date(dateObj);
-    d.setHours(0,0,0,0);
-    if (d >= start && d <= end) return p;
+    // Build the Monday→Friday range as YMD strings by manipulating a local Date.
+    const start = new Date(p.weekDate + 'T00:00:00');
+    const endDate = new Date(start); endDate.setDate(start.getDate() + 4);
+    const startYmd = ymdLocal(start);
+    const endYmd = ymdLocal(endDate);
+    if (todayYmd >= startYmd && todayYmd <= endYmd) return p;
   }
   return null;
 }
@@ -7616,15 +7645,33 @@ function generatePlanAI() {
       clearInflight();
       console.warn('AI week generation failed', err);
       stageEl.textContent = 'Bee is busy — falling back to the offline draft…';
+      // Flag the plan so the teacher can clearly see it wasn't AI-generated
+      // (important: otherwise they won't know their feedback loop isn't
+      // actually feeding anything into this week's draft).
+      offlinePlan.aiGenerated = false;
+      offlinePlan.offlineReason = humaniseAIError(err);
       setTimeout(() => {
         State.plans.push(offlinePlan);
         State.currentPlanId = offlinePlan.id;
         save();
         logEvent('plan_generated', { planId: offlinePlan.id, grade: offlinePlan.grade, theme: offlinePlan.theme, weekDate: offlinePlan.weekDate, ai: false, aiError: err.message || 'unknown' });
         goto('plan');
-        toast(`Offline generation used — ${err.message || 'AI proxy unavailable'}.`);
+        toast(`Offline draft used — ${offlinePlan.offlineReason}`);
       }, 900);
     });
+}
+
+// Map any error thrown by the AI endpoints into a short teacher-readable
+// reason. Used on both the fallback toast and the plan-header badge so
+// teachers know why they got an offline draft instead of an AI one.
+function humaniseAIError(err) {
+  const raw = (err && (err.message || String(err))) || '';
+  if (/503/i.test(raw) || /not configured/i.test(raw)) return 'Bee is offline on this deployment';
+  if (/429|rate/i.test(raw)) return 'too many requests — try again in a minute';
+  if (/502|timed?|timeout|network/i.test(raw)) return "couldn't reach Bee — network issue";
+  if (/invalid.*key|JWT/i.test(raw)) return 'Bee\'s API key is misconfigured';
+  if (/HTTP (\d+)/i.test(raw)) return `Bee returned ${raw.match(/HTTP (\d+)/i)[1]}`;
+  return raw || 'Bee unavailable';
 }
 
 function mergeAIIntoLesson(base, ai) {
@@ -9235,6 +9282,27 @@ function renderPlan() {
   document.getElementById('plan-chip-grade').textContent = plan.gradeName;
   document.getElementById('plan-chip-theme').textContent = plan.themeName;
   document.getElementById('plan-chip-mins').textContent = Math.round(plan.totals/60) + ' hours planned';
+  // Source chip — tells the teacher whether this week was AI-drafted,
+  // offline (and why), or a demo seed. Hidden when nothing meaningful to say.
+  const sourceChip = document.getElementById('plan-chip-source');
+  if (sourceChip) {
+    sourceChip.className = 'chip';
+    sourceChip.style.display = 'none';
+    if (plan.isDemo) {
+      sourceChip.textContent = '✨ Demo plan';
+      sourceChip.className = 'chip chip-gold';
+      sourceChip.style.display = '';
+    } else if (plan.aiGenerated) {
+      sourceChip.textContent = '✨ Drafted by Bee';
+      sourceChip.className = 'chip chip-primary';
+      sourceChip.style.display = '';
+    } else if (plan.aiGenerated === false && plan.offlineReason) {
+      sourceChip.textContent = `Offline draft · ${plan.offlineReason}`;
+      sourceChip.className = 'chip chip-accent';
+      sourceChip.style.display = '';
+      sourceChip.title = 'Bee was unavailable when this week was generated — your feedback isn\'t feeding into it yet. Regenerate any lesson (or the whole week) to run it through Bee.';
+    }
+  }
 
   const banner = document.getElementById('theme-banner');
   if (plan.theme && plan.theme !== 'none') {
@@ -11089,7 +11157,15 @@ function renderLessonHomework(l) {
   if (!main) return;
   const hw = l.homework;
   if (!hw) {
-    // Empty state with a clear AI CTA.
+    // Empty state with a clear AI CTA. Guard: if the lesson has no actual
+    // teaching content (empty plan.main, no outcomes), don't let teachers
+    // generate homework from nothing — it'd produce generic filler.
+    const hasContent = !!(l.plan?.main || l.focus || (Array.isArray(l.outcomes) && l.outcomes.length));
+    const gateHtml = !hasContent ? `
+      <div class="homework-gate">
+        This lesson doesn't have any teaching content yet. Add outcomes or a main-activity description on the <em>Lesson plan</em> tab first, then come back here.
+      </div>` : '';
+    const btnDisabled = !hasContent ? 'disabled title="Add lesson content on the Plan tab first."' : '';
     main.innerHTML = `
       <div class="tab-subtitle"><strong>Homework · a short take-home that matches this lesson.</strong> Bee writes it using your direction + what the class did, pitched to the grade.</div>
       <div class="homework-empty">
@@ -11097,9 +11173,10 @@ function renderLessonHomework(l) {
         <div>
           <h3 style="margin: 0 0 6px; font-family: 'Fraunces', serif;">No homework yet for this lesson</h3>
           <p style="margin: 0 0 14px; color: var(--ink-soft); font-size: 14px;">Tell Bee what should be on the take-home — or just hit Generate and we'll pick up what's already set for this lesson.</p>
-          <textarea id="hw-teacher-note" placeholder="Optional · e.g. Keep it to 15 minutes. / Focus only on the first two sums we did in class." style="width: 100%; max-width: 520px; min-height: 56px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 8px; font-family: inherit; font-size: 13px; resize: vertical; margin-bottom: 10px;"></textarea>
+          ${gateHtml}
+          <textarea id="hw-teacher-note" placeholder="Optional · e.g. Keep it to 15 minutes. / Focus only on the first two sums we did in class." style="width: 100%; max-width: 520px; min-height: 56px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 8px; font-family: inherit; font-size: 13px; resize: vertical; margin-bottom: 10px;" ${!hasContent ? 'disabled' : ''}></textarea>
           <div>
-            <button class="btn btn-ai" onclick="generateHomework()"><span class="ai-spark"><svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0.5 L9.6 5.6 L14.8 7.3 L9.6 9 L8 14.1 L6.4 9 L1.2 7.3 L6.4 5.6 Z"/></svg></span> Generate homework</button>
+            <button class="btn btn-ai" onclick="generateHomework()" ${btnDisabled}><span class="ai-spark"><svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0.5 L9.6 5.6 L14.8 7.3 L9.6 9 L8 14.1 L6.4 9 L1.2 7.3 L6.4 5.6 Z"/></svg></span> Generate homework</button>
           </div>
           <div id="hw-status" class="faint" style="margin-top: 12px; font-size: 12px;"></div>
         </div>
@@ -11211,7 +11288,12 @@ async function generateHomework(replaceExisting) {
     toast('✨ Homework ready.');
   } catch (e) {
     console.warn('Homework generation failed', e);
-    if (statusEl) statusEl.innerHTML = `<span style="color: #b2382a;">${escape(e.message || 'Something went wrong.')}</span>`;
+    if (statusEl) {
+      const friendly = humaniseAIError(e);
+      statusEl.innerHTML = `<span style="color: #b2382a;">${escape(friendly)}</span> <button type="button" class="btn btn-ghost btn-sm" style="margin-left: 8px; padding: 2px 10px; font-size: 11px;" onclick="document.getElementById('hw-status').innerHTML=''">Dismiss</button>`;
+      // Auto-clear after 8s so the error doesn't linger if teachers don't notice.
+      setTimeout(() => { if (statusEl) statusEl.innerHTML = ''; }, 8000);
+    }
   }
 }
 
@@ -11569,9 +11651,16 @@ function toggleVoiceNote(lessonId) {
   if (!hit) return;
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
   if (!SR) {
-    // Fallback: prompt for text input.
-    const text = prompt('Add a note for this lesson:');
-    if (text && text.trim()) saveVoiceNote(lessonId, text.trim());
+    // Fallback: prompt for text input. Signal the fallback explicitly so
+    // teachers on Safari/Firefox don't wonder where the mic went.
+    const text = prompt('Voice input isn\'t supported in this browser — type a quick note instead:');
+    if (text === null) {
+      toast('Note cancelled.');
+    } else if (text.trim()) {
+      saveVoiceNote(lessonId, text.trim());
+    } else {
+      toast('Empty note — nothing saved.');
+    }
     return;
   }
   if (VoiceState.lessonId === lessonId && VoiceState.recognition) {
@@ -13640,10 +13729,21 @@ function deleteTemplate(templateId) {
   ensureTemplates();
   const t = State.profile.templates.find(x => x.id === templateId);
   if (!t) return;
+  // Count how many lessons across all plans currently link to this template.
+  let usingCount = 0;
+  (State.plans || []).forEach(p => {
+    (p.lessons || []).forEach(l => {
+      if (l.templateAppliedId === templateId) usingCount++;
+    });
+  });
+  const usageLine = usingCount > 0
+    ? `<p style="margin: 0 0 8px; color: var(--accent); font-weight: 600;">${usingCount} lesson${usingCount === 1 ? ' currently uses' : 's currently use'} this template.</p>
+       <p style="margin: 0; font-size: 13px; color: var(--ink-soft);">Those lessons keep their content as-is — deleting the template just takes it out of your library, you can't re-apply it from the picker.</p>`
+    : `<p style="margin:0;">No lessons are using this template right now. Delete is permanent — can't be undone.</p>`;
   confirmAction({
-    title: `Delete "${t.name}"?`,
-    body: `<p style="margin:0;">The template will be removed. Any lessons you've already applied it to stay as they are — deleting the template just takes it out of your library.</p>`,
-    okLabel: 'Delete template',
+    title: `Delete "${t.name}" permanently?`,
+    body: usageLine,
+    okLabel: usingCount > 0 ? `Delete template (${usingCount} in use)` : 'Delete template',
     danger: true,
     onConfirm: () => {
       State.profile.templates = State.profile.templates.filter(x => x.id !== templateId);
@@ -13839,15 +13939,32 @@ function renderReflectionStep() {
   }
 
   if (stepIdx >= total) {
-    // Final thank-you step.
+    // Final thank-you step with a concrete "here's what happens with this"
+    // confirmation, so teachers can see the feedback loop isn't a black box.
     if (stepCount) stepCount.textContent = 'All done';
+    const ratedCount = Reflection.subjects.filter(s => Reflection.answers[s.id]?.rating).length;
+    const tweakCount = Reflection.subjects.filter(s => {
+      const r = Reflection.answers[s.id]?.rating;
+      return r === 'mid' || r === 'down';
+    }).length;
     body.innerHTML = `
       <div class="ob-step5-head" style="margin-top: 20px;">
         <div class="abbie abbie-md" data-abbie-pose="apple" aria-hidden="true"></div>
         <div>
           <div class="ob-eyebrow">Thanks for reflecting</div>
           <h1 class="ob-title" style="margin-bottom: 8px;">That's a grand week banked.</h1>
-          <p class="ob-lead" style="margin-bottom: 0;">Every rating and note you've just left feeds next week's draft. Subjects that needed tweaks get a fresh pitch; what worked sticks. Enjoy the weekend.</p>
+          <p class="ob-lead" style="margin-bottom: 0;">Every rating and note you've just left feeds next week's draft. Subjects that needed tweaks get a fresh pitch; what worked sticks.</p>
+        </div>
+      </div>
+      <div class="rf-confirm">
+        <div class="rf-confirm-row">
+          <strong>${ratedCount}</strong> subject${ratedCount === 1 ? '' : 's'} rated · saved to your learning log
+        </div>
+        ${tweakCount ? `<div class="rf-confirm-row">
+          <strong>${tweakCount}</strong> flagged for a fresh pitch next week — Bee will pick these up when you hit <em>AI Generate</em>
+        </div>` : ''}
+        <div class="rf-confirm-row">
+          You'll see these ratings on each lesson's feedback panel too. Edit or clear any time.
         </div>
       </div>
       <div class="rf-summary">
@@ -14086,7 +14203,12 @@ const AbbieState = {
   currentView: null,
   queue: [],
   index: 0,
-  mutedUntil: 0,
+  // Persisted "I don't want to be auto-peeked at right now" timestamp.
+  // Loaded from localStorage so it survives refreshes within the same
+  // 24-hour window that the mute was set.
+  mutedUntil: (() => {
+    try { return Number(localStorage.getItem('seachtain.abbie.muted-until') || '0') || 0; } catch(e){ return 0; }
+  })(),
 };
 
 function abbieIsEnabled() {
@@ -14184,8 +14306,10 @@ function abbieNextTip() {
 }
 
 function abbieMuteToday() {
-  // Suppress auto-peek for the rest of the session (until page reload).
+  // Suppress auto-peek for the next 24 hours — persisted to localStorage
+  // so a refresh doesn't restore the noise.
   AbbieState.mutedUntil = Date.now() + 24 * 60 * 60 * 1000;
+  try { localStorage.setItem('seachtain.abbie.muted-until', String(AbbieState.mutedUntil)); } catch(e){}
   abbieCloseBubble();
   toast("Grand — I'll stay quiet. Click me any time if you need a hand.");
 }
@@ -14445,6 +14569,8 @@ function renderOnboardingStep() {
     }
   }
   const stepCount = document.getElementById('ob-step-count');
+  // Step 5 is the celebratory finish state. The 4 data-entry steps are
+  // numbered "1 of 4" through "4 of 4"; the finale says "All set".
   if (stepCount) stepCount.textContent = step === OB_TOTAL_STEPS ? 'All set' : `Step ${step} of ${OB_TOTAL_STEPS - 1}`;
 
   // Show the active step
@@ -14753,6 +14879,17 @@ AuthModule.init()
 // landing. Signed-in brand-new accounts stay empty until they generate.
 function seedDemoPlan() {
   if (State.plans.length) return;
+  // Dynamic weekDate: always the Monday of the CURRENT week, so the demo
+  // plan lines up with "today" for the Right-Now hero. If it's weekend,
+  // pick next Monday so the demo feels forward-looking.
+  const today = new Date();
+  const dow = today.getDay(); // 0 Sun, 6 Sat
+  const monday = new Date(today);
+  if (dow === 0) monday.setDate(today.getDate() + 1);        // Sun -> tomorrow (Mon)
+  else if (dow === 6) monday.setDate(today.getDate() + 2);   // Sat -> Mon
+  else monday.setDate(today.getDate() - (dow - 1));           // Mon-Fri -> this week's Mon
+  monday.setHours(0, 0, 0, 0);
+  const weekDate = ymdLocal(monday);
   const seed = {
     id: 'plan-seed',
     title: 'Ireland Week',
@@ -14765,11 +14902,12 @@ function seedDemoPlan() {
     pupils: 24,
     sen: 3,
     medium: 'english',
-    weekDate: '2026-04-20',
-    weekDateReadable: fmtDate('2026-04-20'),
+    weekDate,
+    weekDateReadable: fmtDate(weekDate),
     subjects: (()=>{ const o={}; SUBJECTS.forEach(s=>o[s.id]=s.defaultMin); return o; })(),
     totals: SUBJECTS.reduce((a,b)=>a+b.defaultMin,0),
     lessons: IRELAND_WEEK_LESSONS.map(l => ({...l, planId:'plan-seed'})),
+    isDemo: true,
     created: new Date().toISOString()
   };
   State.plans.push(seed);
