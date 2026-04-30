@@ -573,6 +573,82 @@
     border-radius: 10px; font-size: 13px;
   }
 
+  /* Monthly Cúntas view (the one teachers actually hand to inspectors) */
+  .cm-toolbar {
+    display: flex; justify-content: space-between; align-items: center;
+    gap: 12px; flex-wrap: wrap;
+    background: var(--surface); border: 1px solid var(--line);
+    border-radius: 12px; padding: 12px 16px; margin-bottom: 18px;
+    box-shadow: var(--shadow-sm);
+  }
+  .cm-tb-left { display: flex; align-items: center; gap: 10px; min-width: 0; }
+  .cm-tb-right { display: flex; gap: 6px; flex-wrap: wrap; }
+  .cm-month-label {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.08em;
+    text-transform: uppercase; color: var(--ink-faint);
+  }
+  #cm-month-pick { min-width: 200px; max-width: 320px; }
+
+  .cm-strand-card {
+    background: var(--primary-soft); border: 1px solid rgba(45, 95, 63, 0.18);
+    border-radius: 12px; padding: 16px 20px; margin-bottom: 22px;
+  }
+  .cm-strand-card h4 {
+    margin: 0 0 12px; font-family: 'Fraunces', serif; font-size: 14px;
+    letter-spacing: 0.02em; color: var(--primary);
+  }
+  .cm-strand-list { display: flex; flex-direction: column; gap: 10px; }
+  .cm-strand-row {
+    display: grid; grid-template-columns: 160px 1fr; gap: 14px; align-items: center;
+    padding: 6px 0; border-bottom: 1px dashed rgba(45, 95, 63, 0.15);
+    font-size: 13px;
+  }
+  .cm-strand-row:last-child { border-bottom: none; }
+  .cm-strand-subj strong { font-weight: 600; }
+  .cm-strand-marks { display: flex; flex-wrap: wrap; gap: 4px 10px; }
+  .cm-strand-mark {
+    font-size: 12px; padding: 2px 8px; border-radius: 999px;
+    background: var(--surface); color: var(--ink-faint);
+  }
+  .cm-strand-mark.hit { background: var(--primary); color: white; font-weight: 600; }
+
+  .cm-prompt-card {
+    display: flex; gap: 18px; align-items: flex-start;
+    background: var(--surface); border: 1px dashed var(--line-strong);
+    border-radius: 14px; padding: 22px 24px;
+  }
+  .cm-prompt-card .abbie { flex-shrink: 0; }
+
+  .cm-document {
+    background: var(--surface); border: 1px solid var(--line);
+    border-radius: 14px; padding: 28px 32px;
+    max-width: 760px; margin: 0 auto;
+    box-shadow: var(--shadow-sm);
+  }
+  .cm-document .cm-doc-head { border-bottom: 2px solid var(--primary); padding-bottom: 14px; margin-bottom: 22px; }
+  .cm-document .cm-doc-head h2 { font-size: 22px; color: var(--primary); }
+  .cm-document .cm-paragraph {
+    margin-bottom: 22px; padding-bottom: 18px;
+    border-bottom: 1px solid var(--line);
+  }
+  .cm-document .cm-paragraph:last-of-type { border-bottom: none; }
+  .cm-document .cm-paragraph h3 {
+    font-family: 'Fraunces', serif; font-size: 16px; margin: 0 0 8px;
+    color: var(--ink);
+  }
+  .cm-document .cm-paragraph p {
+    margin: 0; font-size: 14px; line-height: 1.6;
+  }
+  .cm-document .cm-strands {
+    margin-top: 8px; font-size: 12px; color: var(--ink-soft); font-style: italic;
+  }
+  .cm-document .cm-doc-foot { margin-top: 18px; font-size: 11px; }
+
+  @media (max-width: 640px) {
+    .cm-strand-row { grid-template-columns: 1fr; gap: 4px; }
+    .cm-document { padding: 20px 18px; }
+  }
+
   /* =========================================================================
      TEMPLATES VIEW + picker + per-lesson banner
      ========================================================================= */
@@ -3012,6 +3088,10 @@
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 L21 7 L21 17 L12 22 L3 17 L3 7 Z"/><path d="M12 7 L17 9.5 L17 14.5 L12 17 L7 14.5 L7 9.5 Z"/></svg>
       Templates
     </button>
+    <button class="nav-item" data-nav="cuntas" onclick="goto('cuntas')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M9 13h6M9 17h4"/></svg>
+      Cúntas Míosúil
+    </button>
     <div class="nav-section-label">Settings</div>
     <button class="nav-item" data-nav="class" onclick="goto('class')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
@@ -3956,6 +4036,22 @@
       </div>
       <div class="theme-grid" id="themes-gallery"></div>
     </section>
+
+    <!-- ============ CÚNTAS MÍOSÚIL — monthly inspector record ============ -->
+    <section id="view-cuntas" class="view">
+      <div class="page-head">
+        <div class="title-block">
+          <h1>Cúntas Míosúil</h1>
+          <div class="sub">Monthly record across every plan you've taught. Pick a month — Bee compiles every lesson, every strand, every reteach into one inspector-ready document.</div>
+        </div>
+      </div>
+      <div class="cm-toolbar no-print" id="cm-toolbar"></div>
+      <div id="cm-empty" style="display:none;"></div>
+      <div id="cm-strand-summary"></div>
+      <div id="cm-status" class="cuntas-status no-print" style="display:none;"></div>
+      <div id="cm-body"></div>
+    </section>
+    <!-- ============ END CÚNTAS ============ -->
 
     <!-- ============ TEMPLATES ============ -->
     <section id="view-templates" class="view">
@@ -6385,6 +6481,7 @@ const VIEW_TO_PATH = {
   library:    '/my-plans',
   themes:     '/themes',
   templates:  '/templates',
+  cuntas:     '/cuntas',
   class:      '/profile',
   create:     '/new-plan',
   // `generating` is a transient in-flight view — don't give it a URL.
@@ -6401,6 +6498,7 @@ const PATH_TO_VIEW = {
   '/my-plans':   'library',
   '/themes':     'themes',
   '/templates':  'templates',
+  '/cuntas':     'cuntas',
   '/profile':    'class',
   '/new-plan':   'create',
 };
@@ -6414,6 +6512,7 @@ const VIEW_TITLES = {
   library:    'My plans · Planner Bee',
   themes:     'Themes · Planner Bee',
   templates:  'Lesson templates · Planner Bee',
+  cuntas:     'Cúntas Míosúil · Planner Bee',
   class:      'My profile · Planner Bee',
   create:     'New plan · Planner Bee',
   generating: 'Drafting… · Planner Bee',
@@ -6453,6 +6552,7 @@ function goto(view, opts = {}) {
   // Refresh the floating Abbie helper for this view (hides on landing/onboarding via CSS).
   try { abbieRefresh(); } catch(e) {}
   if (view === 'templates') renderTemplatesView();
+  if (view === 'cuntas') renderCuntasMonthlyView();
   if (view === 'dashboard') renderDashboard();
   if (view === 'library') renderLibrary();
   if (view === 'themes') renderThemes();
@@ -14404,6 +14504,399 @@ function revertTemplateApply() {
 }
 
 // The templates view — list + defaults summary + inline edit.
+/* =========================================================================
+   CÚNTAS MÍOSÚIL — monthly inspector record across every plan in a month.
+   Aggregates lessons + strand coverage + feedback for the picked month,
+   asks Bee for one paragraph per subject, persists to
+   profile.monthlyCuntas[yyyy-mm] so teachers can revisit + export.
+   ========================================================================= */
+const MONTH_NAMES = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+
+function ensureMonthlyCuntas() {
+  if (!State.profile.monthlyCuntas || typeof State.profile.monthlyCuntas !== 'object') {
+    State.profile.monthlyCuntas = {};
+  }
+}
+
+function defaultCuntasMonthYmd() {
+  // Default to the latest plan's month if there is one, else current month.
+  const plans = (State.plans || []).filter(p => !p.archived && p.weekDate)
+    .sort((a, b) => b.weekDate.localeCompare(a.weekDate));
+  const latest = plans[0];
+  if (latest) return latest.weekDate.slice(0, 7); // YYYY-MM
+  const now = new Date();
+  return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+}
+
+function plansInMonth(yyyymm) {
+  if (!yyyymm) return [];
+  return (State.plans || [])
+    .filter(p => !p.archived && p.weekDate && p.weekDate.startsWith(yyyymm))
+    .sort((a, b) => a.weekDate.localeCompare(b.weekDate));
+}
+
+function monthsWithPlans() {
+  const set = new Set();
+  (State.plans || []).forEach(p => {
+    if (!p.archived && p.weekDate) set.add(p.weekDate.slice(0, 7));
+  });
+  return Array.from(set).sort((a, b) => b.localeCompare(a));
+}
+
+function monthLabelFromYmd(yyyymm) {
+  if (!yyyymm) return '';
+  const [y, m] = yyyymm.split('-');
+  return `${MONTH_NAMES[+m - 1]} ${y}`;
+}
+
+function renderCuntasMonthlyView() {
+  ensureMonthlyCuntas();
+  const toolbar = document.getElementById('cm-toolbar');
+  const empty = document.getElementById('cm-empty');
+  const strandSummary = document.getElementById('cm-strand-summary');
+  const status = document.getElementById('cm-status');
+  const body = document.getElementById('cm-body');
+  if (!toolbar) return;
+
+  const months = monthsWithPlans();
+  if (!months.length) {
+    if (toolbar) toolbar.innerHTML = '';
+    if (empty) {
+      empty.style.display = 'block';
+      empty.innerHTML = `
+        <div class="tpl-empty">
+          <div class="abbie abbie-sm" data-abbie-pose="clipboard" aria-hidden="true"></div>
+          <div>
+            <h3 style="font-family: 'Fraunces', serif; font-size: 18px; margin: 0 0 4px;">No plans on file yet</h3>
+            <p style="margin: 0 0 12px; color: var(--ink-soft); font-size: 14px;">Once you've taught a few weeks, the monthly Cúntas pulls every lesson together for inspectors. Generate a plan first, then come back.</p>
+            <button class="btn btn-primary" onclick="goto('dashboard')">Go to dashboard</button>
+          </div>
+        </div>`;
+      try { mountAbbie(empty); } catch(e){}
+    }
+    if (strandSummary) strandSummary.innerHTML = '';
+    if (body) body.innerHTML = '';
+    return;
+  }
+  if (empty) { empty.style.display = 'none'; empty.innerHTML = ''; }
+
+  // Resolve the active month (URL-state, last-picked, or default).
+  if (!State.cuntasMonth || !months.includes(State.cuntasMonth)) {
+    State.cuntasMonth = defaultCuntasMonthYmd();
+    if (!months.includes(State.cuntasMonth)) State.cuntasMonth = months[0];
+  }
+  const activeMonth = State.cuntasMonth;
+  const activeLabel = monthLabelFromYmd(activeMonth);
+  const monthPlans = plansInMonth(activeMonth);
+  const stored = State.profile.monthlyCuntas[activeMonth];
+
+  // Toolbar: month dropdown + actions
+  toolbar.innerHTML = `
+    <div class="cm-tb-left">
+      <label class="cm-month-label" for="cm-month-pick">Month</label>
+      <select id="cm-month-pick" class="input" onchange="setCuntasMonth(this.value)">
+        ${months.map(m => `<option value="${m}" ${m === activeMonth ? 'selected' : ''}>${escape(monthLabelFromYmd(m))} (${plansInMonth(m).length} weeks)</option>`).join('')}
+      </select>
+    </div>
+    <div class="cm-tb-right">
+      <button class="btn btn-ai btn-sm no-honey" onclick="generateMonthlyCuntas()" title="Compile this month's plans into one Cúntas Míosúil"><span class="ai-spark"><svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0.5 L9.6 5.6 L14.8 7.3 L9.6 9 L8 14.1 L6.4 9 L1.2 7.3 L6.4 5.6 Z"/></svg></span> ${stored ? 'Regenerate' : 'Generate with Bee'}</button>
+      ${stored ? `<button class="btn btn-ghost btn-sm" onclick="printMonthlyCuntas()">🖨 Print / PDF</button>` : ''}
+      ${stored ? `<button class="btn btn-ghost btn-sm" onclick="exportMonthlyCuntasDocx()">📄 Export Word doc</button>` : ''}
+      ${stored ? `<button class="btn btn-ghost btn-sm" onclick="copyMonthlyCuntas()">📋 Copy</button>` : ''}
+    </div>`;
+
+  // Strand-coverage summary across the month — uses planStrandCoverage()
+  // already defined for the per-week Coverage tab, then unions across plans.
+  if (strandSummary) {
+    strandSummary.innerHTML = renderMonthlyStrandSummary(monthPlans);
+  }
+
+  // Body: paragraphs per subject if generated, else a prompt.
+  if (status) { status.style.display = 'none'; status.innerHTML = ''; }
+  if (!stored) {
+    body.innerHTML = `
+      <div class="cm-prompt-card">
+        <div class="abbie abbie-xs" data-abbie-pose="tablet" aria-hidden="true"></div>
+        <div>
+          <h3 style="font-family: 'Fraunces', serif; font-size: 17px; margin: 0 0 4px;">Ready to compile <em>${escape(activeLabel)}</em>?</h3>
+          <p style="margin: 0 0 12px; color: var(--ink-soft); font-size: 13px;">${monthPlans.length} ${monthPlans.length === 1 ? 'week' : 'weeks'} of plans in this month — Bee will summarise every subject across all of them, name the NCCA strands, and flag anything to revisit.</p>
+          <button class="btn btn-ai" onclick="generateMonthlyCuntas()"><span class="ai-spark"><svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0.5 L9.6 5.6 L14.8 7.3 L9.6 9 L8 14.1 L6.4 9 L1.2 7.3 L6.4 5.6 Z"/></svg></span> Generate with Bee</button>
+        </div>
+      </div>`;
+    try { mountAbbie(body); } catch(e){}
+    return;
+  }
+
+  // Render the stored Cúntas paragraphs
+  const paragraphs = stored.paragraphs || [];
+  body.innerHTML = `
+    <div class="cm-document">
+      <div class="cm-doc-head">
+        <h2 style="font-family: 'Fraunces', serif; margin: 0 0 4px;">Cúntas Míosúil — ${escape(stored.monthLabel || activeLabel)}</h2>
+        <div class="muted" style="font-size: 13px;">
+          ${escape(State.profile.salutation || '')} ${escape(State.profile.teacher || '')}
+          ${State.profile.school ? ' · ' + escape(State.profile.school) : ''}
+          ${State.profile.gradeName ? ' · ' + escape(State.profile.gradeName) : (State.profile.grade ? ' · ' + escape(State.profile.grade) : '')}
+        </div>
+      </div>
+      ${paragraphs.map(p => {
+        const subj = SUBJECTS.find(s => s.id === p.subject) || { name: p.subject };
+        const strandsLine = Array.isArray(p.strands) && p.strands.length
+          ? `<div class="cm-strands">Strands covered: ${p.strands.map(escape).join(' · ')}</div>` : '';
+        return `<section class="cm-paragraph">
+          <h3>${escape(subj.name)}</h3>
+          <p>${escape(p.text)}</p>
+          ${strandsLine}
+        </section>`;
+      }).join('')}
+      <div class="cm-doc-foot faint">Generated ${escape(new Date(stored.generatedAt).toLocaleDateString('en-IE', { day: 'numeric', month: 'long', year: 'numeric' }))} · ${monthPlans.length} ${monthPlans.length === 1 ? 'week' : 'weeks'} compiled</div>
+    </div>`;
+}
+
+function setCuntasMonth(yyyymm) {
+  State.cuntasMonth = yyyymm;
+  renderCuntasMonthlyView();
+}
+
+function renderMonthlyStrandSummary(monthPlans) {
+  if (!monthPlans || !monthPlans.length) return '';
+  // Union strand coverage across plans, by subject.
+  const unionCoverage = {};
+  monthPlans.forEach(p => {
+    const cov = planStrandCoverage(p);
+    Object.entries(cov).forEach(([sid, set]) => {
+      unionCoverage[sid] = unionCoverage[sid] || new Set();
+      set.forEach(strand => unionCoverage[sid].add(strand));
+    });
+  });
+  const subjects = Object.keys(unionCoverage).filter(sid => COVERAGE_STRANDS[sid]);
+  if (!subjects.length) return '';
+  const lines = subjects.map(sid => {
+    const subj = SUBJECTS.find(s => s.id === sid) || { name: sid, icon: '📘' };
+    const all = COVERAGE_STRANDS[sid] || [];
+    const covered = unionCoverage[sid] || new Set();
+    return `<div class="cm-strand-row">
+      <div class="cm-strand-subj">${subj.icon} <strong>${escape(subj.name)}</strong></div>
+      <div class="cm-strand-marks">
+        ${all.map(s => `<span class="cm-strand-mark ${covered.has(s) ? 'hit' : 'miss'}">${covered.has(s) ? '✓' : '·'} ${escape(s)}</span>`).join('')}
+      </div>
+    </div>`;
+  }).join('');
+  return `
+    <div class="cm-strand-card">
+      <h4>Strand coverage this month</h4>
+      <div class="cm-strand-list">${lines}</div>
+    </div>`;
+}
+
+async function generateMonthlyCuntas() {
+  ensureMonthlyCuntas();
+  if (!RateLimit.check('cuntas_monthly', 3)) {
+    const wait = RateLimit.retryAfter('cuntas_monthly');
+    toast(`A lot of compilations at once — try again in ${wait}s.`);
+    return;
+  }
+  const month = State.cuntasMonth;
+  const monthPlans = plansInMonth(month);
+  if (!monthPlans.length) { toast('No plans in this month.'); return; }
+  const status = document.getElementById('cm-status');
+  if (status) {
+    status.style.display = 'block';
+    status.innerHTML = '<span class="ai-spinner"></span> Bee is reading every lesson + your feedback across the month…';
+  }
+
+  // Group lessons across all plans by subject.
+  const lessonsBySubject = {};
+  monthPlans.forEach(p => {
+    (p.lessons || []).forEach(l => {
+      (lessonsBySubject[l.subject] = lessonsBySubject[l.subject] || []).push({
+        title: l.title, focus: l.focus, strand: l.strand, strandUnit: l.strandUnit || null,
+        day: l.day, weekDate: p.weekDate,
+        teacherDirection: l.teacherDirection || null,
+      });
+    });
+  });
+
+  // Feedback summary across the whole month.
+  const lessonIds = new Set();
+  monthPlans.forEach(p => (p.lessons || []).forEach(l => lessonIds.add(l.id)));
+  const log = loadLearning();
+  const feedbackEntries = log.filter(e => e.type === 'lesson_feedback' && e.meta && lessonIds.has(e.meta.lessonId));
+  const feedbackSummary = feedbackEntries.length
+    ? feedbackEntries.map(e => {
+        const planMatch = monthPlans.find(p => (p.lessons || []).some(l => l.id === e.meta.lessonId));
+        const lessonMatch = planMatch ? planMatch.lessons.find(l => l.id === e.meta.lessonId) : null;
+        const label = lessonMatch ? `Wk-of-${planMatch.weekDate} · ${lessonMatch.day} ${subjectLabel(lessonMatch.subject)} — ${lessonMatch.title}` : e.meta.lessonId;
+        const rating = e.meta.rating === 'up' ? 'worked well' : e.meta.rating === 'mid' ? 'needed tweaks' : 'off the mark';
+        const tags = (e.meta.tags || []).join(', ');
+        return `- ${label}: ${rating}${tags ? ' (' + tags + ')' : ''}${e.meta.comment ? ' · "' + e.meta.comment + '"' : ''}`;
+      }).join('\n')
+    : '';
+
+  const profile = State.profile || {};
+  const subjectsInMonth = Object.keys(lessonsBySubject);
+  const curriculum = subjectsInMonth.map(sid =>
+    `=== ${subjectLabel(sid).toUpperCase()} ===\n` + nccaContextFor(sid, profile.grade || profile.gradeId)
+  ).join('\n\n');
+
+  try {
+    const resp = await fetch('/api/generate-cuntas-monthly', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({
+        profile: {
+          teacher: profile.teacher, salutation: profile.salutation, school: profile.school,
+          grade: profile.grade, gradeId: profile.gradeId, gradeName: profile.gradeName || (GRADES.find(g => g.id === profile.grade)?.name || profile.grade),
+          pupils: profile.pupils, medium: profile.medium,
+        },
+        plans: monthPlans.map(p => ({
+          id: p.id,
+          weekDate: p.weekDate,
+          weekDateReadable: p.weekDateReadable,
+          themeName: p.themeName,
+        })),
+        monthLabel: monthLabelFromYmd(month),
+        lessonsBySubject,
+        feedbackSummary,
+        curriculum,
+      }),
+    });
+    if (!resp.ok) {
+      const err = await resp.json().catch(() => ({}));
+      throw new Error(err.error || `HTTP ${resp.status}`);
+    }
+    const data = await resp.json();
+    if (!data.cuntas) throw new Error('Empty response');
+    State.profile.monthlyCuntas[month] = {
+      ...data.cuntas,
+      generatedAt: new Date().toISOString(),
+      planIds: monthPlans.map(p => p.id),
+    };
+    saveProfileStore();
+    try { logEvent('monthly_cuntas_generated', { month, planCount: monthPlans.length }); } catch(e){}
+    renderCuntasMonthlyView();
+    toast('✨ Monthly Cúntas ready.');
+  } catch (e) {
+    console.warn('Monthly cuntas failed', e);
+    if (status) status.innerHTML = `<span style="color: #b2382a;">${escape(humaniseAIError(e))}</span>`;
+  }
+}
+
+function copyMonthlyCuntas() {
+  const month = State.cuntasMonth;
+  const stored = State.profile.monthlyCuntas?.[month];
+  if (!stored) return;
+  const lines = [
+    `Cúntas Míosúil — ${stored.monthLabel || monthLabelFromYmd(month)}`,
+    `${(State.profile.salutation || '') + ' ' + (State.profile.teacher || '')}`.trim(),
+    `${State.profile.school || ''}${State.profile.gradeName ? ' · ' + State.profile.gradeName : ''}`,
+    '',
+  ];
+  (stored.paragraphs || []).forEach(p => {
+    const subj = SUBJECTS.find(s => s.id === p.subject)?.name || p.subject;
+    lines.push(subj.toUpperCase());
+    lines.push(p.text);
+    if (Array.isArray(p.strands) && p.strands.length) lines.push(`Strands covered: ${p.strands.join(' · ')}`);
+    lines.push('');
+  });
+  const text = lines.join('\n').trim();
+  if (navigator.clipboard?.writeText) {
+    navigator.clipboard.writeText(text).then(() => toast('Cúntas copied to clipboard'));
+  } else {
+    const ta = document.createElement('textarea');
+    ta.value = text; document.body.appendChild(ta); ta.select();
+    try { document.execCommand('copy'); toast('Copied'); } catch(e){}
+    document.body.removeChild(ta);
+  }
+}
+
+// Open a print-styled new window with letterhead-grade typesetting.
+// Teachers print to PDF or to paper from the browser dialog.
+function printMonthlyCuntas() {
+  const month = State.cuntasMonth;
+  const stored = State.profile.monthlyCuntas?.[month];
+  if (!stored) return;
+  const P = State.profile || {};
+  const monthPlans = plansInMonth(month);
+  const esc = (s) => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  const html = buildMonthlyCuntasHtml(stored, P, monthPlans, esc);
+  const w = window.open('', '_blank', 'width=900,height=1100');
+  if (!w) { toast('Enable pop-ups to print the Cúntas.'); return; }
+  w.document.open();
+  w.document.write(html);
+  w.document.close();
+  setTimeout(() => w.print(), 400);
+}
+
+// Save as Word .doc — uses Word-HTML format, which Microsoft Word and
+// Google Docs both open and let you save as .docx natively.
+function exportMonthlyCuntasDocx() {
+  const month = State.cuntasMonth;
+  const stored = State.profile.monthlyCuntas?.[month];
+  if (!stored) return;
+  const P = State.profile || {};
+  const monthPlans = plansInMonth(month);
+  const esc = (s) => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  const html = buildMonthlyCuntasHtml(stored, P, monthPlans, esc, true);
+  // Word HTML format: prefix with the right namespace + use a .doc filename.
+  // Word + Google Docs both open this and the teacher can Save As .docx.
+  const wordPreamble = `<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40"><head><meta charset="utf-8"><title>Cúntas Míosúil</title></head><body>`;
+  const wordClose = `</body></html>`;
+  const blob = new Blob(['﻿', wordPreamble, html.match(/<body[^>]*>([\s\S]*)<\/body>/i)?.[1] || html, wordClose], {
+    type: 'application/msword',
+  });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  const fname = `Cuntas-${month}-${(P.teacher || 'teacher').replace(/\s+/g, '_')}.doc`;
+  a.href = url; a.download = fname;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 0);
+  toast('Word document downloaded — open in Word or Google Docs.');
+}
+
+function buildMonthlyCuntasHtml(stored, P, monthPlans, esc, forWord) {
+  const monthLabel = stored.monthLabel || monthLabelFromYmd(State.cuntasMonth);
+  const teacherLine = `${P.salutation || ''} ${P.teacher || ''}`.trim();
+  const schoolLine = [P.school, P.gradeName, P.roll ? 'Roll ' + P.roll : ''].filter(Boolean).join(' · ');
+  const paragraphsHtml = (stored.paragraphs || []).map(p => {
+    const subj = SUBJECTS.find(s => s.id === p.subject)?.name || p.subject;
+    const strands = Array.isArray(p.strands) && p.strands.length
+      ? `<p style="font-size: 11pt; color: #555; margin: 4px 0 0; font-style: italic;">Strands covered: ${p.strands.map(esc).join(' · ')}</p>` : '';
+    return `<section style="margin-bottom: 18px; page-break-inside: avoid;">
+      <h2 style="font-family: Georgia, 'Times New Roman', serif; font-size: 14pt; margin: 0 0 6px; color: #2D5F3F; border-bottom: 1px solid #ccc; padding-bottom: 4px;">${esc(subj)}</h2>
+      <p style="margin: 0; font-size: 12pt; line-height: 1.55;">${esc(p.text)}</p>
+      ${strands}
+    </section>`;
+  }).join('');
+  const printControls = forWord ? '' : `
+    <div class="no-print" style="position: fixed; top: 14px; right: 14px;">
+      <button onclick="window.print()" style="background: #2D5F3F; color: white; border: none; border-radius: 8px; padding: 10px 18px; font-weight: 600; font-size: 14px; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">🖨 Print / Save as PDF</button>
+    </div>`;
+  return `<!DOCTYPE html>
+<html><head><meta charset="utf-8"><title>Cúntas Míosúil — ${esc(monthLabel)}</title>
+<style>
+  body { font-family: Georgia, 'Times New Roman', serif; max-width: 720px; margin: 32px auto; padding: 24px; color: #1a1a1a; line-height: 1.55; }
+  .head { border-bottom: 2px solid #2D5F3F; padding-bottom: 14px; margin-bottom: 22px; }
+  .head h1 { font-size: 22pt; margin: 0 0 4px; font-family: Georgia, serif; color: #2D5F3F; }
+  .head .meta { color: #555; font-size: 11pt; }
+  .foot { margin-top: 28px; padding-top: 12px; border-top: 1px solid #eee; color: #777; font-size: 10pt; }
+  @media print { body { margin: 0; padding: 0; } .no-print { display: none !important; } @page { size: A4; margin: 18mm; } }
+</style></head>
+<body>
+  ${printControls}
+  <div class="head">
+    <h1>Cúntas Míosúil — ${esc(monthLabel)}</h1>
+    <div class="meta">
+      <strong>${esc(teacherLine)}</strong><br>
+      ${esc(schoolLine)}
+    </div>
+    <div class="meta" style="margin-top: 6px;">${monthPlans.length} ${monthPlans.length === 1 ? 'week' : 'weeks'} of teaching · compiled ${esc(new Date(stored.generatedAt || Date.now()).toLocaleDateString('en-IE', { day: 'numeric', month: 'long', year: 'numeric' }))}</div>
+  </div>
+  ${paragraphsHtml}
+  <div class="foot">Cúntas Míosúil compiled with Planner Bee — pleanaí seachtainiúla na bliana</div>
+</body></html>`;
+}
+
 function renderTemplatesView() {
   ensureTemplates();
   const empty = document.getElementById('templates-empty');
